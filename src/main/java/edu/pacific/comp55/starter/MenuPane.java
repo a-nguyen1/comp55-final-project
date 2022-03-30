@@ -9,7 +9,6 @@ public class MenuPane extends GraphicsPane {
 	private MainApplication program; // you will use program to get access to
 										// all of the GraphicsProgram calls
 	private GButton play;
-	private GButton chooseWeapon;
 	private GButton music;
 	private GButton howToPlay;
 
@@ -18,8 +17,8 @@ public class MenuPane extends GraphicsPane {
 		program = app;
 		play = new GButton("Play", program.getWidth()/2.5, (program.getHeight()/4)-80, 100, 100);
 		play.setFillColor(Color.RED);
-		chooseWeapon = new GButton("How to Play", program.getWidth()/2.5, program.getHeight()/3, 100, 100);
-		chooseWeapon.setFillColor(Color.RED);
+		howToPlay = new GButton("How to Play", program.getWidth()/2.5, program.getHeight()/3, 100, 100);
+		howToPlay.setFillColor(Color.RED);
 		music = new GButton("Music", program.getWidth()/2.5, ((program.getHeight()*2)/3)-70, 100, 100);
 		music.setFillColor(Color.RED);
 		//howToPlay = new GButton("How to Play", program.getWidth()/2.5, (program.getHeight()*2)/3, 100, 100);
@@ -32,7 +31,7 @@ public class MenuPane extends GraphicsPane {
 	@Override
 	public void showContents() {
 		program.add(play);
-		program.add(chooseWeapon);
+		program.add(howToPlay);
 		program.add(music);
 	}
 
@@ -45,7 +44,13 @@ public class MenuPane extends GraphicsPane {
 	public void mousePressed(MouseEvent e) {
 		GObject obj = program.getElementAt(e.getX(), e.getY());
 		if (obj == play) {
-			program.switchToSome();
+			program.switchTo(0); // switch to playGame pane
+		}
+		else if (obj == howToPlay) {
+			program.switchTo(1); // switch to howToPlay pane
+		}
+		else { // obj == music
+			//toggle music ON or OFF
 		}
 	}
 }

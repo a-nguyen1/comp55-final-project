@@ -5,6 +5,7 @@ public class MainApplication extends GraphicsApplication {
 	public static final String MUSIC_FOLDER = "sounds";
 	private static final String[] SOUND_FILES = { "r2d2.mp3", "somethinlikethis.mp3" };
 
+	private SomePane howToPlay;
 	private SomePane playGame;
 	private MenuPane menu;
 	private int count;
@@ -15,6 +16,7 @@ public class MainApplication extends GraphicsApplication {
 
 	public void run() {
 		System.out.println("Hello, world!");
+		howToPlay = new SomePane(this);
 		playGame = new SomePane(this);
 		menu = new MenuPane(this);
 		setupInteractions();
@@ -26,8 +28,13 @@ public class MainApplication extends GraphicsApplication {
 		switchToScreen(menu);
 	}
 
-	public void switchToSome() {
-		switchToScreen(playGame);
+	public void switchTo(int n) {
+		if (n == 0) {
+			switchToScreen(playGame);
+		}
+		else { // n == 1
+			switchToScreen(howToPlay);
+		}
 	}
 
 	private void playRandomSound() {
