@@ -15,7 +15,7 @@ public class MenuPane extends GraphicsPane {
 	public MenuPane(MainApplication app) {
 		super();
 		program = app;
-		play = new GButton("Play", program.getWidth()/2, program.getHeight()/3, 200, 200);
+		play = new GButton("Play", program.getWidth()/2, program.getHeight()/3, 100, 100);
 		play.setFillColor(Color.RED);
 		chooseWeapon = new GButton("Choose your weapon", program.getWidth()/2, program.getHeight()/2, 200, 200);
 		chooseWeapon.setFillColor(Color.RED);
@@ -25,6 +25,8 @@ public class MenuPane extends GraphicsPane {
 	@Override
 	public void showContents() {
 		program.add(play);
+		program.add(chooseWeapon);
+		program.add(selectLevel);
 	}
 
 	@Override
