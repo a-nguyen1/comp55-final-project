@@ -10,26 +10,29 @@ public class MenuPane extends GraphicsPane {
 										// all of the GraphicsProgram calls
 	private GButton play;
 	private GButton chooseWeapon;
-	private GButton selectLevel;
+	private GButton music;
 	private GButton howToPlay;
 
 	public MenuPane(MainApplication app) {
 		super();
 		program = app;
-		play = new GButton("Play", program.getWidth()/2.5, (program.getHeight()/4)-120, 100, 100);
+		play = new GButton("Play", program.getWidth()/2.5, (program.getHeight()/4)-80, 100, 100);
 		play.setFillColor(Color.RED);
-		chooseWeapon = new GButton("Choose your weapon", program.getWidth()/2.5, ((program.getHeight()/3))-20, 100, 100);
+		chooseWeapon = new GButton("How to Play", program.getWidth()/2.5, program.getHeight()/3, 100, 100);
 		chooseWeapon.setFillColor(Color.RED);
-		selectLevel = new GButton("Select Level", program.getWidth()/2.5, ((program.getHeight()*2)/3)-70, 100, 100);
-		selectLevel.setFillColor(Color.RED);
-		howToPlay = new GButton("How to Play", program.getWidth()/2.5, (program.getHeight()*2)/3, 100, 100);
+		music = new GButton("Music", program.getWidth()/2.5, ((program.getHeight()*2)/3)-70, 100, 100);
+		music.setFillColor(Color.RED);
+		//howToPlay = new GButton("How to Play", program.getWidth()/2.5, (program.getHeight()*2)/3, 100, 100);
+		//System.out.println((program.getHeight()/4)-80);
+		//System.out.println(program.getHeight()/3);
+		//System.out.println(((program.getHeight()*2)/3)-70);
 	}
 
 	@Override
 	public void showContents() {
 		program.add(play);
 		program.add(chooseWeapon);
-		program.add(selectLevel);
+		program.add(music);
 	}
 
 	@Override
