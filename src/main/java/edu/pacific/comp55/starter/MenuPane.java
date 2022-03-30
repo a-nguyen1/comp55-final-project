@@ -32,12 +32,13 @@ public class MenuPane extends GraphicsPane {
 	public void showContents() {
 		program.add(play);
 		program.add(howToPlay);
-		program.add(music);
+		//program.add(music);
 	}
 
 	@Override
 	public void hideContents() {
 		program.remove(play);
+		program.remove(howToPlay);
 	}
 
 	@Override
