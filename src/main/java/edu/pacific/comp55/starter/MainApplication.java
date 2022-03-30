@@ -6,7 +6,7 @@ public class MainApplication extends GraphicsApplication {
 	private static final String[] SOUND_FILES = { "r2d2.mp3", "somethinlikethis.mp3" };
 
 	private HowToPlayPane howToPlay;
-	private SomePane playGame;
+	private PlayGamePane playGame;
 	private MenuPane menu;
 	private int count;
 
@@ -17,7 +17,7 @@ public class MainApplication extends GraphicsApplication {
 	public void run() {
 		System.out.println("Hello, world!");
 		howToPlay = new HowToPlayPane(this);
-		playGame = new SomePane(this);
+		playGame = new PlayGamePane(this);
 		menu = new MenuPane(this);
 		setupInteractions();
 		switchToMenu();
