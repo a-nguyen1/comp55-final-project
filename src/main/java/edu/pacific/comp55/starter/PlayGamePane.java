@@ -7,25 +7,29 @@ import acm.graphics.GObject;
 public class PlayGamePane extends GraphicsPane {
 	private MainApplication program; // you will use program to get access to
 										// all of the GraphicsProgram calls
-	private GImage img;
+	private GImage longRangeWeapon;
 	private GParagraph para;
-
+	private GImage closeRangeWeapon;
+	
 	public PlayGamePane(MainApplication app) {
 		this.program = app;
-		img = new GImage("robot head.jpg", 100, 100);
-		para = new GParagraph("welcome\nto my\nsecret room!", 150, 300);
+		longRangeWeapon = new GImage("bow.png", 150, 200);
+		closeRangeWeapon = new GImage("sword.png", 200, 200);
+		para = new GParagraph("Choose Your Weapon", 150, 300);
 		para.setFont("Arial-24");
 	}
 
 	@Override
 	public void showContents() {
-		program.add(img);
+		program.add(longRangeWeapon);
+		program.add(closeRangeWeapon);
 		program.add(para);
 	}
 
 	@Override
 	public void hideContents() {
-		program.remove(img);
+		program.remove(longRangeWeapon);
+		program.remove(closeRangeWeapon);
 		program.remove(para);
 	}
 
@@ -33,8 +37,15 @@ public class PlayGamePane extends GraphicsPane {
 	public void mousePressed(MouseEvent e) {
 		para.setText("you need\nto click\non the eyes\nto go back");
 		GObject obj = program.getElementAt(e.getX(), e.getY());
-		if (obj == img) {
-			program.switchToMenu();
+		if (obj == longRangeWeapon) {
+			chooseLevel();
+		} else if (obj == closeRangeWeapon){
+			chooseLevel();
 		}
 	}
-}
+	public void chooseLevel() {
+		program.remove(longRangeWeapon);
+		program.remove(closeRangeWeapon);
+		program.remove(para);
+	}
+ }
