@@ -4,7 +4,7 @@ import java.util.ArrayList; // for arraylist
 
 import acm.program.GraphicsProgram;
 
-public class Player extends GraphicsProgram {
+public class Player extends Character {
 	private Weapon weapon;
 	private ArrayList<Item> inventory;
 	
