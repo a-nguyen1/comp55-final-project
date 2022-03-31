@@ -46,5 +46,6 @@ public class PlayGamePane extends GraphicsPane {
 		program.remove(longRangeWeapon);
 		program.remove(closeRangeWeapon);
 		program.remove(para);
+		//TODO initialize character and level
 	}
  }
