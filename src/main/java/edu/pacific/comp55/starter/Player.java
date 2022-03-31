@@ -29,13 +29,10 @@ public class Player extends Character {
 
 	}
 	
-	
-	@Override
 	public void mouseClicked(MouseEvent e) {
 		
 	}
 	
-	@Override
 	public void keyTyped(MouseEvent e) {
 		
 	}
