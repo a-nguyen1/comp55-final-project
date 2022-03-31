@@ -2,7 +2,7 @@ package edu.pacific.comp55.starter;
 import acm.graphics.GImage; // for door graphic
 import java.util.ArrayList; // for arrayList
 
-public class Door {
+public class Door extends Item{
 	private GImage doorClosed;
 	private GImage doorOpen;
 	private boolean closed;

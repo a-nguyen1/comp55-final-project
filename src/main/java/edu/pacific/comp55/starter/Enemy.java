@@ -1,6 +1,6 @@
 package edu.pacific.comp55.starter;
 
-public class Enemy {
+public class Enemy extends Character {
 	
 	public Enemy() {
 		// TODO Auto-generated constructor stub
