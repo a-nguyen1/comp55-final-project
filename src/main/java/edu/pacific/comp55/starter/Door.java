@@ -10,6 +10,8 @@ public class Door {
 	private boolean locked;
 	private boolean unlocked;
 	private boolean finalDoor;
+	//private Player player;
+	//private ArrayList<Item> items;
 	//comment if need more.
 	
 	
