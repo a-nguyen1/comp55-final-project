@@ -1,6 +1,7 @@
 package edu.pacific.comp55.starter;
 
-public class Boss {
+public class Boss extends Enemy {
+	private Weapon weaponDrop;
 	
 	public Boss() {
 		// TODO Auto-generated constructor stub
@@ -8,7 +9,7 @@ public class Boss {
 
 	//TODO: Make Weapon Class.
 	public Weapon death() {
-		return weaponObj;
+		return weaponDrop;
 	}
 
 	public static void main(String[] args) {
