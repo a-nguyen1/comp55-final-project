@@ -5,8 +5,8 @@ import javax.swing.*; // for timer
 public class Room {
 	private Timer timer;
 	private String roomType;
-	//private Player player;
-	//private ArrayList<Item> items;
+	private Player player;
+	private ArrayList<Item> items;
 	
 	public Room() {
 		// TODO Auto-generated constructor stub
