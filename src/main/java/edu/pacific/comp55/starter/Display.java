@@ -8,7 +8,7 @@ public class Display {
 	private ArrayList<GImage> playerHealth;
 	private ArrayList<GImage> bossHealth;
 	private String displayType; // to display current game state (lose/win/playing)
-	//private ArrayList<Level> levels;
+	private ArrayList<Level> levels;
 	private int currentLevel;
 	
 	public Display() {
