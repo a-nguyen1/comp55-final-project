@@ -10,7 +10,7 @@ public class Door {
 	private boolean locked;
 	private boolean unlocked;
 	private boolean finalDoor;
-	//comment if need more
+	//comment if need more.
 	
 	
 	public Door(boolean closed, boolean locked) {
