@@ -13,9 +13,9 @@ public class PlayGamePane extends GraphicsPane {
 	
 	public PlayGamePane(MainApplication app) {
 		this.program = app;
-		longRangeWeapon = new GImage("bow.png", 150, 200);
-		closeRangeWeapon = new GImage("sword.png", 200, 200);
-		para = new GParagraph("Choose Your Weapon", 150, 300);
+		longRangeWeapon = new GImage("bow.png", program.getWidth() * 2 / 3, 200);
+		closeRangeWeapon = new GImage("sword.png", program.getWidth() / 3, 200);
+		para = new GParagraph("Choose Your Weapon", program.getWidth() / 3, 100);
 		para.setFont("Arial-24");
 	}
 
@@ -35,7 +35,6 @@ public class PlayGamePane extends GraphicsPane {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		para.setText("you need\nto click\non the eyes\nto go back");
 		GObject obj = program.getElementAt(e.getX(), e.getY());
 		if (obj == longRangeWeapon) {
 			chooseLevel();
