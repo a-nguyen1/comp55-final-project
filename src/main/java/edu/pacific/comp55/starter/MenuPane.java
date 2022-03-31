@@ -25,7 +25,7 @@ public class MenuPane extends GraphicsPane {
 		//System.out.println((program.getHeight()/4)-80);
 		//System.out.println(program.getHeight()/3);
 		//System.out.println(((program.getHeight()*2)/3)-70);
-		//commentss
+		//comments
 	}
 
 	@Override
