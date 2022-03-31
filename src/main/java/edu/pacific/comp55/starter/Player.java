@@ -20,7 +20,7 @@ public class Player extends Character {
 		this.weapon = weapon;
 	}
 	
-	public void getWeapon() {
+	public Weapon getWeapon() {
 		return weapon;
 	}
 	
