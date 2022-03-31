@@ -15,7 +15,6 @@ public class MainApplication extends GraphicsApplication {
 	}
 
 	public void run() {
-		System.out.println("Hello, world!");
 		howToPlay = new HowToPlayPane(this);
 		playGame = new PlayGamePane(this);
 		menu = new MenuPane(this);
