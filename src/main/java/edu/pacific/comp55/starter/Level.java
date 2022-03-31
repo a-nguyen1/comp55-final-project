@@ -10,6 +10,10 @@ public class Level {
 		// TODO Auto-generated constructor stub
 	}
 
+	public void createRoom(int l) { //TODO create room
+		level = l;
+	}
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
