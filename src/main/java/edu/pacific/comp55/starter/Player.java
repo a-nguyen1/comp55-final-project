@@ -1,10 +1,11 @@
 package edu.pacific.comp55.starter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList; // for arraylist
 
 import acm.program.GraphicsProgram;
 
-public class Player extends Character {
+public class Player extends Character implements Interfaceable{
 	private Weapon weapon;
 	private ArrayList<Item> inventory;
 	
@@ -28,12 +29,51 @@ public class Player extends Character {
 		// TODO Auto-generated method stub
 
 	}
-	
-	public void mouseClicked(MouseEvent e) {
+
+	@Override
+	public void showContents() {
+		// TODO Auto-generated method stub
 		
 	}
-	
-	public void keyTyped(MouseEvent e) {
+
+	@Override
+	public void hideContents() {
+		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		//TODO implement movement
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		//TODO implement attack
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
 	}
 }
