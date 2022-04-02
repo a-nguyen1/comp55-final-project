@@ -21,6 +21,10 @@ public class Item {
 		return sprite;
 	}
 	
+	public void setLabel(GLabel label) {
+		message = label;
+	}
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
