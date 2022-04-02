@@ -44,7 +44,7 @@ public class DisplayPane extends GraphicsPane {
 		key = new Item(keySprite, "key"); //Create key as Item object.
 		
 		//Add player health to the screen.
-		GImage playerHPSprite = new GImage("heartImage.png", 300, 300); //Create a new sprite for player HP.
+		GImage playerHPSprite = new GImage("heartImage.png", 0, 0); //Create a new sprite for player HP.
 		playerHPSprite.setSize(50, 50); //Resize sprite to make it smaller.
 		//playerHPSprite.move(0, 0);
 		playerHealth = new ArrayList<GImage>(); 
