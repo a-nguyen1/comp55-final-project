@@ -13,6 +13,14 @@ public class Item {
 		itemType = name;
 	}
 	
+	public void setImage(GImage newImage) {
+		sprite = newImage;
+	}
+	
+	public GImage getImage() {
+		return sprite;
+	}
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
