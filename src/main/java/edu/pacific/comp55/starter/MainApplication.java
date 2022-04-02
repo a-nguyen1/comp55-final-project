@@ -8,6 +8,7 @@ public class MainApplication extends GraphicsApplication {
 	private HowToPlayPane howToPlay;
 	private PlayGamePane playGame;
 	private MenuPane menu;
+	private DisplayPane display;
 	private int count;
 
 	public void init() {
@@ -18,6 +19,7 @@ public class MainApplication extends GraphicsApplication {
 		howToPlay = new HowToPlayPane(this);
 		playGame = new PlayGamePane(this);
 		menu = new MenuPane(this);
+		display = new DisplayPane(this);
 		setupInteractions();
 		switchToMenu();
 	}
@@ -31,8 +33,11 @@ public class MainApplication extends GraphicsApplication {
 		if (n == 0) {
 			switchToScreen(playGame);
 		}
-		else { // n == 1
+		else if (n == 1){ // n == 1
 			switchToScreen(howToPlay);
+		}
+		else if (n == 2) {
+			switchToScreen(display);
 		}
 	}
 

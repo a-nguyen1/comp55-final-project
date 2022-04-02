@@ -3,14 +3,16 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList; // for arraylist
 
+import acm.graphics.GImage;
 import acm.program.GraphicsProgram;
 
 public class Player extends Character implements Interfaceable{
 	private Weapon weapon;
 	private ArrayList<Item> inventory;
 	
-	public Player() {
+	public Player(GImage sprite, int health) {
 		// TODO Auto-generated constructor stub
+		super(sprite, health);
 	}
 
 	public Boolean canInteract() {

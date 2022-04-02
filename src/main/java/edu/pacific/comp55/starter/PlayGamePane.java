@@ -37,15 +37,16 @@ public class PlayGamePane extends GraphicsPane {
 	public void mousePressed(MouseEvent e) {
 		GObject obj = program.getElementAt(e.getX(), e.getY());
 		if (obj == longRangeWeapon) {
-			chooseLevel();
+			startGame();
 		} else if (obj == closeRangeWeapon){
-			chooseLevel();
+			startGame();
 		}
 	}
-	public void chooseLevel() {
+	public void startGame() {
 		program.remove(longRangeWeapon);
 		program.remove(closeRangeWeapon);
 		program.remove(para);
+		program.switchTo(2); //Switch to DisplayPane.
 		//TODO initialize character and level
 	}
  }

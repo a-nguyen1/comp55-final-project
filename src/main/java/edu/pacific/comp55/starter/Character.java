@@ -5,8 +5,9 @@ public class Character {
 	private GImage sprite;
 	private int health;
 	
-	public Character() {
-		// TODO Auto-generated constructor stub
+	public Character(GImage image, int hp) {
+		sprite = image;
+		health = hp;
 	}
 
 	public void healthChanged(int h) { //TODO implement health changed
@@ -23,6 +24,14 @@ public class Character {
 	
 	public void setHealth(int h) {
 		health = h;
+	}
+	
+	public void setSprite(GImage image) {
+		sprite = image;
+	}
+	
+	public GImage getSprite() {
+		return sprite;
 	}
 	
 	public void move() { //TODO implement movement

@@ -1,10 +1,12 @@
 package edu.pacific.comp55.starter;
 
+import acm.graphics.GImage;
+
 public class Boss extends Enemy {
 	private Weapon weaponDrop;
 	
-	public Boss() {
-		// TODO Auto-generated constructor stub
+	public Boss(GImage image, int hp) {
+		super(image, hp);
 	}
 
 	//TODO: Make Weapon Class.

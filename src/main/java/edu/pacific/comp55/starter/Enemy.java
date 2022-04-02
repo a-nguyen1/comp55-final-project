@@ -1,9 +1,11 @@
 package edu.pacific.comp55.starter;
 
+import acm.graphics.GImage;
+
 public class Enemy extends Character {
 	
-	public Enemy() {
-		// TODO Auto-generated constructor stub
+	public Enemy(GImage image, int hp) {
+		super(image, hp);
 	}
 	
 	public static boolean playerInRange() {
