@@ -8,8 +8,9 @@ public class Item {
 	private String itemType;
 	private GLabel message;
 	
-	public Item() {
-		
+	public Item(GImage image, String name) {
+		sprite = image;
+		itemType = name;
 	}
 	
 	public static void main(String[] args) {
