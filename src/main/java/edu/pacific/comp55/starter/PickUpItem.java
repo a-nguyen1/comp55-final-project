@@ -1,9 +1,11 @@
 package edu.pacific.comp55.starter;
 
+import acm.graphics.GImage;
+
 public class PickUpItem extends Item{
 
-	public PickUpItem() {
-		// TODO Auto-generated constructor stub
+	public PickUpItem(GImage image, String name) {
+		super(image, name);
 	}
 	
 	public void addToInventory() { //TODO add item to inventory item[] (ArrayList) in Player.
