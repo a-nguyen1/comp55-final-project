@@ -42,6 +42,13 @@ public class DisplayPane extends GraphicsPane {
 		GImage keySprite = new GImage ("keyImage.png", 200, 200); //Create a new sprite for key.
 		keySprite.setSize(25, 25); //Resize sprite to make it smaller.
 		key = new Item(keySprite, "key"); //Create key as Item object.
+		
+		//Add player health to the screen.
+		GImage playerHPSprite = new GImage("heartImage.png", 300, 300); //Create a new sprite for player HP.
+		playerHPSprite.setSize(50, 50); //Resize sprite to make it smaller.
+		//playerHPSprite.move(0, 0);
+		playerHealth = new ArrayList<GImage>(); 
+		playerHealth.add(playerHPSprite); //Add sprite to playerHealth arraylist.
 	}
 
 	public void setBackground(String b) { //TODO set background
@@ -60,7 +67,8 @@ public class DisplayPane extends GraphicsPane {
 	public void showContents() {
 		//program.add(background);
 		program.add(player.getSprite()); //Add player sprite to screen.
-		program.add(key.getImage());
+		program.add(key.getImage()); //Add key sprite to the screen.
+		program.add(playerHealth.get(0)); //Add first element of playerHealth (initial amount of health).
 		
 	}
 
