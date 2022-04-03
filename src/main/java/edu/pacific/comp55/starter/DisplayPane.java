@@ -20,6 +20,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private ArrayList<GImage> bossHealth;
 	private String displayType; // to display current game state (lose/win/playing)
 	private ArrayList<Level> levels;
+	private ArrayList<Item> items;
 	private int currentLevel;
 	
 	//Class objects
@@ -40,6 +41,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		program = app;
 		//background = new GImage("bow.png", program.getWidth() * 2 / 3, 200);
 		
+		items = new ArrayList<Item>();
+		
 		//Add playerSprite to the screen and create player object
 		GImage playerSprite = new GImage ("knight-sprite4.png", program.getWidth()/2, program.getHeight()/2);
 		player = new Player(playerSprite, 5);
@@ -48,6 +51,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		GImage keySprite = new GImage ("keyImage.png", 200, 200); //Create a new sprite for key.
 		keySprite.setSize(25, 25); //Resize sprite to make it smaller.
 		key = new PickUpItem(keySprite, "key"); //Create key as Item object.
+		
+		items.add(key);
 		
 		//Add player health to the screen.
 		GImage playerHPSprite = new GImage("heartImage.png", 0, 0); //Create a new sprite for player HP.
@@ -134,6 +139,20 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			timer.start();
 		}
 		
+		if (e.getKeyCode() == 69) { // e is typed
+			Item nearestItem = player.nearestItem(items);
+			//if nearest item is a PickUpItem, add to player inventory
+			if (player.canInteract(nearestItem.getImage().getX(), nearestItem.getImage().getY())) {
+				if (nearestItem instanceof  PickUpItem) {
+					//player.addToInventory(nearestItem);
+					System.out.println("player can pick up item");
+				}
+				//if nearest item is a Door, if player has key, unlock. if player has no key, set item label to indicate that a key is needed
+				//if nearest item is a Chest, open the chest
+				//if nearest item is a Weapon, swap player's current weapon with new weapon
+			}
+			
+		}
 		// for normalizing diagonal movement
 		if (Math.abs(dx) == 1 && Math.abs(dy) == 1) { // check if diagonal movement is happening
 			dx = dx * 0.7071067811865476;
@@ -157,12 +176,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	@Override 
 	public void keyTyped(KeyEvent e) {
 		//TODO implement player interacting with item
-		if (e.getKeyCode() == 69) { // e is typed
-			//if nearest item is a PickUpItem, add to player inventory
-			//if nearest item is a Door, if player has key, unlock. if player has no key, set item label to indicate that a key is needed
-			//if nearest item is a Chest, open the chest
-			//if nearest item is a Weapon, swap player's current weapon with new weapon
-		}
+		
 	}
 	
 	@Override 

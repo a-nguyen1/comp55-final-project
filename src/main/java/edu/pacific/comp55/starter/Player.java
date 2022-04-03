@@ -20,11 +20,11 @@ public class Player extends Character {
 	
 	public Item nearestItem(ArrayList<Item> items) {
 		double lowestDistance = distanceToItem(items.get(0));
-		Item i = new Item(items.get(0).getImage(), items.get(0).getItemType() );
+		Item i = items.get(0);
 		for (int x = 0 ; x < items.size(); x++) {
 			if (distanceToItem(items.get(x)) < lowestDistance) {
 				lowestDistance = distanceToItem(items.get(x));
-				i = new Item(items.get(x).getImage(), items.get(x).getItemType() );
+				i = items.get(x);
 			}
 
 		}	
