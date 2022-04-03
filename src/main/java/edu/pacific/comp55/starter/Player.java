@@ -17,6 +17,26 @@ public class Player extends Character {
 	public void addToInventory(PickUpItem item) {
 		inventory.add(item);
 	}
+	
+	public Item nearestItem(ArrayList<Item> items) {
+		double lowestDistance = distanceToItem(items.get(0));
+		Item i = new Item(items.get(0).getImage(), items.get(0).getItemType() );
+		for (int x = 0 ; x < items.size(); x++) {
+			if (distanceToItem(items.get(x)) < lowestDistance) {
+				lowestDistance = distanceToItem(items.get(x));
+				i = new Item(items.get(x).getImage(), items.get(x).getItemType() );
+			}
+
+		}	
+			return i;
+	}
+	
+	public double distanceToItem(Item i) {
+		double x = Math.abs(i.getImage().getX()- super.getSprite().getX()); // find difference in x coordinates
+		double y = Math.abs(i.getImage().getY() - super.getSprite().getY()); // find difference in y coordinates
+		return Math.sqrt(x * x + y * y);
+		
+	}
 
 	public Boolean canInteract(double x, double y) {
 		double xDiff = Math.abs(x - super.getSprite().getX()); // find difference in x coordinates
