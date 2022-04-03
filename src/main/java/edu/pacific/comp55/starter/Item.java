@@ -30,6 +30,14 @@ public class Item {
 		return message;
 	}
 	
+	public void setItemType(String s) {
+		itemType = s;
+	}
+	
+	public String getItemType() {
+		return itemType;
+	}
+	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
