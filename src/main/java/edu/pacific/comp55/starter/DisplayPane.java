@@ -9,6 +9,8 @@ import java.util.ArrayList; // for ArrayList
 import javax.swing.Timer; // for Timer
 
 import acm.graphics.GImage; // for GImage
+import acm.graphics.GLabel;
+import acm.graphics.GObject;
 
 public class DisplayPane extends GraphicsPane implements ActionListener{
 	private MainApplication program;
@@ -29,25 +31,23 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	private Timer timer;
 	private boolean dashAvailable = true;
+	private int timerCount;
 
-	private Item key; 
+	private PickUpItem key; 
 	
 	public DisplayPane(MainApplication app) {
 		super();
 		program = app;
 		//background = new GImage("bow.png", program.getWidth() * 2 / 3, 200);
 		
-		//Add player to the screen and create player object
+		//Add playerSprite to the screen and create player object
 		GImage playerSprite = new GImage ("Player-Sprite.png", program.getWidth()/2, program.getHeight()/2);
 		player = new Player(playerSprite, 5);
-		
-		//Add timer and set delay to 5 seconds(for dash delay)
-		timer = new Timer(5000, this);
 		
 		//Add key item to the screen.
 		GImage keySprite = new GImage ("keyImage.png", 200, 200); //Create a new sprite for key.
 		keySprite.setSize(25, 25); //Resize sprite to make it smaller.
-		key = new Item(keySprite, "key"); //Create key as Item object.
+		key = new PickUpItem(keySprite, "key"); //Create key as Item object.
 		
 		//Add player health to the screen.
 		GImage playerHPSprite = new GImage("heartImage.png", 0, 0); //Create a new sprite for player HP.
@@ -55,6 +55,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		//playerHPSprite.move(0, 0);
 		playerHealth = new ArrayList<GImage>(); 
 		playerHealth.add(playerHPSprite); //Add sprite to playerHealth arraylist.
+		
+		//create timer object and start timer
+		timer = new Timer(0, this);
+		timer.start();
 	}
 
 	public void setBackground(String b) { //TODO set background
@@ -71,7 +75,19 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		dashAvailable = true;
+		timerCount++;
+		if (timerCount % 500 == 0) {
+			dashAvailable = true; //TODO show to player that dash is available
+		}
+		if (timerCount % 100 == 0) {
+			if (player.canInteract(key.getImage().getX(), key.getImage().getY())) { //TODO make player able to do this check for all items
+				String s = "press e to pick up key";
+				key.setLabel(s);
+				key.getLabel().setLocation(key.getImage().getX(), key.getImage().getY());
+			} else {
+				key.setLabel("");
+			}
+		}
 	}
 
 	@Override
@@ -79,6 +95,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		//program.add(background);
 		program.add(player.getSprite()); //Add player sprite to screen.
 		program.add(key.getImage()); //Add key sprite to the screen.
+		program.add(key.getLabel()); //Add key label to the screen.
 		program.add(playerHealth.get(0)); //Add first element of playerHealth (initial amount of health).
 		
 	}
@@ -140,8 +157,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	@Override 
 	public void keyTyped(KeyEvent e) {
 		//TODO implement player interacting with item
-		if (e.getKeyCode() == 69) { // e
-			
+		if (e.getKeyCode() == 69) { // e is typed
+			//if nearest item is a PickUpItem, add to player inventory
+			//if nearest item is a Door, if player has key, unlock. if player has no key, set item label to indicate that a key is needed
+			//if nearest item is a Chest, open the chest
+			//if nearest item is a Weapon, swap player's current weapon with new weapon
 		}
 	}
 	
