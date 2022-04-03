@@ -11,6 +11,7 @@ public class Item {
 	public Item(GImage image, String name) {
 		sprite = image;
 		itemType = name;
+		message = new GLabel("");
 	}
 	
 	public void setImage(GImage newImage) {
@@ -21,8 +22,8 @@ public class Item {
 		return sprite;
 	}
 	
-	public void setLabel(GLabel label) {
-		message = label;
+	public void setLabel(String s) {
+		message.setLabel(s);
 	}
 	
 	public GLabel getLabel() {
