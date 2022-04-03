@@ -18,7 +18,7 @@ public class Character {
 		return true;
 	}
 	
-	public int getHealth(int h) {
+	public int getHealth() {
 		return health;
 	}
 	
