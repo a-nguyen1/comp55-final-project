@@ -41,7 +41,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		//background = new GImage("bow.png", program.getWidth() * 2 / 3, 200);
 		
 		//Add playerSprite to the screen and create player object
-		GImage playerSprite = new GImage ("Player-Sprite.png", program.getWidth()/2, program.getHeight()/2);
+		GImage playerSprite = new GImage ("knight-sprite4.png", program.getWidth()/2, program.getHeight()/2);
 		player = new Player(playerSprite, 5);
 		
 		//Add key item to the screen.
