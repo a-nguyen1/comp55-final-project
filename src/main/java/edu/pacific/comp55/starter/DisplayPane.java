@@ -5,12 +5,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList; // for ArrayList
-import java.util.HashMap; // for HashMap
 
-import javax.swing.Timer;
+import javax.swing.Timer; // for Timer
 
 import acm.graphics.GImage; // for GImage
-import acm.graphics.GPoint; // for GPoint
 
 public class DisplayPane extends GraphicsPane implements ActionListener{
 	private MainApplication program;
@@ -22,21 +20,41 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private ArrayList<Level> levels;
 	private int currentLevel;
 	
+	//Class objects
 	private Player player;
+
 	private double dx = 0;
 	private double dy = 0;
 	private double speed = 7;
 	
 	private Timer timer;
 	private boolean dashAvailable = true;
+
+	private Item key; 
 	
 	public DisplayPane(MainApplication app) {
 		super();
 		program = app;
 		//background = new GImage("bow.png", program.getWidth() * 2 / 3, 200);
+		
+		//Add player to the screen and create player object
 		GImage playerSprite = new GImage ("Player-Sprite.png", program.getWidth()/2, program.getHeight()/2);
 		player = new Player(playerSprite, 5);
-		timer = new Timer(5000, this); //delay for dash set to 5 seconds
+		
+		//Add timer and set delay to 5 seconds(for dash delay)
+		timer = new Timer(5000, this);
+		
+		//Add key item to the screen.
+		GImage keySprite = new GImage ("keyImage.png", 200, 200); //Create a new sprite for key.
+		keySprite.setSize(25, 25); //Resize sprite to make it smaller.
+		key = new Item(keySprite, "key"); //Create key as Item object.
+		
+		//Add player health to the screen.
+		GImage playerHPSprite = new GImage("heartImage.png", 0, 0); //Create a new sprite for player HP.
+		playerHPSprite.setSize(50, 50); //Resize sprite to make it smaller.
+		//playerHPSprite.move(0, 0);
+		playerHealth = new ArrayList<GImage>(); 
+		playerHealth.add(playerHPSprite); //Add sprite to playerHealth arraylist.
 	}
 
 	public void setBackground(String b) { //TODO set background
@@ -59,12 +77,16 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	@Override
 	public void showContents() {
 		//program.add(background);
-		program.add(player.getSprite());
+		program.add(player.getSprite()); //Add player sprite to screen.
+		program.add(key.getImage()); //Add key sprite to the screen.
+		program.add(playerHealth.get(0)); //Add first element of playerHealth (initial amount of health).
+		
 	}
 
 	@Override
 	public void hideContents() {
 		program.remove(player.getSprite());
+		program.remove(key.getImage());
 	}
 	
 	@Override
@@ -96,7 +118,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		
 		// for normalizing diagonal movement
-		if (Math.abs(dx) == 1 && Math.abs(dy) == 1) { // check for diagonal movement
+		if (Math.abs(dx) == 1 && Math.abs(dy) == 1) { // check if diagonal movement is happening
 			dx = dx * 0.7071067811865476;
 			dy = dy * 0.7071067811865476;
 		}
