@@ -137,9 +137,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			double y = MouseInfo.getPointerInfo().getLocation().getY() - playerSprite.getY() - playerSprite.getHeight() / 2;
 			playerSprite.movePolar(speed * speed * 2, 180 * Math.atan2(-y, x) / Math.PI); // dash in direction of mouse
 			timer.start();
-		}
-		
-		if (e.getKeyCode() == 69) { // e is typed
+		} else if (e.getKeyCode() == 69) { // e is typed
 			Item nearestItem = player.nearestItem(items);
 			//if nearest item is a PickUpItem, add to player inventory
 			if (player.canInteract(nearestItem.getImage().getX(), nearestItem.getImage().getY())) {
@@ -171,12 +169,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		} else if (playerSprite.getLocation().getY()+ playerSprite.getHeight() * 2 > program.getHeight()) {
 			playerSprite.setLocation(playerSprite.getX(), program.getHeight()-playerSprite.getHeight() * 2);
 		} 
-	}
-	
-	@Override 
-	public void keyTyped(KeyEvent e) {
-		//TODO implement player interacting with item
-		
 	}
 	
 	@Override 
