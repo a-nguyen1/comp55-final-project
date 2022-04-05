@@ -8,16 +8,11 @@ public class PickUpItem extends Item{
 		super(image, name);
 	}
 	
-	public void addToInventory() { //TODO add item to inventory item[] (ArrayList) in Player.
-		
-	}
-	
 	public void consume() { //TODO use the item
 		
 	}
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 	}
 }
