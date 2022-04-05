@@ -34,16 +34,11 @@ public class Character {
 		return sprite;
 	}
 	
-	public void move() { //TODO implement movement
-		
-	}
-	
 	public boolean isHit() { //TODO implement is hit
 		return true;
 	}
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 	}
 
