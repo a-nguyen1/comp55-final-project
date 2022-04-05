@@ -75,7 +75,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	}
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		
 	}
 	
 	@Override
@@ -98,10 +98,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	@Override
 	public void showContents() {
 		//program.add(background);
-		program.add(player.getSprite()); //Add player sprite to screen.
 		program.add(key.getImage()); //Add key sprite to the screen.
-		program.add(key.getLabel()); //Add key label to the screen.
 		program.add(playerHealth.get(0)); //Add first element of playerHealth (initial amount of health).
+		program.add(player.getSprite()); //Add player sprite to screen.
+		program.add(key.getLabel()); //Add key label to the screen.
 		
 	}
 
@@ -119,16 +119,16 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	@Override
 	public void keyPressed(KeyEvent e) {
 		GImage playerSprite = player.getSprite();
-		
-		if (e.getKeyCode() == 87) { // w
+		int keyCode = e.getKeyCode();
+		if (keyCode == 87) { // w
 			dy = -1;
-		} else if (e.getKeyCode() == 65) { // a
+		} else if (keyCode == 65) { // a
 			dx = -1;
-		} else if (e.getKeyCode() == 83) { // s
+		} else if (keyCode == 83) { // s
 			dy = 1;
-		} else if (e.getKeyCode() == 68) { // d
+		} else if (keyCode == 68) { // d
 			dx = 1;
-		} else if (e.getKeyCode() == 16 && dashAvailable) { // SHIFT
+		} else if (keyCode == 16 && dashAvailable) { // SHIFT
 			timer.stop();
 			dashAvailable = false;
 			// x is set to horizontal distance between mouse and middle of playerSprite
@@ -137,7 +137,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			double y = MouseInfo.getPointerInfo().getLocation().getY() - playerSprite.getY() - playerSprite.getHeight() / 2;
 			playerSprite.movePolar(speed * speed * 2, 180 * Math.atan2(-y, x) / Math.PI); // dash in direction of mouse
 			timer.start();
-		} else if (e.getKeyCode() == 69) { // e is typed
+		} else if (keyCode == 69) { // e
 			Item nearestItem = player.nearestItem(items);
 			//if nearest item is a PickUpItem, add to player inventory
 			if (player.canInteract(nearestItem.getImage().getX(), nearestItem.getImage().getY())) {
