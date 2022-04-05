@@ -6,10 +6,6 @@ public class Door extends Item{
 	private GImage doorOpen;
 	private boolean locked;
 	private boolean finalDoor;
-	//private Player player;
-	//private ArrayList<Item> items;
-	//comment if need more.
-	
 	
 	public Door(GImage image, String name) { // image is when door closed
 		super(image, name);
@@ -25,7 +21,6 @@ public class Door extends Item{
 		return finalDoor;
 	}
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 	}
 
