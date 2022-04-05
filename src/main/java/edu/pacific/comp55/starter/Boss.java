@@ -9,13 +9,11 @@ public class Boss extends Enemy {
 		super(image, hp);
 	}
 
-	//TODO: Make Weapon Class.
 	public Weapon death() {
 		return weaponDrop;
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 	}
 }
