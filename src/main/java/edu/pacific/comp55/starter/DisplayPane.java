@@ -120,10 +120,19 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		if (enemy.canInteract(player.getSprite().getX(), player.getSprite().getY())) {
 			if (timerCount % 100 == 0) {
-				playerSprite = player.getSprite();
-				//System.out.println("player in range of enemy");
-				//System.out.println("playersprite location" + playerSprite.getX() +  " " + playerSprite.getY());
-				enemySprite.move(5, 0);
+				//WILL PUT THIS IN A FUNCTION.
+				if (playerSprite.getY() > enemySprite.getY()) {
+					enemySprite.move(0, 5);
+				}
+				else if (playerSprite.getX() > enemySprite.getX()) {
+					enemySprite.move(5, 0);
+				}
+				else if (playerSprite.getY() < enemySprite.getY()) {
+					enemySprite.move(0, -5);
+				}
+				else if (playerSprite.getX() < enemySprite.getX()) {
+					enemySprite.move(-5, 0);
+				}
 			}
 		}
 	}
