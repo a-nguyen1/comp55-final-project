@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList; // for ArrayList
+import java.util.HashMap;
 
 import javax.swing.Timer; // for Timer
 
@@ -21,7 +22,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private ArrayList<GImage> bossHealth;
 	private String displayType; // to display current game state (lose/win/playing)
 	private ArrayList<Level> levels;
-	private ArrayList<Item> items;
+	private ArrayList<Item> items; // items to display on the level.
+	private HashMap<String, String> itemLabel; 
 	private int currentLevel;
 	
 	//Class objects
@@ -36,7 +38,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private boolean dashAvailable = true;
 	private int timerCount;
 
-	private PickUpItem key; 
+	//private PickUpItem key;
+	//private Door door;
 	
 	public DisplayPane(MainApplication app) {
 		super();
@@ -44,6 +47,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		//background = new GImage("bow.png", program.getWidth() * 2 / 3, 200);
 		
 		items = new ArrayList<Item>();
+		itemLabel = new HashMap<String, String>();
+		itemLabel.put("key", "Press e to pick up key.");
+		itemLabel.put("door", "Press e to unlock door.");
+		itemLabel.put("heart", "Press e to pick up heart.");
 		
 		//Add playerSprite to the screen and create player object
 		GImage playerSprite = new GImage ("knight-sprite4.png", program.getWidth()/2, program.getHeight()/2);
@@ -54,10 +61,14 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		//Add key item to the screen.
 		GImage keySprite = new GImage ("keyImage.png", 200, 200); //Create a new sprite for key.
 		keySprite.setSize(25, 25); //Resize sprite to make it smaller.
-		key = new PickUpItem(keySprite, "key"); //Create key as Item object.
+		PickUpItem key = new PickUpItem(keySprite, "key"); //Create key as Item object.
 		
 		items.add(key);
-		
+		//Add door item to the screen.
+		GImage doorSprite = new GImage ("door.png", 100, 100); //Create a new sprite for door.
+		doorSprite.setSize(50, 100); //Resize sprite to make it smaller.
+		Door door = new Door(doorSprite, "door"); //Create door as Item object.
+		items.add(door);
 		
 		//Add player health to the screen.
 		GImage playerHPSprite = new GImage("heartImage.png", 0, 0); //Create a new sprite for player HP.
@@ -90,12 +101,14 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			dashAvailable = true; //TODO show to player that dash is available
 		}
 		if (timerCount % 100 == 0) {
-			if (player.canInteract(key.getImage().getX(), key.getImage().getY())) { //TODO make player able to do this check for all items
-				String s = "press e to pick up key";
-				key.setLabel(s);
-				key.getLabel().setLocation(key.getImage().getX(), key.getImage().getY());
-			} else {
-				key.setLabel("");
+			for (Item i : items) {
+				if (player.canInteract(i.getImage().getX(), i.getImage().getY())) { //TODO make player able to do this check for all items
+					String s = itemLabel.get(i.getItemType());
+					i.setLabel(s);
+					i.getLabel().setLocation(i.getImage().getX(), i.getImage().getY());
+				} else {
+					i.setLabel("");
+				}
 			}
 		}
 	}
@@ -103,17 +116,23 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	@Override
 	public void showContents() {
 		//program.add(background);
-		program.add(key.getImage()); //Add key sprite to the screen.
+		for (Item i : items) {
+			program.add(i.getImage()); //Add key sprite to the screen.
+			program.add(i.getLabel()); //Add key label to the screen.
+		}
 		program.add(playerHealth.get(0)); //Add first element of playerHealth (initial amount of health).
 		program.add(player.getSprite()); //Add player sprite to screen.
-		program.add(key.getLabel()); //Add key label to the screen.
 		program.add(inventoryBox); //Add inventory box to the screen.
 	}
 
 	@Override
 	public void hideContents() {
+		for (Item i : items) {
+			program.remove(i.getImage()); //Add key sprite to the screen.
+			program.remove(i.getLabel()); //Add key label to the screen.
+		}
 		program.remove(player.getSprite());
-		program.remove(key.getImage());
+		//program.remove(key.getImage());
 	}
 	
 	@Override
@@ -152,6 +171,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					inventoryBox.setSize(inventoryBox.getWidth() + 25, 25);
 					((PickUpItem) nearestItem).setInInventory(true);
 					program.remove(nearestItem.getLabel()); // remove label
+				}
+				else if (nearestItem instanceof Door) {
+					System.out.println("Near Door");
 				}
 				//if nearest item is a Door, if player has key, unlock. if player has no key, set item label to indicate that a key is needed
 				//if nearest item is a Chest, open the chest
