@@ -141,9 +141,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			Item nearestItem = player.nearestItem(items);
 			//if nearest item is a PickUpItem, add to player inventory
 			if (player.canInteract(nearestItem.getImage().getX(), nearestItem.getImage().getY())) {
-				if (nearestItem instanceof  PickUpItem) {
-					//player.addToInventory(nearestItem);
-					System.out.println("player can pick up item");
+				if (nearestItem instanceof PickUpItem) {
+					player.addToInventory(nearestItem);
+					nearestItem.getImage().setLocation(50, 0);
+					program.remove(nearestItem.getLabel()); // remove label
 				}
 				//if nearest item is a Door, if player has key, unlock. if player has no key, set item label to indicate that a key is needed
 				//if nearest item is a Chest, open the chest

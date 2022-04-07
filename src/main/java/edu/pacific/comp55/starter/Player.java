@@ -8,13 +8,14 @@ import acm.program.GraphicsProgram;
 
 public class Player extends Character {
 	private Weapon weapon;
-	private ArrayList<PickUpItem> inventory;
+	private ArrayList<Item> inventory;
 	
 	public Player(GImage sprite, int health) {
 		super(sprite, health);
+		inventory = new ArrayList<Item>();
 	}
 	
-	public void addToInventory(PickUpItem item) {
+	public void addToInventory(Item item) {
 		inventory.add(item);
 	}
 	
