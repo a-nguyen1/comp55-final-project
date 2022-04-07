@@ -10,11 +10,20 @@ public class Door extends Item{
 	public Door(GImage image, String name) { // image is when door closed
 		super(image, name);
 		locked = true;
-		//doorOpen = new GImage(name, 0, 0);
+		doorOpen = new GImage("openDoor.png", image.getX(), image.getY());
 	}
 	
-	public boolean unlock(ArrayList<Item> inventory) { // TODO unlock if player has key
-		return true;
+	public boolean unlock(ArrayList<Item> inventory) {
+		for (Item i: inventory) {
+			if (i.getItemType() == "key") {
+				locked = false;
+			}
+		}
+		return !locked;
+	}
+	
+	public void setOpenDoor() {
+		super.setImage(doorOpen);
 	}
 	
 	public boolean finalDoor() {

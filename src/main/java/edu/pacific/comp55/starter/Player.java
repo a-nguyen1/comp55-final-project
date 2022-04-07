@@ -15,6 +15,23 @@ public class Player extends Character {
 		inventory = new ArrayList<Item>();
 	}
 	
+	public void printInventory() {
+		if (inventory.size() > 0) {
+			System.out.println("Items in player inventory: ");
+			for (int x = 0; x < inventory.size(); x++) {
+				System.out.println(inventory.get(x).getItemType());
+			}
+		}
+		else {
+			System.out.println("No items in inventory");
+		}
+				
+	}
+	
+	public void removeFromInventory(int ind) {
+		inventory.remove(ind);
+	}
+	
 	public void addToInventory(Item item) {
 		inventory.add(item);
 	}
@@ -51,6 +68,14 @@ public class Player extends Character {
 	
 	public Weapon getWeapon() {
 		return weapon;
+	}
+	
+	public ArrayList<Item> getInventory() {
+		return inventory;
+	}
+
+	public void setInventory(ArrayList<Item> inventory) {
+		this.inventory = inventory;
 	}
 	
 	public static void main(String[] args) {

@@ -67,11 +67,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		GImage keySprite = new GImage ("keyImage.png", 200, 200); //Create a new sprite for key.
 		keySprite.setSize(25, 25); //Resize sprite to make it smaller.
 		PickUpItem key = new PickUpItem(keySprite, "key"); //Create key as Item object.
-		
 		items.add(key);
+		
 		//Add door item to the screen.
-		GImage doorSprite = new GImage ("door.png", 100, 100); //Create a new sprite for door.
-		doorSprite.setSize(50, 100); //Resize sprite to make it smaller.
+		GImage doorSprite = new GImage ("closedDoor.png", 100, 100); //Create a new sprite for door.
+		//doorSprite.setSize(50, 100); //Resize sprite to make it smaller.
 		Door door = new Door(doorSprite, "door"); //Create door as Item object.
 		items.add(door);
 		
@@ -141,8 +141,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	public void showContents() {
 		//program.add(background);
 		for (Item i : items) {
-			program.add(i.getImage()); //Add key sprite to the screen.
-			program.add(i.getLabel()); //Add key label to the screen.
+			program.add(i.getImage()); //Add item sprite to the screen.
+			program.add(i.getLabel()); //Add item label to the screen.
 		}
 		program.add(playerHealth.get(0)); //Add first element of playerHealth (initial amount of health).
 		program.add(player.getSprite()); //Add player sprite to screen.
@@ -153,8 +153,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	@Override
 	public void hideContents() {
 		for (Item i : items) {
-			program.remove(i.getImage()); //Add key sprite to the screen.
-			program.remove(i.getLabel()); //Add key label to the screen.
+			program.remove(i.getImage()); //remove item sprite to the screen.
+			program.remove(i.getLabel()); //remove item label to the screen.
 		}
 		program.remove(player.getSprite());
 		//program.remove(key.getImage());
@@ -198,7 +198,34 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					program.remove(nearestItem.getLabel()); // remove label
 				}
 				else if (nearestItem instanceof Door) {
-					System.out.println("Near Door");
+					player.printInventory();
+					boolean unlockDoor = ((Door)nearestItem).unlock(player.getInventory());
+					if (unlockDoor){
+						int removeIndex = -1;
+						if (player.getInventory().size() > 0) {
+							for (int x = 0; x < player.getInventory().size(); x++) {
+								if (player.getInventory().get(x).getItemType() == "key") {
+									removeIndex = x;
+								}
+							}
+							if (removeIndex >= 0) {
+								player.removeFromInventory(removeIndex); // remove key from player inventory
+							} 
+							else {
+								//no key in inventory
+							}
+							for (Item i: items) {
+								if (i.getItemType() == "door") {
+									((Door)i).setOpenDoor();
+								}
+							}
+							//TODO change door to openDoor.png
+						}
+						System.out.println("door open");
+					}
+					else {
+						System.out.println("door closed");
+					}
 				}
 				//if nearest item is a Door, if player has key, unlock. if player has no key, set item label to indicate that a key is needed
 				//if nearest item is a Chest, open the chest
