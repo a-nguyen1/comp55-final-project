@@ -11,6 +11,7 @@ import javax.swing.Timer; // for Timer
 import acm.graphics.GImage; // for GImage
 import acm.graphics.GLabel;
 import acm.graphics.GObject;
+import acm.graphics.GRect;
 
 public class DisplayPane extends GraphicsPane implements ActionListener{
 	private MainApplication program;
@@ -25,6 +26,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	//Class objects
 	private Player player;
+	private GRect inventoryBox;
 
 	private double dx = 0;
 	private double dy = 0;
@@ -47,12 +49,15 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		GImage playerSprite = new GImage ("knight-sprite4.png", program.getWidth()/2, program.getHeight()/2);
 		player = new Player(playerSprite, 5);
 		
+		inventoryBox = new GRect(50, 0, 0, 0);
+		
 		//Add key item to the screen.
 		GImage keySprite = new GImage ("keyImage.png", 200, 200); //Create a new sprite for key.
 		keySprite.setSize(25, 25); //Resize sprite to make it smaller.
 		key = new PickUpItem(keySprite, "key"); //Create key as Item object.
 		
 		items.add(key);
+		
 		
 		//Add player health to the screen.
 		GImage playerHPSprite = new GImage("heartImage.png", 0, 0); //Create a new sprite for player HP.
@@ -102,7 +107,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		program.add(playerHealth.get(0)); //Add first element of playerHealth (initial amount of health).
 		program.add(player.getSprite()); //Add player sprite to screen.
 		program.add(key.getLabel()); //Add key label to the screen.
-		
+		program.add(inventoryBox); //Add inventory box to the screen.
 	}
 
 	@Override
@@ -141,9 +146,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			Item nearestItem = player.nearestItem(items);
 			//if nearest item is a PickUpItem, add to player inventory
 			if (player.canInteract(nearestItem.getImage().getX(), nearestItem.getImage().getY())) {
-				if (nearestItem instanceof PickUpItem) {
+				if (nearestItem instanceof PickUpItem && !((PickUpItem) nearestItem).getInInventory()) {
 					player.addToInventory(nearestItem);
 					nearestItem.getImage().setLocation(50, 0);
+					inventoryBox.setSize(inventoryBox.getWidth() + 25, 25);
+					((PickUpItem) nearestItem).setInInventory(true);
 					program.remove(nearestItem.getLabel()); // remove label
 				}
 				//if nearest item is a Door, if player has key, unlock. if player has no key, set item label to indicate that a key is needed
