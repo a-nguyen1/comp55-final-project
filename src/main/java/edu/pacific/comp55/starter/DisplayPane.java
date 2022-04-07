@@ -29,6 +29,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	//Class objects
 	private Player player;
 	private Enemy enemy;
+	GImage enemySprite = new GImage ("Enemy-sprite.png", 300, 50);
+	GImage playerSprite = new GImage ("knight-sprite4.png", program.getWidth()/2, program.getHeight()/2);
 	private GRect inventoryBox;
 
 	private double dx = 0;
@@ -53,12 +55,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		itemLabel.put("door", "Press e to unlock door.");
 		itemLabel.put("heart", "Press e to pick up heart.");
 		
-		//Add playerSprite to the screen and create player object
-		GImage playerSprite = new GImage ("knight-sprite4.png", program.getWidth()/2, program.getHeight()/2);
+		//Add playerSprite to the screen and create player object.
 		player = new Player(playerSprite, 5);
 		
 		//Add Enemy to screen and create enemy object
-		GImage enemySprite = new GImage ("Enemy-sprite.png", 300, 50);
 		enemy = new Enemy(enemySprite, 5);
 		
 		inventoryBox = new GRect(50, 0, 0, 0);
@@ -114,6 +114,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				} else {
 					i.setLabel("");
 				}
+			}
+		}
+		if (enemy.canInteract(player.getSprite().getX(), player.getSprite().getY())) {
+			if (timerCount % 100 == 0) {
+				System.out.println("player in range of enemy");
+				enemySprite.move(5, 0);
 			}
 		}
 	}
