@@ -28,6 +28,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	//Class objects
 	private Player player;
+	private Enemy enemy;
 	private GRect inventoryBox;
 
 	private double dx = 0;
@@ -55,6 +56,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		//Add playerSprite to the screen and create player object
 		GImage playerSprite = new GImage ("knight-sprite4.png", program.getWidth()/2, program.getHeight()/2);
 		player = new Player(playerSprite, 5);
+		
+		//Add Enemy to screen and create enemy object
+		GImage enemySprite = new GImage ("Enemy-sprite.png", 300, 50);
+		enemy = new Enemy(enemySprite, 5);
 		
 		inventoryBox = new GRect(50, 0, 0, 0);
 		
@@ -122,6 +127,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		program.add(playerHealth.get(0)); //Add first element of playerHealth (initial amount of health).
 		program.add(player.getSprite()); //Add player sprite to screen.
+		program.add(enemy.getSprite()); //Add enemy sprite to screen.
 		program.add(inventoryBox); //Add inventory box to the screen.
 	}
 
