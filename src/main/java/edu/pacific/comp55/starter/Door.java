@@ -9,26 +9,34 @@ public class Door extends Item{
 	
 	public Door(GImage image, String name) { // image is when door closed
 		super(image, name);
-		locked = true;
+		setLocked(true);
 		doorOpen = new GImage("openDoor.png", image.getX(), image.getY());
 	}
 	
 	public boolean unlock(ArrayList<Item> inventory) {
 		for (Item i: inventory) {
 			if (i.getItemType() == "key") {
-				locked = false;
+				setLocked(false);
 			}
 		}
 		return !locked;
 	}
 	
-	public void setOpenDoor() {
-		super.setImage(doorOpen);
+	public GImage getOpenDoor() {
+		return doorOpen;
 	}
 	
 	public boolean finalDoor() {
 		return finalDoor;
 	}
+	public boolean getLocked() {
+		return locked;
+	}
+
+	public void setLocked(boolean locked) {
+		this.locked = locked;
+	}
+
 	public static void main(String[] args) {
 
 	}

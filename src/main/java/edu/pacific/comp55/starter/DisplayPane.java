@@ -53,6 +53,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		itemLabel = new HashMap<String, String>();
 		itemLabel.put("key", "Press e to pick up key.");
 		itemLabel.put("door", "Press e to unlock door.");
+		itemLabel.put("opendoor", "Press e to enter next room.");
 		itemLabel.put("heart", "Press e to pick up heart.");
 		
 		//Add playerSprite to the screen and create player object.
@@ -225,14 +226,16 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								player.removeFromInventory(removeIndex); // remove key from player inventory
 							} 
 							else {
-								//no key in inventory
+								nearestItem.setLabel("You need a key to unlock this door.");
 							}
 							for (Item i: items) {
 								if (i.getItemType() == "door") {
-									((Door)i).setOpenDoor();
+									i.setItemType("opendoor");
+									program.add(((Door)nearestItem).getOpenDoor());
+									((GObject)player.getSprite()).sendToFront();
+									System.out.println("door set to open");
 								}
 							}
-							//TODO change door to openDoor.png
 						}
 						System.out.println("door open");
 					}
