@@ -70,7 +70,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		items.add(door);
 		
 		//Add player health to the screen.
-		GImage playerHPSprite = new GImage("heartImage.png", 0, 0); //Create a new sprite for player HP.
+		GImage playerHPSprite = new GImage("Heart.png", 0, 0); //Create a new sprite for player HP.
 		playerHPSprite.setSize(50, 50); //Resize sprite to make it smaller.
 		playerHealth = new ArrayList<GImage>(); 
 		playerHealth.add(playerHPSprite); //Add sprite to playerHealth ArrayList.
