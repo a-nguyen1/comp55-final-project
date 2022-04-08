@@ -9,10 +9,12 @@ import acm.program.GraphicsProgram;
 public class Player extends Character {
 	private Weapon weapon;
 	private ArrayList<Item> inventory;
+	private boolean dashAvailable;
 	
 	public Player(GImage sprite, int health) {
 		super(sprite, health);
 		inventory = new ArrayList<Item>();
+		dashAvailable = true;
 	}
 	
 	public void printInventory() {
@@ -84,6 +86,14 @@ public class Player extends Character {
 
 	public void setInventory(ArrayList<Item> inventory) {
 		this.inventory = inventory;
+	}
+
+	public boolean isDashAvailable() {
+		return dashAvailable;
+	}
+
+	public void setDashAvailable(boolean dashAvailable) {
+		this.dashAvailable = dashAvailable;
 	}
 	
 	public static void main(String[] args) {

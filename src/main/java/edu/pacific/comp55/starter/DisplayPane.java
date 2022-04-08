@@ -33,7 +33,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private GRect inventoryBox;
 	
 	private Timer timer;
-	private boolean dashAvailable = true; //TODO move to player class and re-implement dash
 	private int timerCount;
 	
 	public DisplayPane(MainApplication app) {
@@ -103,7 +102,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		GImage enemySprite = enemy.getSprite();
 		timerCount++;
 		if (timerCount % 500 == 0) {
-			dashAvailable = true; //TODO show player that dash is available
+			player.setDashAvailable(true); //TODO show player that dash is available
 		}
 		if (timerCount % 100 == 0) {
 			
@@ -192,9 +191,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			player.setMoveY(1);
 		} else if (keyCode == 68) { // d
 			player.setMoveX(1);
-		} else if (keyCode == 16 && dashAvailable) { // SHIFT
+		} else if (keyCode == 16 && player.isDashAvailable()) { // SHIFT
 			timer.stop();
-			dashAvailable = false;
+			player.setDashAvailable(false);
 			// x is set to horizontal distance between mouse and middle of playerSprite
 			double x = MouseInfo.getPointerInfo().getLocation().getX() - playerSprite.getX() - playerSprite.getWidth() / 2;
 			// y is set to vertical distance between mouse and middle of playerSprite
