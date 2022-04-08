@@ -4,6 +4,9 @@ import acm.graphics.GImage;
 public class Character {
 	private GImage sprite;
 	private int health;
+	private double moveX;
+	private double moveY;
+	private double speed;
 	
 	public Character(GImage image, int hp) {
 		sprite = image;
@@ -42,9 +45,32 @@ public class Character {
 	public boolean isHit() { //TODO implement is hit
 		return true;
 	}
+
+	public double getMoveX() {
+		return moveX;
+	}
+
+	public void setMoveX(double moveX) {
+		this.moveX = moveX;
+	}
+
+	public double getMoveY() {
+		return moveY;
+	}
+
+	public void setMoveY(double moveY) {
+		this.moveY = moveY;
+	}
+
+	public double getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
 	
 	public static void main(String[] args) {
 
 	}
-
 }

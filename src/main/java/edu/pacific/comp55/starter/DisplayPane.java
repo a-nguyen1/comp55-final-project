@@ -33,9 +33,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private GRect inventoryBox;
 
 	//TODO move these variables to be private variables in the Character class and re-implement movement
-	private double dx = 0;
-	private double dy = 0;
-	private double speed = 7;
 	private int enemyMoveX;
 	private int enemyMoveY;
 	
@@ -58,6 +55,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		//Add playerSprite to the screen and create player object.
 		GImage playerSprite = new GImage ("knight-sprite-with-sword.png", program.getWidth()/2, program.getHeight()/2);
 		player = new Player(playerSprite, 5);
+		player.setSpeed(7);
 		
 		//Add Enemy to screen and create enemy object
 		GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 50);
@@ -195,13 +193,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		GImage playerSprite = player.getSprite();
 		int keyCode = e.getKeyCode();
 		if (keyCode == 87) { // w
-			dy = -1;
+			player.setMoveY(-1);
 		} else if (keyCode == 65) { // a
-			dx = -1;
+			player.setMoveX(-1);
 		} else if (keyCode == 83) { // s
-			dy = 1;
+			player.setMoveY(1);
 		} else if (keyCode == 68) { // d
-			dx = 1;
+			player.setMoveX(1);
 		} else if (keyCode == 16 && dashAvailable) { // SHIFT
 			timer.stop();
 			dashAvailable = false;
@@ -209,7 +207,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			double x = MouseInfo.getPointerInfo().getLocation().getX() - playerSprite.getX() - playerSprite.getWidth() / 2;
 			// y is set to vertical distance between mouse and middle of playerSprite
 			double y = MouseInfo.getPointerInfo().getLocation().getY() - playerSprite.getY() - playerSprite.getHeight() / 2;
-			playerSprite.movePolar(speed * speed * 2, 180 * Math.atan2(-y, x) / Math.PI); // dash in direction of mouse
+			playerSprite.movePolar(player.getSpeed() * player.getSpeed() * 2, 180 * Math.atan2(-y, x) / Math.PI); // dash in direction of mouse
 			timer.start();
 		} else if (keyCode == 69) { // e
 			Item nearestItem = player.nearestItem(items);
@@ -274,12 +272,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			
 		}
 		// for normalizing diagonal movement
-		if (Math.abs(dx) == 1 && Math.abs(dy) == 1) { // check if diagonal movement is happening
-			dx = dx * 0.7071067811865476;
-			dy = dy * 0.7071067811865476;
+		if (Math.abs(player.getMoveX()) == 1 && Math.abs(player.getMoveY()) == 1) { // check if diagonal movement is happening
+			player.setMoveX(player.getMoveX() * 0.7071067811865476);
+			player.setMoveY(player.getMoveY() * 0.7071067811865476);
 		}
 		
-		playerSprite.move(dx * speed, dy * speed); // move playerSprite
+		playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
 		
 		// setting bounds for player
 		if (playerSprite.getLocation().getX() < 0) {
@@ -297,9 +295,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	public void keyReleased(KeyEvent e) {
 		int keyCode = e.getKeyCode();
 		if (keyCode == 87 || keyCode == 83) { // w or s -> reset vertical movement when released
-			dy = 0;
+			player.setMoveY(0);
 		} else if (keyCode == 65 || keyCode == 68) { // a or d -> reset horizontal movement when released
-			dx = 0;
+			player.setMoveX(0);
 		}
 	}
 }
