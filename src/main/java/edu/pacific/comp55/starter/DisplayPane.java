@@ -61,7 +61,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 		//Add Enemy to screen and create enemy object
 		GImage enemySprite = new GImage ("Enemy-sprite.png", 300, 50);
-		enemy = new Enemy(enemySprite, 5);
+		enemy = new Enemy(enemySprite, 2); //Enemy has 2 health points.
 		
 		inventoryBox = new GRect(50, 0, 0, 0);
 		
@@ -179,6 +179,14 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	@Override
 	public void mouseClicked(MouseEvent e) { //TODO implement attack
+		if (player.canInteract(enemy.getSprite().getX(), enemy.getSprite().getY())) { //player in range of enemy.
+			System.out.println("Enemy is hit.");
+			enemy.healthChanged(-1); //Reduce health by 1.
+			if (enemy.healthIsZero()) { //Enemy has no health.
+				program.remove(enemy.getSprite()); //Remove enemy from the screen since he is dead.
+				System.out.println("Enemy is dead.");
+			}
+		}
 		
 	}
 	

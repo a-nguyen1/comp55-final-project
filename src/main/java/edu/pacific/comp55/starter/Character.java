@@ -11,11 +11,16 @@ public class Character {
 	}
 
 	public void healthChanged(int h) { //TODO implement health changed
-		
+		health = health + h; //Either add health or remove it depending if h is pos or neg.
 	}
 	
 	public boolean healthIsZero() { //TODO implement health is zero
-		return true;
+		if (health == 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	public int getHealth() {
