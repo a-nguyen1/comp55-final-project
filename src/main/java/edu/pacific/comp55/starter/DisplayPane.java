@@ -31,10 +31,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private Player player;
 	private Enemy enemy;
 	private GRect inventoryBox;
-
-	//TODO move these variables to be private variables in the Character class and re-implement movement
-	private int enemyMoveX;
-	private int enemyMoveY;
 	
 	private Timer timer;
 	private boolean dashAvailable = true; //TODO move to player class and re-implement dash
@@ -128,26 +124,22 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			if (timerCount % 100 == 0) {
 				//TODO PUT THIS IN A FUNCTION.
 				if (playerSprite.getY() > enemySprite.getY()) {
-					//enemySprite.move(0, 5);
-					enemyMoveX = 0;
-					enemyMoveY = 5;
+					enemy.setMoveX(0);
+					enemy.setMoveY(5);
 				}
 				else if (playerSprite.getX() > enemySprite.getX()) {
-					//enemySprite.move(5, 0);
-					enemyMoveX = 5;
-					enemyMoveY = 0;
+					enemy.setMoveX(5);
+					enemy.setMoveY(0);
 				}
 				else if (playerSprite.getY() < enemySprite.getY()) {
-					//enemySprite.move(0, -5);
-					enemyMoveX = 0;
-					enemyMoveY = -5;
+					enemy.setMoveX(0);
+					enemy.setMoveY(-5);
 				}
 				else if (playerSprite.getX() < enemySprite.getX()) {
-					//enemySprite.move(-5, 0);
-					enemyMoveX = -5;
-					enemyMoveY = 0;
+					enemy.setMoveX(-5);
+					enemy.setMoveY(0);
 				}
-				enemySprite.move(enemyMoveX, enemyMoveY);
+				enemySprite.move(enemy.getMoveX(), enemy.getMoveY());
 			}
 		}
 	}
