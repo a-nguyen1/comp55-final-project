@@ -60,7 +60,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		player = new Player(playerSprite, 5);
 		
 		//Add Enemy to screen and create enemy object
-		GImage enemySprite = new GImage ("Enemy-sprite.png", 300, 50);
+		GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 50);
 		enemy = new Enemy(enemySprite, 2); //Enemy has 2 health points.
 		
 		inventoryBox = new GRect(50, 0, 0, 0);
