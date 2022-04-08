@@ -44,7 +44,6 @@ public class Player extends Character {
 				lowestDistance = distanceToItem(items.get(x));
 				i = items.get(x);
 			}
-
 		}	
 			return i;
 	}
@@ -60,6 +59,15 @@ public class Player extends Character {
 		double xDiff = Math.abs(x - super.getSprite().getX()); // find difference in x coordinates
 		double yDiff = Math.abs(y - super.getSprite().getY()); // find difference in y coordinates
 		return xDiff <= 50 && yDiff <= 50; //returns true if x,y coordinates are within 50 in x direction and y direction
+	}
+	
+	public Boolean hasKey() {
+		for (Item i: inventory) {
+			if (i.getItemType() == "key") {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public void setWeapon(Weapon weapon) {

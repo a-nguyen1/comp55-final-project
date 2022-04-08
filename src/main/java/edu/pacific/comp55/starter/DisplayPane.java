@@ -25,12 +25,14 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private ArrayList<Item> items; // items to display on the level.
 	private HashMap<String, String> itemLabel; 
 	private int currentLevel;
+	private int currentRoom;
 	
 	//Class objects
 	private Player player;
 	private Enemy enemy;
 	private GRect inventoryBox;
 
+	//TODO move these variables to be private variables in the Character class and re-implement movement
 	private double dx = 0;
 	private double dy = 0;
 	private double speed = 7;
@@ -38,11 +40,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private int enemyMoveY;
 	
 	private Timer timer;
-	private boolean dashAvailable = true;
+	private boolean dashAvailable = true; //TODO move to player class and re-implement dash
 	private int timerCount;
-
-	//private PickUpItem key;
-	//private Door door;
 	
 	public DisplayPane(MainApplication app) {
 		super();
@@ -52,8 +51,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		items = new ArrayList<Item>();
 		itemLabel = new HashMap<String, String>();
 		itemLabel.put("key", "Press e to pick up key.");
-		itemLabel.put("door", "Press e to unlock door.");
-		itemLabel.put("opendoor", "Press e to enter next room.");
+		itemLabel.put("closedDoor", "Press e to unlock door.");
+		itemLabel.put("openDoor", "Press e to enter next room.");
 		itemLabel.put("heart", "Press e to pick up heart.");
 		
 		//Add playerSprite to the screen and create player object.
@@ -74,14 +73,14 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 		//Add door item to the screen.
 		GImage doorSprite = new GImage ("closedDoor.png", 100, 100); //Create a new sprite for door.
-		Door door = new Door(doorSprite, "door"); //Create door as Item object.
+		Door door = new Door(doorSprite, "closedDoor"); //Create door as Item object.
 		items.add(door);
 		
 		//Add player health to the screen.
 		GImage playerHPSprite = new GImage("heartImage.png", 0, 0); //Create a new sprite for player HP.
 		playerHPSprite.setSize(50, 50); //Resize sprite to make it smaller.
 		playerHealth = new ArrayList<GImage>(); 
-		playerHealth.add(playerHPSprite); //Add sprite to playerHealth arraylist.
+		playerHealth.add(playerHPSprite); //Add sprite to playerHealth ArrayList.
 		
 		//create timer object and start timer
 		timer = new Timer(0, this);
@@ -96,6 +95,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 	}
 	
+	public void createRoom(int r) { //TODO create room
+		
+	}
+	
 	public static void main(String[] args) {
 		
 	}
@@ -106,11 +109,15 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		GImage enemySprite = enemy.getSprite();
 		timerCount++;
 		if (timerCount % 500 == 0) {
-			dashAvailable = true; //TODO show to player that dash is available
+			dashAvailable = true; //TODO show player that dash is available
 		}
 		if (timerCount % 100 == 0) {
+			
 			for (Item i : items) {
-				if (player.canInteract(i.getImage().getX(), i.getImage().getY())) { //TODO make player able to do this check for all items
+				if (player.canInteract(i.getImage().getX(), i.getImage().getY())) {
+					if (player.hasKey() && i.getItemType() == "closedDoor") {
+						itemLabel.put("closedDoor", "Press e to unlock door.");
+					}
 					String s = itemLabel.get(i.getItemType());
 					i.setLabel(s);
 					i.getLabel().setLocation(i.getImage().getX(), i.getImage().getY());
@@ -121,7 +128,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		if (enemy.canInteract(player.getSprite().getX(), player.getSprite().getY())) {
 			if (timerCount % 100 == 0) {
-				//WILL PUT THIS IN A FUNCTION.
+				//TODO PUT THIS IN A FUNCTION.
 				if (playerSprite.getY() > enemySprite.getY()) {
 					//enemySprite.move(0, 5);
 					enemyMoveX = 0;
@@ -143,8 +150,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					enemyMoveY = 0;
 				}
 				enemySprite.move(enemyMoveX, enemyMoveY);
-				
-				
 			}
 		}
 	}
@@ -174,7 +179,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	@Override
 	public void mouseClicked(MouseEvent e) { //TODO implement attack
-
+		
 	}
 	
 	@Override
@@ -204,27 +209,26 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			if (player.canInteract(nearestItem.getImage().getX(), nearestItem.getImage().getY())) {
 				if (nearestItem instanceof PickUpItem && !((PickUpItem) nearestItem).getInInventory()) {
 					player.addToInventory(nearestItem);
-					nearestItem.getImage().setLocation(50, 0);
-					inventoryBox.setSize(inventoryBox.getWidth() + 25, 25);
+					nearestItem.getImage().setLocation(50, 0); //TODO change after hearts are implemented
+					inventoryBox.setSize(25*player.getInventory().size(), 25);
 					((PickUpItem) nearestItem).setInInventory(true);
 					program.remove(nearestItem.getLabel()); // remove key label
 				}
 				else if (nearestItem instanceof Door) {
-					player.printInventory();
 					boolean doorStateBefore = !((Door)nearestItem).getLocked();
 					boolean unlockedDoor = ((Door)nearestItem).unlock(player.getInventory());
 					if (unlockedDoor){
-						if (doorStateBefore == unlockedDoor) {
-							program.removeAll();
+						if (doorStateBefore == unlockedDoor) { // door has already been opened
+							program.removeAll(); //remove all to create next room
 							for (Item i : items) { 
-								if (i.getItemType() == "key") {
+								if (i.getItemType() == "key") { //reset key to default values
 									i.getImage().setLocation(200,200);
 									((PickUpItem)i).setInInventory(false);
 								}
-								else if (i.getItemType() == "opendoor") {
-									i.setItemType("door");
+								else if (i.getItemType() == "openDoor") { //reset door to default values
+									i.setItemType("closedDoor");
 									((Door)i).setLocked(true);
-									itemLabel.put("door", "Press e to unlock door");
+									itemLabel.put("closedDoor", "Press e to unlock door.");
 								}
 								program.add(i.getImage()); //Add item sprite to the screen.
 								program.add(i.getLabel()); //Add item label to the screen.
@@ -232,31 +236,30 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							program.add(playerHealth.get(0)); //Add first element of playerHealth (initial amount of health).
 							program.add(player.getSprite()); //Add player sprite to screen.
 							program.add(enemy.getSprite()); //Add enemy sprite to screen.
+							inventoryBox.setSize(25*player.getInventory().size(), 25);
 							program.add(inventoryBox); //Add inventory box to the screen.
 						}
 						int removeIndex = -1;
 						if (player.getInventory().size() > 0) {
 							for (int x = 0; x < player.getInventory().size(); x++) {
-								if (player.getInventory().get(x).getItemType() == "key") {
+								if (player.getInventory().get(x).getItemType() == "key") { // check for key in player inventory
 									removeIndex = x;
 								}
 							}
 							if (removeIndex >= 0) {
 								player.removeFromInventory(removeIndex); // remove key from player inventory
 							} 
-							if (nearestItem.getItemType() == "door") {
-								nearestItem.setItemType("opendoor");
-								program.add(((Door)nearestItem).getOpenDoor());
-								((GObject)player.getSprite()).sendToFront();
+							if (nearestItem.getItemType() == "closedDoor") { // change door to open door
+								nearestItem.setItemType("openDoor");
+								program.add(((Door)nearestItem).getOpenDoor()); // add open door GImage to screen
+								((GObject)player.getSprite()).sendToFront(); // send player to the front of the screen
 							}
-							
 						}
 					}
 					else {
-						itemLabel.put("door", "You need a key to unlock this door."); //change door label
+						itemLabel.put("closedDoor", "A key is needed."); 
 					}
 				}
-				//if nearest item is a Door, if player has key, unlock. if player has no key, set item label to indicate that a key is needed
 				//if nearest item is a Chest, open the chest
 				//if nearest item is a Weapon, swap player's current weapon with new weapon
 			}
