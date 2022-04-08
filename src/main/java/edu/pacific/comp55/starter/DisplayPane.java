@@ -34,6 +34,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private double dx = 0;
 	private double dy = 0;
 	private double speed = 7;
+	private int enemyMoveX;
+	private int enemyMoveY;
 	
 	private Timer timer;
 	private boolean dashAvailable = true;
@@ -54,7 +56,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		itemLabel.put("heart", "Press e to pick up heart.");
 		
 		//Add playerSprite to the screen and create player object.
-		GImage playerSprite = new GImage ("knight-sprite4.png", program.getWidth()/2, program.getHeight()/2);
+		GImage playerSprite = new GImage ("knight-sprite-with-sword.png", program.getWidth()/2, program.getHeight()/2);
 		player = new Player(playerSprite, 5);
 		
 		//Add Enemy to screen and create enemy object
@@ -122,17 +124,28 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			if (timerCount % 100 == 0) {
 				//WILL PUT THIS IN A FUNCTION.
 				if (playerSprite.getY() > enemySprite.getY()) {
-					enemySprite.move(0, 5);
+					//enemySprite.move(0, 5);
+					enemyMoveX = 0;
+					enemyMoveY = 5;
 				}
 				else if (playerSprite.getX() > enemySprite.getX()) {
-					enemySprite.move(5, 0);
+					//enemySprite.move(5, 0);
+					enemyMoveX = 5;
+					enemyMoveY = 0;
 				}
 				else if (playerSprite.getY() < enemySprite.getY()) {
-					enemySprite.move(0, -5);
+					//enemySprite.move(0, -5);
+					enemyMoveX = 0;
+					enemyMoveY = -5;
 				}
 				else if (playerSprite.getX() < enemySprite.getX()) {
-					enemySprite.move(-5, 0);
+					//enemySprite.move(-5, 0);
+					enemyMoveX = -5;
+					enemyMoveY = 0;
 				}
+				enemySprite.move(enemyMoveX, enemyMoveY);
+				
+				
 			}
 		}
 	}
