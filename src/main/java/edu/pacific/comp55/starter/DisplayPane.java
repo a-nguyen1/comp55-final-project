@@ -55,6 +55,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		//Add Enemy to screen and create enemy object
 		GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 50);
 		enemy = new Enemy(enemySprite, 2); //Enemy has 2 health points.
+		enemy.setSpeed(5);
 		
 		inventoryBox = new GRect(50, 0, 0, 0);
 		
@@ -122,23 +123,29 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		if (enemy.canInteract(player.getSprite().getX(), player.getSprite().getY())) {
 			if (timerCount % 100 == 0) {
 				//TODO PUT THIS IN A FUNCTION.
-				if (playerSprite.getY() > enemySprite.getY()) {
+				/*if (playerSprite.getY() > enemySprite.getY()) {
 					enemy.setMoveX(0);
 					enemy.setMoveY(5);
 				}
-				else if (playerSprite.getX() > enemySprite.getX()) {
+				else if (playerSprite.getX() - playerSprite.getWidth() / 2 > enemySprite.getX()) {
 					enemy.setMoveX(5);
 					enemy.setMoveY(0);
 				}
-				else if (playerSprite.getY() < enemySprite.getY()) {
+				else if (playerSprite.getY() - playerSprite.getHeight() / 2 < enemySprite.getY()) {
 					enemy.setMoveX(0);
 					enemy.setMoveY(-5);
 				}
-				else if (playerSprite.getX() < enemySprite.getX()) {
+				else if (playerSprite.getX() - playerSprite.getWidth() / 2 < enemySprite.getX()) {
 					enemy.setMoveX(-5);
 					enemy.setMoveY(0);
-				}
-				enemySprite.move(enemy.getMoveX(), enemy.getMoveY());
+				} */
+				
+				// x is set to horizontal distance between mouse and middle of playerSprite
+				double x = (enemySprite.getX() - enemySprite.getWidth() / 2) - playerSprite.getX() - playerSprite.getWidth() / 2;
+				// y is set to vertical distance between mouse and middle of playerSprite
+				double y = (enemySprite.getY() - enemySprite.getHeight() / 2) - playerSprite.getY() - playerSprite.getHeight() / 2;
+				enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // dash in direction of mouse
+				//enemySprite.move(enemy.getMoveX(), enemy.getMoveY());
 			}
 		}
 	}
