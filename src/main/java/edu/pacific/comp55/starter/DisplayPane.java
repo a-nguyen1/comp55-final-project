@@ -58,6 +58,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		enemy.setSpeed(5);
 		
 		inventoryBox = new GRect(50, 0, 0, 0);
+		inventoryBox.setVisible(false);
 		
 		//Add key item to the screen.
 		GImage keySprite = new GImage ("keyImage.png", 200, 200); //Create a new sprite for key.
@@ -202,8 +203,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			if (player.canInteract(nearestItem.getImage().getX(), nearestItem.getImage().getY())) {
 				if (nearestItem instanceof PickUpItem && !((PickUpItem) nearestItem).getInInventory()) {
 					player.addToInventory(nearestItem);
-					nearestItem.getImage().setLocation(50, 0); //TODO change after hearts are implemented
+					nearestItem.getImage().setLocation(50 * player.getHealth(), 12.5); //TODO change after hearts are implemented
+					inventoryBox.setVisible(true); 
 					inventoryBox.setSize(25*player.getInventory().size(), 25);
+					inventoryBox.setLocation(50 * player.getHealth(), 12.5);
 					((PickUpItem) nearestItem).setInInventory(true);
 					program.remove(nearestItem.getLabel()); // remove key label
 				}
@@ -226,10 +229,16 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								program.add(i.getImage()); //Add item sprite to the screen.
 								program.add(i.getLabel()); //Add item label to the screen.
 							}
-							program.add(playerHealth.get(0)); //Add first element of playerHealth (initial amount of health).
+							for (GImage heart: playerHealth) { // add all hearts to display
+								heart.setSize(50,50);
+								program.add(heart);
+							}
 							program.add(player.getSprite()); //Add player sprite to screen.
 							program.add(enemy.getSprite()); //Add enemy sprite to screen.
 							inventoryBox.setSize(25*player.getInventory().size(), 25);
+							if (player.getInventory().size() == 0) {
+								inventoryBox.setVisible(false);
+							}
 							program.add(inventoryBox); //Add inventory box to the screen.
 						}
 						int removeIndex = -1;
