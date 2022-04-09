@@ -71,10 +71,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		items.add(door);
 		
 		//Add player health to the screen.
-		GImage playerHPSprite = new GImage("Heart.png", 0, 0); //Create a new sprite for player HP.
-		playerHPSprite.setSize(50, 50); //Resize sprite to make it smaller.
 		playerHealth = new ArrayList<GImage>(); 
-		playerHealth.add(playerHPSprite); //Add sprite to playerHealth ArrayList.
+		for (int x = 0; x < player.getHealth(); x++) { //Add heart sprites to playerHealth ArrayList.
+			playerHealth.add(new GImage("Heart.png", x*50, 0)); 
+		}
 		
 		//create timer object and start timer
 		timer = new Timer(0, this);
@@ -120,33 +120,20 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				}
 			}
 		}
-		if (enemy.canInteract(player.getSprite().getX(), player.getSprite().getY())) {
+		if (enemy.canInteract(playerSprite.getX(), playerSprite.getY())) {
 			if (timerCount % 100 == 0) {
-				//TODO PUT THIS IN A FUNCTION.
-				/*if (playerSprite.getY() > enemySprite.getY()) {
-					enemy.setMoveX(0);
-					enemy.setMoveY(5);
-				}
-				else if (playerSprite.getX() - playerSprite.getWidth() / 2 > enemySprite.getX()) {
-					enemy.setMoveX(5);
-					enemy.setMoveY(0);
-				}
-				else if (playerSprite.getY() - playerSprite.getHeight() / 2 < enemySprite.getY()) {
-					enemy.setMoveX(0);
-					enemy.setMoveY(-5);
-				}
-				else if (playerSprite.getX() - playerSprite.getWidth() / 2 < enemySprite.getX()) {
-					enemy.setMoveX(-5);
-					enemy.setMoveY(0);
-				} */
-				
-				// x is set to horizontal distance between mouse and middle of playerSprite
+				// x is set to horizontal distance between enemy and middle of playerSprite
 				double x = (enemySprite.getX() - enemySprite.getWidth() / 2) - playerSprite.getX() - playerSprite.getWidth() / 2;
-				// y is set to vertical distance between mouse and middle of playerSprite
+				// y is set to vertical distance between enemy and middle of playerSprite
 				double y = (enemySprite.getY() - enemySprite.getHeight() / 2) - playerSprite.getY() - playerSprite.getHeight() / 2;
 				enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // dash in direction of mouse
 				//enemySprite.move(enemy.getMoveX(), enemy.getMoveY());
 			}
+		}
+		if (!player.healthIsZero()) { //player is alive
+			
+		} else { //player is dead
+			
 		}
 	}
 
@@ -157,7 +144,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			program.add(i.getImage()); //Add item sprite to the screen.
 			program.add(i.getLabel()); //Add item label to the screen.
 		}
-		program.add(playerHealth.get(0)); //Add first element of playerHealth (initial amount of health).
+		for (GImage heart: playerHealth) { // add all hearts to display
+			heart.setSize(50,50);
+			program.add(heart);
+		}
+		
 		program.add(player.getSprite()); //Add player sprite to screen.
 		program.add(enemy.getSprite()); //Add enemy sprite to screen.
 		program.add(inventoryBox); //Add inventory box to the screen.
@@ -166,11 +157,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	@Override
 	public void hideContents() {
 		for (Item i : items) {
-			program.remove(i.getImage()); //remove item sprite to the screen.
-			program.remove(i.getLabel()); //remove item label to the screen.
+			program.remove(i.getImage()); //remove item sprite from the screen.
+			program.remove(i.getLabel()); //remove item label from the screen.
 		}
 		program.remove(player.getSprite());
-		//program.remove(key.getImage());
 	}
 	
 	@Override
@@ -183,7 +173,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				System.out.println("Enemy is dead.");
 			}
 		}
-		
 	}
 	
 	@Override
