@@ -35,6 +35,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private Timer timer;
 	private int timerCount;
 	
+	private GImage bulletSprite;
+	
 	public DisplayPane(MainApplication app) {
 		super();
 		program = app;
@@ -47,11 +49,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		itemLabel.put("openDoor", "Press e to enter next room.");
 		itemLabel.put("heart", "Press e to pick up heart.");
 		
+		
 		//Add playerSprite to the screen and create player object.
 		GImage playerSprite = new GImage ("knight-sprite-with-sword.png", program.getWidth()/2, program.getHeight()/2);
 		player = new Player(playerSprite, 5);
 		player.setSpeed(7);
-		
+		bulletSprite = new GImage("door.png", player.getSprite().getX() - player.getSprite().getWidth() / 2, player.getSprite().getY() - player.getSprite().getHeight() / 2);
 		//Add Enemy to screen and create enemy object
 		GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 50);
 		enemy = new Enemy(enemySprite, 2); //Enemy has 2 health points.
@@ -103,6 +106,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		GImage playerSprite = player.getSprite();
 		GImage enemySprite = enemy.getSprite();
 		timerCount++;
+		if (timerCount % 200 == 0) {
+			player.setAttackAvailable(true); //player can attack now.
+		}
 		if (timerCount % 500 == 0) {
 			player.setDashAvailable(true); //TODO show player that dash is available
 		}
@@ -140,6 +146,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 
 	@Override
 	public void showContents() {
+		System.out.println("If closed range weapon " + program.isCloseRangeWeapon());
 		//program.add(background);
 		for (Item i : items) {
 			program.add(i.getImage()); //Add item sprite to the screen.
@@ -153,6 +160,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		program.add(player.getSprite()); //Add player sprite to screen.
 		program.add(enemy.getSprite()); //Add enemy sprite to screen.
 		program.add(inventoryBox); //Add inventory box to the screen.
+		program.add(bulletSprite);
 	}
 
 	@Override
@@ -166,13 +174,23 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	@Override
 	public void mouseClicked(MouseEvent e) { //TODO implement attack
-		if (player.canInteract(enemy.getSprite().getX(), enemy.getSprite().getY())) { //player in range of enemy.
-			System.out.println("Enemy is hit.");
-			enemy.healthChanged(-1); //Reduce health by 1.
-			if (enemy.healthIsZero()) { //Enemy has no health.
-				program.remove(enemy.getSprite()); //Remove enemy from the screen since he is dead.
-				System.out.println("Enemy is dead.");
+		player.setAttackAvailable(false); //Player attack cool down.
+		if (program.isCloseRangeWeapon()) {
+			if (player.canInteract(enemy.getSprite().getX(), enemy.getSprite().getY())) { //player in range of enemy.
+				System.out.println("Enemy is hit.");
+				enemy.healthChanged(-1); //Reduce health by 1.
+				if (enemy.healthIsZero()) { //Enemy has no health.
+					program.remove(enemy.getSprite()); //Remove enemy from the screen since he is dead.
+					System.out.println("Enemy is dead.");
+				}
 			}
+		}
+		else { //For long range damage on enemy.
+			//x is set to horizontal distance between mouse and middle of playerSprite
+            double x = MouseInfo.getPointerInfo().getLocation().getX() - bulletSprite.getX() - bulletSprite.getWidth() / 2;
+            //y is set to vertical distance between mouse and middle of playerSprite
+            double y = MouseInfo.getPointerInfo().getLocation().getY() - bulletSprite.getY() - bulletSprite.getHeight() / 2;
+            bulletSprite.movePolar(100, 180 * Math.atan2(-y, x) / Math.PI); // dash in direction of mouse
 		}
 	}
 	

@@ -10,11 +10,13 @@ public class Player extends Character {
 	private Weapon weapon;
 	private ArrayList<Item> inventory;
 	private boolean dashAvailable;
+	private boolean attackAvailable;
 	
 	public Player(GImage sprite, int health) {
 		super(sprite, health);
 		inventory = new ArrayList<Item>();
 		dashAvailable = true;
+		attackAvailable = true;
 	}
 	
 	public void printInventory() {
@@ -98,6 +100,14 @@ public class Player extends Character {
 	
 	public static void main(String[] args) {
 		
+	}
+
+	public boolean isAttackAvailable() {
+		return attackAvailable;
+	}
+
+	public void setAttackAvailable(boolean attackAvailable) {
+		this.attackAvailable = attackAvailable;
 	}
 
 }

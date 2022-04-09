@@ -9,6 +9,7 @@ public class MainApplication extends GraphicsApplication {
 	private PlayGamePane playGame;
 	private MenuPane menu;
 	private DisplayPane display;
+	private boolean closeRangeWeapon;
 	private int count;
 
 	public void init() {
@@ -48,5 +49,13 @@ public class MainApplication extends GraphicsApplication {
 	
 	public static void main(String[] args) {
 		new MainApplication().start();
+	}
+
+	public boolean isCloseRangeWeapon() {
+		return closeRangeWeapon;
+	}
+
+	public void setCloseRangeWeapon(boolean closeRangeWeapon) {
+		this.closeRangeWeapon = closeRangeWeapon;
 	}
 }
