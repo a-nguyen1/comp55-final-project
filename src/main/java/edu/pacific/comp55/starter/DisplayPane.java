@@ -136,6 +136,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // dash in direction of mouse
 				//enemySprite.move(enemy.getMoveX(), enemy.getMoveY());
 			}
+			if (enemy.overlapping(player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getWidth(), player.getSprite().getHeight())) {
+				// x is set to horizontal distance between enemy and middle of playerSprite
+				double x = (enemySprite.getX() - enemySprite.getWidth() / 2) - (playerSprite.getX() - playerSprite.getWidth() / 2);
+				// y is set to vertical distance between enemy and middle of playerSprite
+				double y = (enemySprite.getY() - enemySprite.getHeight() / 2) - (playerSprite.getY() - playerSprite.getHeight() / 2);
+				playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // dash in direction of mouse
+			}
 		}
 		if (!player.healthIsZero()) { //player is alive
 			
