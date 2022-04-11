@@ -149,20 +149,15 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 		}
 		if (enemy.canInteract(playerSprite.getX(), playerSprite.getY())) {
+			// x is set to horizontal distance between enemy and middle of playerSprite
+			double x = (enemySprite.getX() - enemySprite.getWidth() / 2) - (playerSprite.getX() - playerSprite.getWidth() / 2);
+			// y is set to vertical distance between enemy and middle of playerSprite
+			double y = (enemySprite.getY() - enemySprite.getHeight() / 2) - (playerSprite.getY() - playerSprite.getHeight() / 2);
 			if (timerCount % 100 == 0) {
-				// x is set to horizontal distance between enemy and middle of playerSprite
-				double x = (enemySprite.getX() - enemySprite.getWidth() / 2) - (playerSprite.getX() - playerSprite.getWidth() / 2);
-				// y is set to vertical distance between enemy and middle of playerSprite
-				double y = (enemySprite.getY() - enemySprite.getHeight() / 2) - (playerSprite.getY() - playerSprite.getHeight() / 2);
-				enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // dash in direction of mouse
-				//enemySprite.move(enemy.getMoveX(), enemy.getMoveY());
+				enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // enemy move towards player
 			}
 			if (enemy.overlapping(player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getWidth(), player.getSprite().getHeight())) {
-				// x is set to horizontal distance between enemy and middle of playerSprite
-				double x = (enemySprite.getX() - enemySprite.getWidth() / 2) - (playerSprite.getX() - playerSprite.getWidth() / 2);
-				// y is set to vertical distance between enemy and middle of playerSprite
-				double y = (enemySprite.getY() - enemySprite.getHeight() / 2) - (playerSprite.getY() - playerSprite.getHeight() / 2);
-				playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // dash in direction of mouse
+				playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // player move away from enemy
 			}
 		}
 		if (!player.healthIsZero()) { //player is alive
@@ -304,6 +299,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								inventoryBox.setVisible(false);
 							}
 							program.add(inventoryBox); //Add inventory box to the screen.
+							program.add(bulletSprite);
 						}
 						int removeIndex = -1;
 						if (player.getInventory().size() > 0) {
