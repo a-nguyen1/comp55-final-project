@@ -115,12 +115,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		GImage enemySprite = enemy.getSprite();
 		timerCount++;
 		if (timerCount % 500 == 0) {
-			player.setAttackAvailable(true); //player can attack now.
-			System.out.println("attack available");
+			player.setAttackAvailable(true); //player can now attack
 		}
 		if (timerCount % 500 == 0) {
 			player.setDashAvailable(true); //TODO show player that dash is available
-			System.out.println("dash available");
 		}
 		if (timerCount % 100 == 0) {
 			for (Item i : items) {
@@ -337,13 +335,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 		// setting bounds for player
 		if (playerSprite.getLocation().getX() < 0) {
-			playerSprite.setLocation(0,playerSprite.getY());
+			playerSprite.setLocation(5, playerSprite.getY());
 		} else if (playerSprite.getLocation().getY() < 0) {
-			playerSprite.setLocation(playerSprite.getX(),0);
-		} else if (playerSprite.getLocation().getX()+ playerSprite.getWidth() > program.getWidth()) {
-			playerSprite.setLocation(program.getWidth()-playerSprite.getWidth(),playerSprite.getY());
-		} else if (playerSprite.getLocation().getY()+ playerSprite.getHeight() * 2 > program.getHeight()) {
-			playerSprite.setLocation(playerSprite.getX(), program.getHeight()-playerSprite.getHeight() * 2);
+			playerSprite.setLocation(playerSprite.getX(), 5);
+		} else if (playerSprite.getLocation().getX() + playerSprite.getWidth() * 1.75 > program.getWidth()) {
+			playerSprite.setLocation(program.getWidth() - playerSprite.getWidth() * 1.75,playerSprite.getY());
+		} else if (playerSprite.getLocation().getY() + playerSprite.getHeight() * 2.25 > program.getHeight()) {
+			playerSprite.setLocation(playerSprite.getX(), program.getHeight()-playerSprite.getHeight() * 2.25);
 		} 
 	}
 	
