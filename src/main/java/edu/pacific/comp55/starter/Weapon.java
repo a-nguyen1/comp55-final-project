@@ -11,6 +11,7 @@ public class Weapon extends Item {
 	
 	public void setRange(int r) {
 		range = r;
+		
 	}
 	
 	public int getRange() {

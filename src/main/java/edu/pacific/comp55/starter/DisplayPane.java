@@ -29,6 +29,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	//Class objects
 	private Player player;
+	private boolean bulletTraveling;
+	private int bulletDistance;
 	private Enemy enemy;
 	private GRect inventoryBox;
 	
@@ -127,6 +129,22 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				}
 			}
 		}
+		if (bulletTraveling) {
+			if (timerCount % 100 == 0) {
+			bulletDistance++;
+			//x is set to horizontal distance between mouse and middle of playerSprite
+            double x = MouseInfo.getPointerInfo().getLocation().getX() - bulletSprite.getX() - bulletSprite.getWidth() / 2;
+            //y is set to vertical distance between mouse and middle of playerSprite
+            double y = MouseInfo.getPointerInfo().getLocation().getY() - bulletSprite.getY() - bulletSprite.getHeight() / 2;
+            	bulletSprite.movePolar(1, 180 * Math.atan2(-y, x) / Math.PI); // dash in direction of mouse    
+            	if (bulletDistance >= player.getWeapon().getRange()) {
+            		bulletTraveling = false;
+            		bulletSprite.setLocation(playerSprite.getX(), playerSprite.getY());
+            		bulletDistance = 0;
+            		bulletSprite.setVisible(false);
+            	}
+			}
+		}
 		if (enemy.canInteract(playerSprite.getX(), playerSprite.getY())) {
 			if (timerCount % 100 == 0) {
 				// x is set to horizontal distance between enemy and middle of playerSprite
@@ -153,8 +171,16 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 
 	@Override
 	public void showContents() {
-		System.out.println("If closed range weapon " + program.isCloseRangeWeapon());
-		//program.add(background);
+		Weapon weapon = new Weapon(background, "close range weapon");
+		if (program.isCloseRangeWeapon()) {
+			weapon.setRange(50);
+			player.setWeapon(weapon);
+			}
+		else {
+			weapon.setItemType("long range weapon");
+			weapon.setRange(300);
+			player.setWeapon(weapon);
+		}
 		for (Item i : items) {
 			program.add(i.getImage()); //Add item sprite to the screen.
 			program.add(i.getLabel()); //Add item label to the screen.
@@ -192,14 +218,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				}
 			}
 		}
-		else { //For long range damage on enemy.
-			//x is set to horizontal distance between mouse and middle of playerSprite
-            double x = MouseInfo.getPointerInfo().getLocation().getX() - bulletSprite.getX() - bulletSprite.getWidth() / 2;
-            //y is set to vertical distance between mouse and middle of playerSprite
-            double y = MouseInfo.getPointerInfo().getLocation().getY() - bulletSprite.getY() - bulletSprite.getHeight() / 2;
-            bulletSprite.movePolar(100, 180 * Math.atan2(-y, x) / Math.PI); // dash in direction of mouse
+		else { 
+			bulletSprite.setVisible(true);
+			bulletTraveling = true;
+			bulletSprite.setLocation(player.getSprite().getX(), player.getSprite().getY());
+            }
 		}
-	}
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
