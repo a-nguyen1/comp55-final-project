@@ -29,15 +29,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	//Class objects
 	private Player player;
-	private boolean bulletTraveling;
-	private int bulletDistance;
 	private Enemy enemy;
 	private GRect inventoryBox;
 	
 	private Timer timer;
 	private int timerCount;
-	
-	private GImage bulletSprite;
 	
 	public DisplayPane(MainApplication app) {
 		super();
@@ -56,11 +52,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		//create player object with knight sprite as default.
 		GImage playerSprite = new GImage ("knight-sprite-with-sword.png", program.getWidth()/2, program.getHeight()/2);
 		player = new Player(playerSprite, 5);
-
 		player.setSpeed(7);
-		//TODO change bulletSprite to actual bullet
-		bulletSprite = new GImage("door.png", player.getSprite().getX() - player.getSprite().getWidth() / 2, player.getSprite().getY() - player.getSprite().getHeight() / 2);
-		bulletTraveling = false;
 		
 		//create enemy object
 		GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 50);
@@ -125,14 +117,15 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		GImage playerSprite = player.getSprite();
 		GImage enemySprite = enemy.getSprite();
 		timerCount++;
-		if (timerCount % 1 == 0) { 
-			if (bulletTraveling) {
-				bulletDistance++;
+		if (timerCount % 1 == 0 && timerCount >= 200) { //let timerCount reach 200 before starting
+			if (player.isBulletTraveling()) {
+				GImage bulletSprite = player.getBulletSprite();
+				player.setBulletDistance(player.getBulletDistance() + 1);
 	            bulletSprite.movePolar(1, player.getWeapon().getAngle()); // move towards mouse click    
-	            if (bulletDistance >= player.getWeapon().getRange()) {
-	            	bulletTraveling = false;
+	            if (player.getBulletDistance() >= player.getWeapon().getRange()) {
+	            	player.setBulletTraveling(false);
 	            	bulletSprite.setLocation(playerSprite.getX(), playerSprite.getY());
-	            	bulletDistance = 0;
+	            	player.setBulletDistance(0);
 	            	bulletSprite.setVisible(false);
 	            }
 			}
@@ -201,7 +194,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			Weapon weapon = new Weapon(new GImage("bow.png"), "long range weapon");
 			weapon.setRange(200);
 			player.setWeapon(weapon);
-			program.add(bulletSprite);
+			program.add(player.getBulletSprite());
 		}
 		program.add(player.getSprite()); //Add player sprite to screen.
 		program.add(enemy.getSprite()); //Add enemy sprite to screen.
@@ -231,13 +224,14 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		else { // long range attack
 			if (player.isAttackAvailable()) {
+				GImage bulletSprite = player.getBulletSprite();
 				//x is set to horizontal distance between mouse and middle of playerSprite
 	            double x = MouseInfo.getPointerInfo().getLocation().getX() - bulletSprite.getX() - bulletSprite.getWidth() / 2;
 	            //y is set to vertical distance between mouse and middle of playerSprite
 	            double y = MouseInfo.getPointerInfo().getLocation().getY() - bulletSprite.getY() - bulletSprite.getHeight() / 2;
 	            player.getWeapon().setAngle(180 * Math.atan2(-y, x) / Math.PI);	
 				bulletSprite.setVisible(true);
-				bulletTraveling = true;
+				player.setBulletTraveling(true);
 				bulletSprite.setLocation(player.getSprite().getX(), player.getSprite().getY());
 				}
 			}
@@ -311,7 +305,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							program.add(player.getSprite()); //Add player sprite to screen.
 							program.add(inventoryBox); //Add inventory box to the screen.
 							if (!program.isCloseRangeWeapon()) { // check if weapon is long range
-								program.add(bulletSprite); //Add bulletSprite
+								program.add(player.getBulletSprite()); //Add bulletSprite
 							}
 							player.displayInventory(inventoryBox); //display inventory correctly
 							player.getSprite().setLocation(program.getWidth() / 2, program.getHeight() - 100); //set player location to bottom of screen

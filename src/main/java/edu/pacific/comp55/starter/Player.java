@@ -12,12 +12,19 @@ public class Player extends Character {
 	private ArrayList<Item> inventory;
 	private boolean dashAvailable;
 	private boolean attackAvailable;
+	private boolean bulletTraveling;
+	private int bulletDistance;
+	private GImage bulletSprite;
 	
 	public Player(GImage sprite, int health) {
 		super(sprite, health);
 		inventory = new ArrayList<Item>();
 		dashAvailable = true;
 		attackAvailable = true;
+		bulletTraveling = false;
+		bulletDistance = 0;
+		//TODO change bulletSprite to actual bullet
+		bulletSprite = new GImage("door.png", getSprite().getX() - getSprite().getWidth() / 2, getSprite().getY() - getSprite().getHeight() / 2);
 	}
 	
 	public void printInventory() {
@@ -128,5 +135,29 @@ public class Player extends Character {
 
 	public static void main(String[] args) {
 		
+	}
+
+	public boolean isBulletTraveling() {
+		return bulletTraveling;
+	}
+
+	public void setBulletTraveling(boolean bulletTraveling) {
+		this.bulletTraveling = bulletTraveling;
+	}
+
+	public int getBulletDistance() {
+		return bulletDistance;
+	}
+
+	public void setBulletDistance(int bulletDistance) {
+		this.bulletDistance = bulletDistance;
+	}
+
+	public GImage getBulletSprite() {
+		return bulletSprite;
+	}
+
+	public void setBulletSprite(GImage bulletSprite) {
+		this.bulletSprite = bulletSprite;
 	}
 }
