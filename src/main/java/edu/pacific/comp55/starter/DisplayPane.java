@@ -258,9 +258,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			timer.stop();
 			player.setDashAvailable(false);
 			// x is set to horizontal distance between mouse and middle of playerSprite
-			double x = MouseInfo.getPointerInfo().getLocation().getX() - playerSprite.getX() - playerSprite.getWidth() / 2;
+			double x = MouseInfo.getPointerInfo().getLocation().getX() - (playerSprite.getX() +playerSprite.getWidth() / 2);
 			// y is set to vertical distance between mouse and middle of playerSprite
-			double y = MouseInfo.getPointerInfo().getLocation().getY() - playerSprite.getY() - playerSprite.getHeight() / 2;
+			double y = MouseInfo.getPointerInfo().getLocation().getY() - (playerSprite.getY() + playerSprite.getHeight() / 2);
 			playerSprite.movePolar(player.getSpeed() * player.getSpeed() * 2, 180 * Math.atan2(-y, x) / Math.PI); // dash in direction of mouse
 			timer.start();
 		} else if (keyCode == 69) { // e
