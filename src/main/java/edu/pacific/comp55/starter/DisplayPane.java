@@ -26,6 +26,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private HashMap<String, String> itemLabel; 
 	private int currentLevel;
 	private int currentRoom;
+	private double mouseX;
+	private double mouseY;
 	
 	//Class objects
 	private Player player;
@@ -118,8 +120,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				GImage bulletSprite = player.getBulletSprite();
 				player.setBulletDistance(player.getBulletDistance() + 1);
 				bulletSprite.movePolar(1, player.getWeapon().getAngle()); // move towards mouse click   
-				double xDiff = Math.abs(bulletSprite.getX() - bulletSprite.getWidth()/2 - (enemySprite.getX() - enemySprite.getWidth() / 2)); // find difference in x coordinates
-				double yDiff = Math.abs(bulletSprite.getY() - bulletSprite.getHeight()/2 - (enemySprite.getY()- enemySprite.getHeight() / 2)); // find difference in y coordinates
+				double xDiff = Math.abs(bulletSprite.getX() + bulletSprite.getWidth()/2 - (enemySprite.getX() + enemySprite.getWidth() / 2)); // find difference in x coordinates
+				double yDiff = Math.abs(bulletSprite.getY() + bulletSprite.getHeight()/2 - (enemySprite.getY() + enemySprite.getHeight() / 2)); // find difference in y coordinates
 				if (xDiff <= enemySprite.getWidth() && yDiff <= enemySprite.getHeight()) { //returns true if x,y coordinates are within 50 in x direction
 					enemy.healthChanged(-1);
 					System.out.println(enemy.getHealth());
@@ -155,9 +157,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				
 		if (enemy.canInteract(playerSprite.getX(), playerSprite.getY())) { //enemy detects player
 			// x is set to horizontal distance between enemy and player
-			double x = (enemySprite.getX() - enemySprite.getWidth() / 2) - (playerSprite.getX() - playerSprite.getWidth() / 2);
+			double x = (enemySprite.getX() + enemySprite.getWidth() / 2) - (playerSprite.getX() + playerSprite.getWidth() / 2);
 			// y is set to vertical distance between enemy and player
-			double y = (enemySprite.getY() - enemySprite.getHeight() / 2) - (playerSprite.getY() - playerSprite.getHeight() / 2);
+			double y = (enemySprite.getY() + enemySprite.getHeight() / 2) - (playerSprite.getY() + playerSprite.getHeight() / 2);
 			if (timerCount % 100 == 0) {
 				enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // enemy moves towards player
 			}
@@ -207,6 +209,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			program.remove(i.getLabel()); //remove item label from the screen.
 		}
 		program.remove(player.getSprite());
+	}
+	
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		mouseX = e.getX();
+		mouseY = e.getY();
 	}
 	
 	@Override
