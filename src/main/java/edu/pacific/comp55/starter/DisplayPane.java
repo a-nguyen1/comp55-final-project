@@ -65,6 +65,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		enemy.setSpeed(5);
 		enemies.add(enemy); //add enemy to ArrayList
 		
+		GImage miniEnemySprite = new GImage ("bigger-enemy-sprite.png", 50, 300);
+		miniEnemySprite.setSize(enemySprite.getWidth() / 2, enemySprite.getHeight() / 2);
+		Enemy miniEnemy = new Enemy(miniEnemySprite, 1); //Enemy has 1 health point.
+		miniEnemy.setSpeed(10);
+		enemies.add(miniEnemy); //add miniEnemy to ArrayList
+		
 		//create inventory box
 		inventoryBox = new GRect(50, 0, 0, 0);
 		inventoryBox.setVisible(false);
@@ -121,7 +127,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		for (int z = 0; z < enemies.size(); z++) {
 			Enemy enemy = enemies.get(z);
 			GImage enemySprite = enemy.getSprite();
-			if (timerCount % 1 == 0) { //let timerCount reach 200 before starting
+			if (timerCount % 1 == 0) {
 				if (player.isBulletTraveling()) {
 					GImage bulletSprite = player.getBulletSprite();
 					player.setBulletDistance(player.getBulletDistance() + 1);
@@ -139,7 +145,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						if (xDiff <= enemySprite.getWidth() && yDiff <= enemySprite.getHeight()) { //returns true if x,y coordinates are within enemy
 							enemy.changeHealth(-1);
 							enemy.setDamaged(true); //Enemy is damaged.
-							System.out.println(enemy.getHealth());
+							System.out.println("Enemy health: " + enemy.getHealth());
 							if (enemy.isDead()) { //Enemy has no health.
 								removeEnemyIndex.add(z); // add index to ArrayList
 								program.remove(enemy.getSprite()); //Remove enemy sprite from the screen since it is dead.
@@ -170,7 +176,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		if (removeEnemyIndex.size() > 0) { // remove all dead enemies
 			for (int y = 0; y < removeEnemyIndex.size(); y++) {
-				System.out.println(removeEnemyIndex.get(y));
 				enemies.remove((int)removeEnemyIndex.get(y));
 			}
 		}
@@ -266,7 +271,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 			if (removeEnemyIndex.size() > 0) { // remove all dead enemies
 				for (int y = 0; y < removeEnemyIndex.size(); y++) {
-					System.out.println(removeEnemyIndex.get(y));
 					enemies.remove((int)removeEnemyIndex.get(y));
 				}
 			}
