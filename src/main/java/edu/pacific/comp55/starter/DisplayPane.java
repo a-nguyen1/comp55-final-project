@@ -67,6 +67,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		enemy.setSpeed(5);
 		enemies.add(enemy); //add enemy to ArrayList
 		
+		//create miniEnemy object
 		GImage miniEnemySprite = new GImage ("bigger-enemy-sprite.png", 50, 300);
 		miniEnemySprite.setSize(enemySprite.getWidth() / 2, enemySprite.getHeight() / 2);
 		Enemy miniEnemy = new Enemy(miniEnemySprite, 1); //Enemy has 1 health point.
@@ -97,7 +98,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		//initialize playerHealth
 		playerHealth = new ArrayList<GImage>(); 
 		for (int x = 0; x < player.getHealth(); x++) { //add hearts based on player health
-			playerHealth.add(new GImage("Heart.png", x*50, 0)); 
+			playerHealth.add(new GImage("Heart.png", x * 50, 0)); 
 		}
 		
 		//create timer object and start timer
@@ -126,16 +127,16 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		GImage playerSprite = player.getSprite();
 		ArrayList<Integer> removeEnemyIndex = new ArrayList<Integer>(); // for removing dead enemies
-		for (int z = 0; z < enemies.size(); z++) {
+		for (int z = 0; z < enemies.size(); z++) { // loop through all enemies in list
 			Enemy enemy = enemies.get(z);
 			GImage enemySprite = enemy.getSprite();
 			if (timerCount % 1 == 0) {
 				if (player.isBulletTraveling()) {
 					GImage bulletSprite = player.getBulletSprite();
+					double xDiff = Math.abs(bulletSprite.getX() + bulletSprite.getWidth() / 2 - (enemySprite.getX() + enemySprite.getWidth() / 2)); // find difference in x coordinates
+					double yDiff = Math.abs(bulletSprite.getY() + bulletSprite.getHeight() / 2 - (enemySprite.getY() + enemySprite.getHeight() / 2)); // find difference in y coordinates
 					player.setBulletDistance(player.getBulletDistance() + 1);
-					bulletSprite.movePolar(1, player.getWeapon().getAngle()); // move towards mouse click   
-					double xDiff = Math.abs(bulletSprite.getX() + bulletSprite.getWidth()/2 - (enemySprite.getX() + enemySprite.getWidth() / 2)); // find difference in x coordinates
-					double yDiff = Math.abs(bulletSprite.getY() + bulletSprite.getHeight()/2 - (enemySprite.getY() + enemySprite.getHeight() / 2)); // find difference in y coordinates
+					bulletSprite.movePolar(1, player.getWeapon().getAngle()); // move towards mouse click
 					if (enemy.isDamaged()) {
 						enemy.setInvincibilityCounter(enemy.getInvincibilityCounter() + 1); //enemy is invincible for a time.
 						if (enemy.getInvincibilityCounter() > 100) { //enemy is not invincible.
@@ -144,9 +145,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						}
 					}
 					else {
-						if (xDiff <= enemySprite.getWidth() && yDiff <= enemySprite.getHeight()) { //returns true if x,y coordinates are within enemy
+						if (xDiff <= (enemySprite.getWidth() / 2 + bulletSprite.getWidth() / 2) && yDiff <= (enemySprite.getHeight() / 2 + bulletSprite.getHeight() / 2)) { //returns true if bullet is touching enemy
 							enemy.changeHealth(-1);
 							enemy.setDamaged(true); //Enemy is damaged.
+							enemySprite.setVisible(true); // show enemy sprite
 							System.out.println("Enemy health: " + enemy.getHealth());
 							if (enemy.isDead()) { //Enemy has no health.
 								removeEnemyIndex.add(z); // add index to ArrayList
@@ -171,7 +173,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // enemy moves towards player
 					}
 					if (enemy.overlapping(player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getWidth(), player.getSprite().getHeight())) {
-						playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // player moves away from enemy
+						playerSprite.movePolar(Math.sqrt(x * x + y * y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // player moves away from enemy
 					}
 				}
 			}
@@ -186,7 +188,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		timerCount++;
 		if (timerCount % 100 == 0) {
-			for (Item i : items) {
+			for (Item i : items) { // show label if player can interact with an item
 				if (player.canInteract(i.getSprite().getX(), i.getSprite().getY())) {
 					if (player.hasKey() && i.getItemType() == "closedDoor") {
 						itemLabel.put("closedDoor", "Press e to unlock door.");
@@ -278,22 +280,22 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 		}
 		else { // long range attack
-			if (player.isAttackAvailable()) {
-				GImage bulletSprite = player.getBulletSprite();
-				GImage playerSprite = player.getSprite();
-				//x is set to horizontal distance between mouse and middle of playerSprite
-	            double x = e.getX() - ( playerSprite.getX() + (player.getSprite().getWidth() / 2));
-	            //y is set to vertical distance between mouse and middle of playerSprite
-	            double y = e.getY() - (playerSprite.getY() + (player.getSprite().getHeight() / 2));
-	            y = - y;
-	            player.getWeapon().setAngle(180 * Math.atan2(y, x) / Math.PI);	
-				bulletSprite.setVisible(true);
-				player.setBulletTraveling(true);
-				bulletSprite.setLocation( playerSprite.getX() + (player.getSprite().getWidth() / 2) - bulletSprite.getWidth() / 2, playerSprite.getY() + (player.getSprite().getHeight() / 2) - bulletSprite.getHeight() / 2);
+				if (player.isAttackAvailable()) {
+					GImage bulletSprite = player.getBulletSprite();
+					GImage playerSprite = player.getSprite();
+					//x is set to horizontal distance between mouse and middle of playerSprite
+					double x = e.getX() - ( playerSprite.getX() + (player.getSprite().getWidth() / 2));
+					//y is set to vertical distance between mouse and middle of playerSprite
+					double y = e.getY() - (playerSprite.getY() + (player.getSprite().getHeight() / 2));
+					y = - y;
+					player.getWeapon().setAngle(180 * Math.atan2(y, x) / Math.PI);	
+					bulletSprite.setVisible(true);
+					player.setBulletTraveling(true);
+					bulletSprite.setLocation( playerSprite.getX() + (player.getSprite().getWidth() / 2) - bulletSprite.getWidth() / 2, playerSprite.getY() + (player.getSprite().getHeight() / 2) - bulletSprite.getHeight() / 2);
 				}
 			}
 		player.setAttackAvailable(false); // Initiate attack cool down.
-		}
+	}
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
