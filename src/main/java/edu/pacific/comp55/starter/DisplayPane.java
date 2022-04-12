@@ -266,10 +266,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			if (player.canInteract(nearestItem.getSprite().getX(), nearestItem.getSprite().getY())) {
 				if (nearestItem instanceof PickUpItem && !((PickUpItem) nearestItem).getInInventory()) { // check if PickUpItem and if not in inventory
 					player.addToInventory(nearestItem); // add item to player inventory
-					nearestItem.getSprite().setLocation(50 * player.getHealth() + player.getInventory().size() * 25, 12.5); // set location of item in inventory
-					inventoryBox.setVisible(true); // show inventory box
-					inventoryBox.setSize(25*player.getInventory().size(), 25); // resize inventory box
-					inventoryBox.setLocation(25 + 50 * player.getHealth(), 12.5); // set location of inventory box
+					//nearestItem.getSprite().setLocation(50 * player.getHealth() + player.getInventory().size() * 25, 12.5); // set location of item in inventory
+					player.displayInventory(inventoryBox);
 					((PickUpItem) nearestItem).setInInventory(true);
 					program.remove(nearestItem.getLabel()); // remove item label
 				}
@@ -283,8 +281,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								program.add(tile);
 							}
 							for (Item i : items) {
-								if (i.getItemType() == "key") { //reset key to default values
-									i.getSprite().setLocation(200,200);
+								if (i.getItemType() == "key") { //reset key to default values and randomize location
+									double x = 100 + Math.random() * (program.getWidth() - 200); //randomize x so key not at edge of screen
+									double y = 100 + Math.random() * (program.getHeight() - 200); //randomize y so key not at edge of screen
+									i.getSprite().setLocation(x, y);
 									((PickUpItem)i).setInInventory(false);
 								}
 								else if (i.getItemType() == "openDoor") { //reset door to default values
@@ -308,6 +308,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							}
 							program.add(inventoryBox); //Add inventory box to the screen.
 							program.add(bulletSprite); //Add bulletSprite
+							player.displayInventory(inventoryBox); //display inventory correctly
+							player.getSprite().setLocation(program.getWidth() / 2, program.getHeight() - 100); //set player location to bottom of screen
 						}
 						int removeIndex = -1;
 						if (player.getInventory().size() > 0) {
