@@ -117,7 +117,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			if (player.isBulletTraveling()) {
 				GImage bulletSprite = player.getBulletSprite();
 				player.setBulletDistance(player.getBulletDistance() + 1);
-	            bulletSprite.movePolar(1, player.getWeapon().getAngle()); // move towards mouse click    
+				bulletSprite.movePolar(1, player.getWeapon().getAngle()); // move towards mouse click   
+				double xDiff = Math.abs(bulletSprite.getX() - bulletSprite.getWidth()/2 - (enemySprite.getX() - enemySprite.getWidth() / 2)); // find difference in x coordinates
+				double yDiff = Math.abs(bulletSprite.getY() - bulletSprite.getHeight()/2 - (enemySprite.getY()- enemySprite.getHeight() / 2)); // find difference in y coordinates
+				if (xDiff <= enemySprite.getWidth() && yDiff <= enemySprite.getHeight()) { //returns true if x,y coordinates are within 50 in x direction
+					enemy.healthChanged(-1);
+					System.out.println(enemy.getHealth());
+				}
 	            if (player.getBulletDistance() >= player.getWeapon().getRange()) {
 	            	player.setBulletTraveling(false);
 	            	bulletSprite.setLocation(playerSprite.getX(), playerSprite.getY());
@@ -143,7 +149,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				}
 				else if (timerCount % 500 == 0) {
 					player.setDashAvailable(true); //player can now dash
-				}
+				
 			}
 		}
 				
@@ -159,10 +165,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // player moves away from enemy
 			}
 		}
-		if (!player.healthIsZero()) { //player is alive
-			
-		} else { //player is dead
-			
+		
 		}
 	}
 
@@ -221,14 +224,19 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		else { // long range attack
 			if (player.isAttackAvailable()) {
 				GImage bulletSprite = player.getBulletSprite();
+				GImage playerSprite = player.getSprite();
 				//x is set to horizontal distance between mouse and middle of playerSprite
-	            double x = MouseInfo.getPointerInfo().getLocation().getX() - bulletSprite.getX() - bulletSprite.getWidth() / 2;
+	            double x = e.getX() - ( playerSprite.getX() + (player.getSprite().getWidth() / 2));
 	            //y is set to vertical distance between mouse and middle of playerSprite
-	            double y = MouseInfo.getPointerInfo().getLocation().getY() - bulletSprite.getY() - bulletSprite.getHeight() / 2;
-	            player.getWeapon().setAngle(180 * Math.atan2(-y, x) / Math.PI);	
+	            double y = e.getY() - (playerSprite.getY() + (player.getSprite().getHeight() / 2));
+	            y = - y;
+	            player.getWeapon().setAngle(180 * Math.atan2(y, x) / Math.PI);	
+	            System.out.println("weaponAngle" + player.getWeapon().getAngle());
+	            System.out.println("x:" + x);
+	            System.out.println("y:" + y);
 				bulletSprite.setVisible(true);
 				player.setBulletTraveling(true);
-				bulletSprite.setLocation(player.getSprite().getX(), player.getSprite().getY());
+				bulletSprite.setLocation( playerSprite.getX() + (player.getSprite().getWidth() / 2), playerSprite.getY() + (player.getSprite().getHeight() / 2));
 				}
 			}
 		player.setAttackAvailable(false); // Initiate attack cool down.
