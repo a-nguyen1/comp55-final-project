@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList; // for arraylist
 
 import acm.graphics.GImage;
+import acm.graphics.GRect;
 import acm.program.GraphicsProgram;
 
 public class Player extends Character {
@@ -82,8 +83,15 @@ public class Player extends Character {
 		return weapon;
 	}
 	
-	public void displayInventory() {
-		
+	public void displayInventory(GRect inventoryBox) {
+		int x = 0;
+		for (Item i: inventory) {
+			i.getSprite().setLocation(50 * getHealth() + 25 + x, 12.5);
+			x += 25;
+		}
+		inventoryBox.setVisible(true); // show inventory box
+		inventoryBox.setSize(25 * inventory.size(), 25); // resize inventory box
+		inventoryBox.setLocation(25 + 50 * getHealth(), 12.5); // set location of inventory box
 	}
 	
 	public ArrayList<Item> getInventory() {
