@@ -31,15 +31,15 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private Player player;
 	private Enemy enemy;
 	private GRect inventoryBox;
-	
 	private Timer timer;
+	
 	private int timerCount;
 	
 	public DisplayPane(MainApplication app) {
 		super();
 		program = app;
 		
-		//add background tiles
+		//set background tile
 		setBackground("GrayTile.png");
 		
 		items = new ArrayList<Item>();
@@ -108,10 +108,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 	}
 	
-	public static void main(String[] args) {
-		
-	}
-	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		GImage playerSprite = player.getSprite();
@@ -145,7 +141,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				if (timerCount % 300 == 0) {
 					player.setAttackAvailable(true); //player can now attack
 				}
-				if (timerCount % 500 == 0) {
+				else if (timerCount % 500 == 0) {
 					player.setDashAvailable(true); //player can now dash
 				}
 			}
@@ -157,10 +153,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			// y is set to vertical distance between enemy and player
 			double y = (enemySprite.getY() - enemySprite.getHeight() / 2) - (playerSprite.getY() - playerSprite.getHeight() / 2);
 			if (timerCount % 100 == 0) {
-				enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // enemy move towards player
+				enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // enemy moves towards player
 			}
 			if (enemy.overlapping(player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getWidth(), player.getSprite().getHeight())) {
-				playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // player move away from enemy
+				playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // player moves away from enemy
 			}
 		}
 		if (!player.healthIsZero()) { //player is alive
@@ -260,16 +256,16 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			playerSprite.movePolar(player.getSpeed() * player.getSpeed() * 2, 180 * Math.atan2(-y, x) / Math.PI); // dash in direction of mouse
 			timer.start();
 		} else if (keyCode == 69) { // e
-			Item nearestItem = player.nearestItem(items);
-			//if nearest item is a PickUpItem, add to player inventory
+			Item nearestItem = player.nearestItem(items); //check for item nearest to player
 			if (player.canInteract(nearestItem.getSprite().getX(), nearestItem.getSprite().getY())) {
+				//if nearest item is a PickUpItem
 				if (nearestItem instanceof PickUpItem && !((PickUpItem) nearestItem).getInInventory()) { // check if PickUpItem and if not in inventory
 					player.addToInventory(nearestItem); // add item to player inventory
 					player.displayInventory(inventoryBox);
 					((PickUpItem) nearestItem).setInInventory(true);
 					program.remove(nearestItem.getLabel()); // remove item label
 				}
-				else if (nearestItem instanceof Door) {
+				else if (nearestItem instanceof Door) { //if nearest item is a Door
 					boolean doorStateBefore = !((Door)nearestItem).getLocked(); // to check if door is already opened
 					boolean unlockedDoor = ((Door)nearestItem).unlock(player.getInventory()); // to check if door is unlocked
 					if (unlockedDoor){
@@ -326,7 +322,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 									((GObject)player.getSprite()).sendToFront(); // send player to the front of the screen
 								}
 							} 
-							
 						}
 					}
 					else {
@@ -366,5 +361,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		} else if (keyCode == 65 || keyCode == 68) { // a or d -> reset horizontal movement when released
 			player.setMoveX(0);
 		}
+	}
+	
+	public static void main(String[] args) {
+		
 	}
 }
