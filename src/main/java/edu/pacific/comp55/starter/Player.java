@@ -24,7 +24,7 @@ public class Player extends Character {
 		bulletTraveling = false;
 		bulletDistance = 0;
 		//TODO change bulletSprite to actual bullet
-		bulletSprite = new GImage("door.png", getSprite().getX() - getSprite().getWidth() / 2, getSprite().getY() - getSprite().getHeight() / 2);
+		bulletSprite = new GImage("lightningBallSprite.png", getSprite().getX() - getSprite().getWidth() / 2, getSprite().getY() - getSprite().getHeight() / 2);
 	}
 	
 	public void printInventory() {
