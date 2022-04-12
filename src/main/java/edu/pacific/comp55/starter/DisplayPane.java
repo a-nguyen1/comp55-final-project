@@ -56,11 +56,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		player = new Player(playerSprite, 5);
 		player.setSpeed(7);
 		
-		//Change player sprite to wizard if user chose long range weapon.
-		if(!program.isCloseRangeWeapon()) {
-			playerSprite = new GImage ("wizardSprite.png", program.getWidth()/2, program.getHeight()/2);
-		}
-		
 		//create enemy object
 		GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 50);
 		enemy = new Enemy(enemySprite, 2); //Enemy has 2 health points.
@@ -127,10 +122,21 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				bulletSprite.movePolar(1, player.getWeapon().getAngle()); // move towards mouse click   
 				double xDiff = Math.abs(bulletSprite.getX() + bulletSprite.getWidth()/2 - (enemySprite.getX() + enemySprite.getWidth() / 2)); // find difference in x coordinates
 				double yDiff = Math.abs(bulletSprite.getY() + bulletSprite.getHeight()/2 - (enemySprite.getY() + enemySprite.getHeight() / 2)); // find difference in y coordinates
-				if (xDiff <= enemySprite.getWidth() && yDiff <= enemySprite.getHeight()) { //returns true if x,y coordinates are within 50 in x direction
-					enemy.healthChanged(-1);
-					System.out.println(enemy.getHealth());
+				if (enemy.isDamaged()) {
+					enemy.setInvincibilityCounter(enemy.getInvincibilityCounter() + 1); //enemy is invincible for a time.
+					if (enemy.getInvincibilityCounter() > 100) {
+						enemy.setDamaged(false);
+						enemy.setInvincibilityCounter(0); //enemy is not invincible.
+					}
 				}
+				else {
+					if (xDiff <= enemySprite.getWidth() && yDiff <= enemySprite.getHeight()) { //returns true if x,y coordinates are within 50 in x direction
+						enemy.healthChanged(-1);
+						enemy.setDamaged(true); //Enemy is damaged.
+						System.out.println(enemy.getHealth());
+					}
+				}
+				
 	            if (player.getBulletDistance() >= player.getWeapon().getRange()) {
 	            	player.setBulletTraveling(false);
 	            	bulletSprite.setLocation(playerSprite.getX(), playerSprite.getY());
@@ -244,9 +250,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	            double y = e.getY() - (playerSprite.getY() + (player.getSprite().getHeight() / 2));
 	            y = - y;
 	            player.getWeapon().setAngle(180 * Math.atan2(y, x) / Math.PI);	
-	            System.out.println("weaponAngle" + player.getWeapon().getAngle());
-	            System.out.println("x:" + x);
-	            System.out.println("y:" + y);
 				bulletSprite.setVisible(true);
 				player.setBulletTraveling(true);
 				bulletSprite.setLocation( playerSprite.getX() + (player.getSprite().getWidth() / 2), playerSprite.getY() + (player.getSprite().getHeight() / 2));
@@ -271,9 +274,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			timer.stop();
 			player.setDashAvailable(false);
 			// x is set to horizontal distance between mouse and middle of playerSprite
-			double x = MouseInfo.getPointerInfo().getLocation().getX() - (playerSprite.getX() +playerSprite.getWidth() / 2);
+			double x = mouseX - (playerSprite.getX() +playerSprite.getWidth() / 2);
 			// y is set to vertical distance between mouse and middle of playerSprite
-			double y = MouseInfo.getPointerInfo().getLocation().getY() - (playerSprite.getY() + playerSprite.getHeight() / 2);
+			double y = mouseY - (playerSprite.getY() + playerSprite.getHeight() / 2);
 			playerSprite.movePolar(player.getSpeed() * player.getSpeed() * 2, 180 * Math.atan2(-y, x) / Math.PI); // dash in direction of mouse
 			timer.start();
 		} else if (keyCode == 69) { // e

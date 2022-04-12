@@ -7,10 +7,13 @@ public class Character {
 	private double moveX;
 	private double moveY;
 	private double speed;
+	private boolean isDamaged;
+	private int invincibilityCounter;
 	
 	public Character(GImage image, int hp) {
 		sprite = image;
 		health = hp;
+		isDamaged = false;
 	}
 
 	public void healthChanged(int h) { //TODO implement health changed
@@ -72,5 +75,21 @@ public class Character {
 	
 	public static void main(String[] args) {
 
+	}
+
+	public boolean isDamaged() {
+		return isDamaged;
+	}
+
+	public void setDamaged(boolean isDamaged) {
+		this.isDamaged = isDamaged;
+	}
+
+	public int getInvincibilityCounter() {
+		return invincibilityCounter;
+	}
+
+	public void setInvincibilityCounter(int invincibilityCounter) {
+		this.invincibilityCounter = invincibilityCounter;
 	}
 }
