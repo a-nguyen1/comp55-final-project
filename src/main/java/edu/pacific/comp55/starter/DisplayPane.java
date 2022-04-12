@@ -399,15 +399,22 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
 		
 		// setting bounds for player
-		if (playerSprite.getLocation().getX() < 5) {
-			playerSprite.setLocation(5, playerSprite.getY());
-		} else if (playerSprite.getLocation().getY() < 5) { 
-			playerSprite.setLocation(playerSprite.getX(), 5);
-		} else if (playerSprite.getLocation().getX() + playerSprite.getWidth() * 1.75 > program.getWidth()) {
-			playerSprite.setLocation(program.getWidth() - playerSprite.getWidth() * 1.75,playerSprite.getY());
-		} else if (playerSprite.getLocation().getY() + playerSprite.getHeight() * 2.25 > program.getHeight()) {
-			playerSprite.setLocation(playerSprite.getX(), program.getHeight() - playerSprite.getHeight() * 2.25);
-		} 
+		double playerX = playerSprite.getX();
+		double playerY = playerSprite.getY();
+		double min = 0;
+		double xMax = program.getWidth() - 1.75 * playerSprite.getWidth();
+		double yMax = program.getHeight() - 2.25 * playerSprite.getHeight();
+		playerSprite.setLocation(inRange(playerX, min, xMax), inRange(playerY, min, yMax));
+	}
+	
+	public double inRange(double x, double min, double max) { // return value between minimum and maximum
+		if (x > min && x < max) {
+			return x;
+		} else if (x <= min){
+			return min + 1;
+		} else { // x >= max
+			return max - 1;
+		}
 	}
 	
 	@Override 
