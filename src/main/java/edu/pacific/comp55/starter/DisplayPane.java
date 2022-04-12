@@ -60,6 +60,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		player.setSpeed(7);
 		//TODO change bulletSprite to actual bullet
 		bulletSprite = new GImage("door.png", player.getSprite().getX() - player.getSprite().getWidth() / 2, player.getSprite().getY() - player.getSprite().getHeight() / 2);
+		bulletTraveling = false;
 		
 		//create enemy object
 		GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 50);
@@ -178,19 +179,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 
 	@Override
 	public void showContents() {
-		//TODO add weapon to screen and make player weapon show in player hand 
-		Weapon weapon = new Weapon(new GImage("sword.png"), "close range weapon"); 
-		if (program.isCloseRangeWeapon()) {
-			weapon.setRange(50);
-			player.setWeapon(weapon);
-		}
-		else { //long range weapon selected
-			player.setSprite(new GImage ("wizardSprite.png", program.getWidth()/2, program.getHeight()/2));
-			weapon = new Weapon(new GImage("bow.png"), "long range weapon");
-			weapon.setRange(200);
-			player.setWeapon(weapon);
-			program.add(bulletSprite);
-		}
 		for (GImage tile: backgroundTiles) { //Add all tiles to the screen.
 			program.add(tile);
 		}
@@ -201,6 +189,19 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		for (GImage heart: playerHealth) { //Add all hearts to the screen.
 			heart.setSize(50,50);
 			program.add(heart);
+		}
+		//TODO add weapon to screen and make player weapon show in player hand 
+		if (program.isCloseRangeWeapon()) {
+			Weapon weapon = new Weapon(new GImage("sword.png"), "close range weapon"); 
+			weapon.setRange(50);
+			player.setWeapon(weapon);
+		}
+		else { //long range weapon selected
+			player.setSprite(new GImage ("wizardSprite.png", program.getWidth()/2, program.getHeight()/2));
+			Weapon weapon = new Weapon(new GImage("bow.png"), "long range weapon");
+			weapon.setRange(200);
+			player.setWeapon(weapon);
+			program.add(bulletSprite);
 		}
 		program.add(player.getSprite()); //Add player sprite to screen.
 		program.add(enemy.getSprite()); //Add enemy sprite to screen.
@@ -306,12 +307,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								heart.setSize(50,50);
 								program.add(heart);
 							}
-							program.add(player.getSprite()); //Add player sprite to screen.
 							program.add(enemy.getSprite()); //Add enemy sprite to screen.
-							inventoryBox.setSize(25*player.getInventory().size(), 25);
-							if (player.getInventory().size() == 0) {
-								inventoryBox.setVisible(false);
-							}
+							program.add(player.getSprite()); //Add player sprite to screen.
 							program.add(inventoryBox); //Add inventory box to the screen.
 							if (!program.isCloseRangeWeapon()) { // check if weapon is long range
 								program.add(bulletSprite); //Add bulletSprite
