@@ -59,7 +59,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		itemLabel.put("heart", "Press e to pick up heart.");
 		
 		//Add playerSprite to the screen and create player object.
-		GImage playerSprite = new GImage ("knight-sprite-with-sword.png", program.getWidth()/2, program.getHeight()/2);
+		GImage playerSprite = new GImage ("wizardSprite.png", program.getWidth()/2, program.getHeight()/2);
 		player = new Player(playerSprite, 5);
 		player.setSpeed(7);
 		bulletSprite = new GImage("door.png", player.getSprite().getX() - player.getSprite().getWidth() / 2, player.getSprite().getY() - player.getSprite().getHeight() / 2);
