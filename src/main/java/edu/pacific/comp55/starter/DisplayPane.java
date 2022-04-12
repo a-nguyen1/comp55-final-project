@@ -121,7 +121,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		for (int z = 0; z < enemies.size(); z++) {
 			Enemy enemy = enemies.get(z);
 			GImage enemySprite = enemy.getSprite();
-			if (timerCount % 1 == 0 && timerCount >= 200) { //let timerCount reach 200 before starting
+			if (timerCount % 1 == 0) { //let timerCount reach 200 before starting
 				if (player.isBulletTraveling()) {
 					GImage bulletSprite = player.getBulletSprite();
 					player.setBulletDistance(player.getBulletDistance() + 1);
@@ -149,7 +149,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					}
 					if (player.getBulletDistance() >= player.getWeapon().getRange()) {
 						player.setBulletTraveling(false);
-						bulletSprite.setLocation(playerSprite.getX(), playerSprite.getY());
+						bulletSprite.setLocation(playerSprite.getX() + playerSprite.getWidth() / 2 - bulletSprite.getWidth() / 2, playerSprite.getY() + playerSprite.getHeight() / 2 - bulletSprite.getHeight() / 2);
 						player.setBulletDistance(0);
 						bulletSprite.setVisible(false);
 					}
@@ -283,7 +283,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	            player.getWeapon().setAngle(180 * Math.atan2(y, x) / Math.PI);	
 				bulletSprite.setVisible(true);
 				player.setBulletTraveling(true);
-				bulletSprite.setLocation( playerSprite.getX() + (player.getSprite().getWidth() / 2), playerSprite.getY() + (player.getSprite().getHeight() / 2));
+				bulletSprite.setLocation( playerSprite.getX() + (player.getSprite().getWidth() / 2) - bulletSprite.getWidth() / 2, playerSprite.getY() + (player.getSprite().getHeight() / 2) - bulletSprite.getHeight() / 2);
 				}
 			}
 		player.setAttackAvailable(false); // Initiate attack cool down.
@@ -361,7 +361,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								program.add(player.getBulletSprite()); //Add bulletSprite
 							}
 							player.displayInventory(inventoryBox); //display inventory correctly
-							player.getSprite().setLocation(program.getWidth() / 2, program.getHeight() - 100); //set player location to bottom of screen
+							player.getSprite().setLocation(program.getWidth() / 2 - player.getSprite().getWidth() / 2, program.getHeight() - 100); //set player location to bottom of screen
 							player.getSprite().sendToFront(); // move player to front of the screen
 						}
 						int removeIndex = -1;
@@ -406,7 +406,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		} else if (playerSprite.getLocation().getX() + playerSprite.getWidth() * 1.75 > program.getWidth()) {
 			playerSprite.setLocation(program.getWidth() - playerSprite.getWidth() * 1.75,playerSprite.getY());
 		} else if (playerSprite.getLocation().getY() + playerSprite.getHeight() * 2.25 > program.getHeight()) {
-			playerSprite.setLocation(playerSprite.getX(), program.getHeight()-playerSprite.getHeight() * 2.25);
+			playerSprite.setLocation(playerSprite.getX(), program.getHeight() - playerSprite.getHeight() * 2.25);
 		} 
 	}
 	

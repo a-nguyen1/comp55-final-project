@@ -20,11 +20,11 @@ public class Player extends Character {
 		super(sprite, health);
 		inventory = new ArrayList<Item>();
 		dashAvailable = true;
-		attackAvailable = true;
+		attackAvailable = false;
 		bulletTraveling = false;
 		bulletDistance = 0;
-		//TODO change bulletSprite to actual bullet
-		bulletSprite = new GImage("lightningBallSprite.png", getSprite().getX() - getSprite().getWidth() / 2, getSprite().getY() - getSprite().getHeight() / 2);
+		bulletSprite = new GImage("lightningBallSprite.png", getSprite().getX() + getSprite().getWidth() / 2, getSprite().getY() + getSprite().getHeight() / 2);
+		bulletSprite.setVisible(false); 
 	}
 	
 	public void printInventory() {
