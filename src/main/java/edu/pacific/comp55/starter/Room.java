@@ -9,7 +9,7 @@ public class Room {
 	private ArrayList<Item> items;
 	
 	public Room() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	public void addPlayer() { //TODO add player to room

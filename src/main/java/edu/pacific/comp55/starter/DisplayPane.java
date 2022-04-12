@@ -47,7 +47,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		backgroundTiles = new ArrayList<GImage>(); 
 		for (int x = 0; x < program.getWidth(); x+=50) { // add tiles in x direction
 			for (int y = 0; y < program.getHeight(); y+=50) { // add tiles in y direction
-				backgroundTiles.add(new GImage("GrayTile.png", x, y)); 
+				backgroundTiles.add(new GImage("GrayTile.png", x, y));
 			}
 		}
 		
@@ -58,33 +58,36 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		itemLabel.put("openDoor", "Press e to enter next room.");
 		itemLabel.put("heart", "Press e to pick up heart.");
 		
-		//Add playerSprite to the screen and create player object.
+		//create player object
 		GImage playerSprite = new GImage ("knight-sprite-with-sword.png", program.getWidth()/2, program.getHeight()/2);
-		player = new Player(playerSprite, 5);
+		player = new Player(playerSprite, 3);
 		player.setSpeed(7);
+		//TODO change bulletSprite to actual bullet
 		bulletSprite = new GImage("door.png", player.getSprite().getX() - player.getSprite().getWidth() / 2, player.getSprite().getY() - player.getSprite().getHeight() / 2);
-		//Add Enemy to screen and create enemy object
+		
+		//create enemy object
 		GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 50);
 		enemy = new Enemy(enemySprite, 2); //Enemy has 2 health points.
 		enemy.setSpeed(5);
 		
+		//create inventory box
 		inventoryBox = new GRect(50, 0, 0, 0);
 		inventoryBox.setVisible(false);
 		
-		//Add key item to the screen.
+		//create key object
 		GImage keySprite = new GImage ("keyImage.png", 200, 200); //Create a new sprite for key.
 		keySprite.setSize(25, 25); //Resize sprite to make it smaller.
 		PickUpItem key = new PickUpItem(keySprite, "key"); //Create key as Item object.
 		items.add(key);
 		
-		//Add door item to the screen.
+		//create door object
 		GImage doorSprite = new GImage ("closedDoor.png", 100, 100); //Create a new sprite for door.
 		Door door = new Door(doorSprite, "closedDoor"); //Create door as Item object.
 		items.add(door);
 		
-		//Add player health to the screen.
+		//initialize playerHealth
 		playerHealth = new ArrayList<GImage>(); 
-		for (int x = 0; x < player.getHealth(); x++) { //Add heart sprites to playerHealth ArrayList.
+		for (int x = 0; x < player.getHealth(); x++) { //add hearts based on player health
 			playerHealth.add(new GImage("Heart.png", x*50, 0)); 
 		}
 		
@@ -114,7 +117,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		GImage playerSprite = player.getSprite();
 		GImage enemySprite = enemy.getSprite();
 		timerCount++;
-		if (timerCount % 500 == 0) {
+		if (timerCount % 300 == 0) {
 			player.setAttackAvailable(true); //player can now attack
 		}
 		if (timerCount % 500 == 0) {
@@ -122,13 +125,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		if (timerCount % 100 == 0) {
 			for (Item i : items) {
-				if (player.canInteract(i.getImage().getX(), i.getImage().getY())) {
+				if (player.canInteract(i.getSprite().getX(), i.getSprite().getY())) {
 					if (player.hasKey() && i.getItemType() == "closedDoor") {
 						itemLabel.put("closedDoor", "Press e to unlock door.");
 					}
 					String s = itemLabel.get(i.getItemType());
 					i.setLabel(s);
-					i.getLabel().setLocation(i.getImage().getX(), i.getImage().getY());
+					i.getLabel().setLocation(i.getSprite().getX(), i.getSprite().getY());
 				} else {
 					i.setLabel("");
 				}
@@ -181,7 +184,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			program.add(tile);
 		}
 		for (Item i : items) {
-			program.add(i.getImage()); //Add item sprite to the screen.
+			program.add(i.getSprite()); //Add item sprite to the screen.
 			program.add(i.getLabel()); //Add item label to the screen.
 		}
 		for (GImage heart: playerHealth) { // add all hearts to display
@@ -197,14 +200,14 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	@Override
 	public void hideContents() {
 		for (Item i : items) {
-			program.remove(i.getImage()); //remove item sprite from the screen.
+			program.remove(i.getSprite()); //remove item sprite from the screen.
 			program.remove(i.getLabel()); //remove item label from the screen.
 		}
 		program.remove(player.getSprite());
 	}
 	
 	@Override
-	public void mouseClicked(MouseEvent e) { //TODO implement attack
+	public void mouseClicked(MouseEvent e) { //TODO implement close range attack
 		if (program.isCloseRangeWeapon()) {
 			if (player.canInteract(enemy.getSprite().getX(), enemy.getSprite().getY())) { //player in range of enemy.
 				System.out.println("Enemy is hit.");
@@ -254,10 +257,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		} else if (keyCode == 69) { // e
 			Item nearestItem = player.nearestItem(items);
 			//if nearest item is a PickUpItem, add to player inventory
-			if (player.canInteract(nearestItem.getImage().getX(), nearestItem.getImage().getY())) {
+			if (player.canInteract(nearestItem.getSprite().getX(), nearestItem.getSprite().getY())) {
 				if (nearestItem instanceof PickUpItem && !((PickUpItem) nearestItem).getInInventory()) {
 					player.addToInventory(nearestItem);
-					nearestItem.getImage().setLocation(50 * player.getHealth(), 12.5); //TODO change after hearts are implemented
+					nearestItem.getSprite().setLocation(50 * player.getHealth(), 12.5); //TODO change after hearts are implemented
 					inventoryBox.setVisible(true); 
 					inventoryBox.setSize(25*player.getInventory().size(), 25);
 					inventoryBox.setLocation(50 * player.getHealth(), 12.5);
@@ -275,7 +278,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							}
 							for (Item i : items) { 
 								if (i.getItemType() == "key") { //reset key to default values
-									i.getImage().setLocation(200,200);
+									i.getSprite().setLocation(200,200);
 									((PickUpItem)i).setInInventory(false);
 								}
 								else if (i.getItemType() == "openDoor") { //reset door to default values
@@ -283,7 +286,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 									((Door)i).setLocked(true);
 									itemLabel.put("closedDoor", "Press e to unlock door.");
 								}
-								program.add(i.getImage()); //Add item sprite to the screen.
+								program.add(i.getSprite()); //Add item sprite to the screen.
 								program.add(i.getLabel()); //Add item label to the screen.
 							}
 							for (GImage heart: playerHealth) { // add all hearts to display

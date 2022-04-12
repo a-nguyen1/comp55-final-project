@@ -53,8 +53,8 @@ public class Player extends Character {
 	}
 	
 	public double distanceToItem(Item i) {
-		double x = Math.abs(i.getImage().getX()- super.getSprite().getX()); // find difference in x coordinates
-		double y = Math.abs(i.getImage().getY() - super.getSprite().getY()); // find difference in y coordinates
+		double x = Math.abs(i.getSprite().getX()- super.getSprite().getX()); // find difference in x coordinates
+		double y = Math.abs(i.getSprite().getY() - super.getSprite().getY()); // find difference in y coordinates
 		return Math.sqrt(x * x + y * y);
 		
 	}
@@ -97,10 +97,6 @@ public class Player extends Character {
 	public void setDashAvailable(boolean dashAvailable) {
 		this.dashAvailable = dashAvailable;
 	}
-	
-	public static void main(String[] args) {
-		
-	}
 
 	public boolean isAttackAvailable() {
 		return attackAvailable;
@@ -110,4 +106,7 @@ public class Player extends Character {
 		this.attackAvailable = attackAvailable;
 	}
 
+	public static void main(String[] args) {
+		
+	}
 }

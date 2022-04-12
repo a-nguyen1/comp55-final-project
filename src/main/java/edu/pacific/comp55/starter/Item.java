@@ -14,11 +14,11 @@ public class Item {
 		message = new GLabel("");
 	}
 	
-	public void setImage(GImage newImage) {
+	public void setSprite(GImage newImage) {
 		sprite = newImage;
 	}
 	
-	public GImage getImage() {
+	public GImage getSprite() {
 		return sprite;
 	}
 	
