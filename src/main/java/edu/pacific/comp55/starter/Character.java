@@ -16,17 +16,12 @@ public class Character {
 		isDamaged = false;
 	}
 
-	public void healthChanged(int h) { //TODO implement health changed
-		health = health + h; //Either add health or remove it depending if h is pos or neg.
+	public void changeHealth(int h) { 
+		health = health + h; //Either add health or remove it depending if h is positive or negative.
 	}
 	
-	public boolean healthIsZero() { //TODO implement health is zero
-		if (health == 0) {
-			return true;
-		}
-		else {
-			return false;
-		}
+	public boolean isDead() { 
+		return health <= 0;
 	}
 	
 	public int getHealth() {
@@ -43,10 +38,6 @@ public class Character {
 	
 	public GImage getSprite() {
 		return sprite;
-	}
-	
-	public boolean isHit() { //TODO implement is hit
-		return true;
 	}
 
 	public double getMoveX() {
