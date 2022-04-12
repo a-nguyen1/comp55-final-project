@@ -82,6 +82,10 @@ public class Player extends Character {
 		return weapon;
 	}
 	
+	public void displayInventory() {
+		
+	}
+	
 	public ArrayList<Item> getInventory() {
 		return inventory;
 	}

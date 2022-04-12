@@ -44,12 +44,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		program = app;
 		
 		//add background tiles
-		backgroundTiles = new ArrayList<GImage>(); 
-		for (int x = 0; x < program.getWidth(); x+=50) { // add tiles in x direction
-			for (int y = 0; y < program.getHeight(); y+=50) { // add tiles in y direction
-				backgroundTiles.add(new GImage("GrayTile.png", x, y));
-			}
-		}
+		setBackground("GrayTile.png");
 		
 		items = new ArrayList<Item>();
 		itemLabel = new HashMap<String, String>();
@@ -80,8 +75,14 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		PickUpItem key = new PickUpItem(keySprite, "key"); //Create key as Item object.
 		items.add(key);
 		
+		//create heart object
+		GImage heartSprite = new GImage ("Heart.png", 150, 300); //Create a new sprite for heart.
+		heartSprite.setSize(25, 25); //Resize sprite to make it smaller.
+		PickUpItem heart = new PickUpItem(heartSprite, "heart");
+		items.add(heart);
+		
 		//create door object
-		GImage doorSprite = new GImage ("closedDoor.png", 100, 100); //Create a new sprite for door.
+		GImage doorSprite = new GImage ("closedDoor.png", program.getWidth() / 2, 100); //Create a new sprite for door.
 		Door door = new Door(doorSprite, "closedDoor"); //Create door as Item object.
 		items.add(door);
 		
@@ -96,8 +97,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		timer.start();
 	}
 
-	public void setBackground(String b) { //TODO set background
-		
+	public void setBackground(String tileFile) { 
+		backgroundTiles = new ArrayList<GImage>(); 
+		for (int x = 0; x < program.getWidth(); x += 50) { // add tiles in x direction
+			for (int y = 0; y < program.getHeight(); y += 50) { // add tiles in y direction
+				backgroundTiles.add(new GImage(tileFile, x, y));
+			}
+		}
 	}
 	
 	public void createLevel(int l) { //TODO create level
@@ -117,12 +123,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		GImage playerSprite = player.getSprite();
 		GImage enemySprite = enemy.getSprite();
 		timerCount++;
-		if (timerCount % 300 == 0) {
-			player.setAttackAvailable(true); //player can now attack
-		}
-		if (timerCount % 500 == 0) {
-			player.setDashAvailable(true); //TODO show player that dash is available
-		}
 		if (timerCount % 100 == 0) {
 			for (Item i : items) {
 				if (player.canInteract(i.getSprite().getX(), i.getSprite().getY())) {
@@ -136,9 +136,15 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					i.setLabel("");
 				}
 			}
+			if (timerCount % 300 == 0) {
+				player.setAttackAvailable(true); //player can now attack
+			}
+			if (timerCount % 500 == 0) {
+				player.setDashAvailable(true); //player can now dash
+			}
 		}
 		if (bulletTraveling) {
-			if (timerCount % 1 == 0) {
+			if (timerCount % 1 == 0) { 
 			bulletDistance++;
             bulletSprite.movePolar(1, player.getWeapon().getAngle()); // move towards mouse click    
             	if (bulletDistance >= player.getWeapon().getRange()) {
@@ -149,10 +155,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
             	}
 			}
 		}
-		if (enemy.canInteract(playerSprite.getX(), playerSprite.getY())) {
-			// x is set to horizontal distance between enemy and middle of playerSprite
+		if (enemy.canInteract(playerSprite.getX(), playerSprite.getY())) { //enemy detects player
+			// x is set to horizontal distance between enemy and player
 			double x = (enemySprite.getX() - enemySprite.getWidth() / 2) - (playerSprite.getX() - playerSprite.getWidth() / 2);
-			// y is set to vertical distance between enemy and middle of playerSprite
+			// y is set to vertical distance between enemy and player
 			double y = (enemySprite.getY() - enemySprite.getHeight() / 2) - (playerSprite.getY() - playerSprite.getHeight() / 2);
 			if (timerCount % 100 == 0) {
 				enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // enemy move towards player
@@ -180,14 +186,14 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			weapon.setRange(200);
 			player.setWeapon(weapon);
 		}
-		for (GImage tile: backgroundTiles) { // add all tiles to display
+		for (GImage tile: backgroundTiles) { //Add all tiles to the screen.
 			program.add(tile);
 		}
 		for (Item i : items) {
 			program.add(i.getSprite()); //Add item sprite to the screen.
 			program.add(i.getLabel()); //Add item label to the screen.
 		}
-		for (GImage heart: playerHealth) { // add all hearts to display
+		for (GImage heart: playerHealth) { //Add all hearts to the screen.
 			heart.setSize(50,50);
 			program.add(heart);
 		}
@@ -258,25 +264,25 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			Item nearestItem = player.nearestItem(items);
 			//if nearest item is a PickUpItem, add to player inventory
 			if (player.canInteract(nearestItem.getSprite().getX(), nearestItem.getSprite().getY())) {
-				if (nearestItem instanceof PickUpItem && !((PickUpItem) nearestItem).getInInventory()) {
-					player.addToInventory(nearestItem);
-					nearestItem.getSprite().setLocation(50 * player.getHealth(), 12.5); //TODO change after hearts are implemented
-					inventoryBox.setVisible(true); 
-					inventoryBox.setSize(25*player.getInventory().size(), 25);
-					inventoryBox.setLocation(50 * player.getHealth(), 12.5);
+				if (nearestItem instanceof PickUpItem && !((PickUpItem) nearestItem).getInInventory()) { // check if PickUpItem and if not in inventory
+					player.addToInventory(nearestItem); // add item to player inventory
+					nearestItem.getSprite().setLocation(50 * player.getHealth() + player.getInventory().size() * 25, 12.5); // set location of item in inventory
+					inventoryBox.setVisible(true); // show inventory box
+					inventoryBox.setSize(25*player.getInventory().size(), 25); // resize inventory box
+					inventoryBox.setLocation(25 + 50 * player.getHealth(), 12.5); // set location of inventory box
 					((PickUpItem) nearestItem).setInInventory(true);
-					program.remove(nearestItem.getLabel()); // remove key label
+					program.remove(nearestItem.getLabel()); // remove item label
 				}
 				else if (nearestItem instanceof Door) {
-					boolean doorStateBefore = !((Door)nearestItem).getLocked();
-					boolean unlockedDoor = ((Door)nearestItem).unlock(player.getInventory());
+					boolean doorStateBefore = !((Door)nearestItem).getLocked(); // to check if door is already opened
+					boolean unlockedDoor = ((Door)nearestItem).unlock(player.getInventory()); // to check if door is unlocked
 					if (unlockedDoor){
-						if (doorStateBefore == unlockedDoor) { // door has already been opened
-							program.removeAll(); //remove all to create next room
+						if (doorStateBefore == unlockedDoor) { // door has already been opened, so create next room
+							program.removeAll(); //remove all objects
 							for (GImage tile: backgroundTiles) { // add background tiles
 								program.add(tile);
 							}
-							for (Item i : items) { 
+							for (Item i : items) {
 								if (i.getItemType() == "key") { //reset key to default values
 									i.getSprite().setLocation(200,200);
 									((PickUpItem)i).setInInventory(false);
@@ -284,6 +290,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								else if (i.getItemType() == "openDoor") { //reset door to default values
 									i.setItemType("closedDoor");
 									((Door)i).setLocked(true);
+									i.setSprite(new GImage ("closedDoor.png", program.getWidth() / 2, 100));
 									itemLabel.put("closedDoor", "Press e to unlock door.");
 								}
 								program.add(i.getSprite()); //Add item sprite to the screen.
@@ -300,7 +307,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								inventoryBox.setVisible(false);
 							}
 							program.add(inventoryBox); //Add inventory box to the screen.
-							program.add(bulletSprite);
+							program.add(bulletSprite); //Add bulletSprite
 						}
 						int removeIndex = -1;
 						if (player.getInventory().size() > 0) {
@@ -309,14 +316,15 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 									removeIndex = x;
 								}
 							}
-							if (removeIndex >= 0) {
+							if (removeIndex >= 0) { // check if player has key to remove
 								player.removeFromInventory(removeIndex); // remove key from player inventory
+								if (nearestItem.getItemType() == "closedDoor") { // change door to open door
+									nearestItem.setItemType("openDoor");
+									program.add(((Door)nearestItem).getOpenDoor()); // add open door GImage to screen
+									((GObject)player.getSprite()).sendToFront(); // send player to the front of the screen
+								}
 							} 
-							if (nearestItem.getItemType() == "closedDoor") { // change door to open door
-								nearestItem.setItemType("openDoor");
-								program.add(((Door)nearestItem).getOpenDoor()); // add open door GImage to screen
-								((GObject)player.getSprite()).sendToFront(); // send player to the front of the screen
-							}
+							
 						}
 					}
 					else {
@@ -337,9 +345,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
 		
 		// setting bounds for player
-		if (playerSprite.getLocation().getX() < 0) {
+		if (playerSprite.getLocation().getX() < 5) {
 			playerSprite.setLocation(5, playerSprite.getY());
-		} else if (playerSprite.getLocation().getY() < 0) {
+		} else if (playerSprite.getLocation().getY() < 5) { 
 			playerSprite.setLocation(playerSprite.getX(), 5);
 		} else if (playerSprite.getLocation().getX() + playerSprite.getWidth() * 1.75 > program.getWidth()) {
 			playerSprite.setLocation(program.getWidth() - playerSprite.getWidth() * 1.75,playerSprite.getY());
