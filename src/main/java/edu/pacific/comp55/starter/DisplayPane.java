@@ -56,6 +56,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		player = new Player(playerSprite, 5);
 		player.setSpeed(7);
 		
+		//Change plauer sprite to wizard if user chose long range weapon.
+		if(!program.isCloseRangeWeapon()) {
+			playerSprite = new GImage ("wizardSprite.png", program.getWidth()/2, program.getHeight()/2);
+		}
+		
 		//create enemy object
 		GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 50);
 		enemy = new Enemy(enemySprite, 2); //Enemy has 2 health points.
