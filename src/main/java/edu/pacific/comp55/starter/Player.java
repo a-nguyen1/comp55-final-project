@@ -84,14 +84,22 @@ public class Player extends Character {
 	}
 	
 	public void displayInventory(GRect inventoryBox) {
-		int x = 0;
-		for (Item i: inventory) {
-			i.getSprite().setLocation(50 * getHealth() + 25 + x, 12.5);
-			x += 25;
+		if (inventory.size() > 0) {
+			
+			int x = 0;
+			for (Item i: inventory) {
+				i.getSprite().setLocation(50 * getHealth() + 25 + x, 12.5);
+				x += 25;
+			}
+			inventoryBox.setSize(25 * inventory.size(), 25); // resize inventory box
+			inventoryBox.setLocation(25 + 50 * getHealth(), 12.5); // set location of inventory box
+			inventoryBox.setVisible(true); // show inventory box
 		}
-		inventoryBox.setVisible(true); // show inventory box
-		inventoryBox.setSize(25 * inventory.size(), 25); // resize inventory box
-		inventoryBox.setLocation(25 + 50 * getHealth(), 12.5); // set location of inventory box
+		else {
+			inventoryBox.setVisible(false); // make inventory box invisible
+		}
+		
+		
 	}
 	
 	public ArrayList<Item> getInventory() {

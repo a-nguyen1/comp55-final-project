@@ -53,9 +53,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		itemLabel.put("openDoor", "Press e to enter next room.");
 		itemLabel.put("heart", "Press e to pick up heart.");
 		
-		//create player object
+		//create player object with knight sprite as default.
 		GImage playerSprite = new GImage ("knight-sprite-with-sword.png", program.getWidth()/2, program.getHeight()/2);
-		player = new Player(playerSprite, 3);
+		player = new Player(playerSprite, 5);
+
 		player.setSpeed(7);
 		//TODO change bulletSprite to actual bullet
 		bulletSprite = new GImage("door.png", player.getSprite().getX() - player.getSprite().getWidth() / 2, player.getSprite().getY() - player.getSprite().getHeight() / 2);
@@ -123,38 +124,39 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		GImage playerSprite = player.getSprite();
 		GImage enemySprite = enemy.getSprite();
 		timerCount++;
-		if (timerCount % 100 == 0) {
-			for (Item i : items) {
-				if (player.canInteract(i.getSprite().getX(), i.getSprite().getY())) {
-					if (player.hasKey() && i.getItemType() == "closedDoor") {
-						itemLabel.put("closedDoor", "Press e to unlock door.");
+		if (timerCount % 1 == 0) { 
+			if (bulletTraveling) {
+				bulletDistance++;
+	            bulletSprite.movePolar(1, player.getWeapon().getAngle()); // move towards mouse click    
+	            if (bulletDistance >= player.getWeapon().getRange()) {
+	            	bulletTraveling = false;
+	            	bulletSprite.setLocation(playerSprite.getX(), playerSprite.getY());
+	            	bulletDistance = 0;
+	            	bulletSprite.setVisible(false);
+	            }
+			}
+			if (timerCount % 100 == 0) {
+				for (Item i : items) {
+					if (player.canInteract(i.getSprite().getX(), i.getSprite().getY())) {
+						if (player.hasKey() && i.getItemType() == "closedDoor") {
+							itemLabel.put("closedDoor", "Press e to unlock door.");
+						}
+						String s = itemLabel.get(i.getItemType());
+						i.setLabel(s);
+						i.getLabel().setLocation(i.getSprite().getX(), i.getSprite().getY());
+					} else {
+						i.setLabel("");
 					}
-					String s = itemLabel.get(i.getItemType());
-					i.setLabel(s);
-					i.getLabel().setLocation(i.getSprite().getX(), i.getSprite().getY());
-				} else {
-					i.setLabel("");
+				}
+				if (timerCount % 300 == 0) {
+					player.setAttackAvailable(true); //player can now attack
+				}
+				if (timerCount % 500 == 0) {
+					player.setDashAvailable(true); //player can now dash
 				}
 			}
-			if (timerCount % 300 == 0) {
-				player.setAttackAvailable(true); //player can now attack
-			}
-			if (timerCount % 500 == 0) {
-				player.setDashAvailable(true); //player can now dash
-			}
 		}
-		if (bulletTraveling) {
-			if (timerCount % 1 == 0) { 
-			bulletDistance++;
-            bulletSprite.movePolar(1, player.getWeapon().getAngle()); // move towards mouse click    
-            	if (bulletDistance >= player.getWeapon().getRange()) {
-            		bulletTraveling = false;
-            		bulletSprite.setLocation(playerSprite.getX(), playerSprite.getY());
-            		bulletDistance = 0;
-            		bulletSprite.setVisible(false);
-            	}
-			}
-		}
+				
 		if (enemy.canInteract(playerSprite.getX(), playerSprite.getY())) { //enemy detects player
 			// x is set to horizontal distance between enemy and player
 			double x = (enemySprite.getX() - enemySprite.getWidth() / 2) - (playerSprite.getX() - playerSprite.getWidth() / 2);
@@ -176,15 +178,18 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 
 	@Override
 	public void showContents() {
-		Weapon weapon = new Weapon(new GImage("sword.png"), "close range weapon"); //TODO change so image shows up near player hand
+		//TODO add weapon to screen and make player weapon show in player hand 
+		Weapon weapon = new Weapon(new GImage("sword.png"), "close range weapon"); 
 		if (program.isCloseRangeWeapon()) {
 			weapon.setRange(50);
 			player.setWeapon(weapon);
-			}
-		else {
-			weapon.setItemType("long range weapon");
+		}
+		else { //long range weapon selected
+			player.setSprite(new GImage ("wizardSprite.png", program.getWidth()/2, program.getHeight()/2));
+			weapon = new Weapon(new GImage("bow.png"), "long range weapon");
 			weapon.setRange(200);
 			player.setWeapon(weapon);
+			program.add(bulletSprite);
 		}
 		for (GImage tile: backgroundTiles) { //Add all tiles to the screen.
 			program.add(tile);
@@ -200,7 +205,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		program.add(player.getSprite()); //Add player sprite to screen.
 		program.add(enemy.getSprite()); //Add enemy sprite to screen.
 		program.add(inventoryBox); //Add inventory box to the screen.
-		program.add(bulletSprite);
 	}
 
 	@Override
@@ -266,7 +270,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			if (player.canInteract(nearestItem.getSprite().getX(), nearestItem.getSprite().getY())) {
 				if (nearestItem instanceof PickUpItem && !((PickUpItem) nearestItem).getInInventory()) { // check if PickUpItem and if not in inventory
 					player.addToInventory(nearestItem); // add item to player inventory
-					//nearestItem.getSprite().setLocation(50 * player.getHealth() + player.getInventory().size() * 25, 12.5); // set location of item in inventory
 					player.displayInventory(inventoryBox);
 					((PickUpItem) nearestItem).setInInventory(true);
 					program.remove(nearestItem.getLabel()); // remove item label
@@ -292,9 +295,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 									((Door)i).setLocked(true);
 									i.setSprite(new GImage ("closedDoor.png", program.getWidth() / 2, 100));
 									itemLabel.put("closedDoor", "Press e to unlock door.");
+									program.add(i.getLabel());
 								}
 								program.add(i.getSprite()); //Add item sprite to the screen.
-								program.add(i.getLabel()); //Add item label to the screen.
+								if (i instanceof PickUpItem && !((PickUpItem)i).getInInventory()) { // check if item is not in player inventory
+									program.add(i.getLabel()); //Add PickUp item label to the screen.
+								}
 							}
 							for (GImage heart: playerHealth) { // add all hearts to display
 								heart.setSize(50,50);
@@ -307,9 +313,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								inventoryBox.setVisible(false);
 							}
 							program.add(inventoryBox); //Add inventory box to the screen.
-							program.add(bulletSprite); //Add bulletSprite
+							if (!program.isCloseRangeWeapon()) { // check if weapon is long range
+								program.add(bulletSprite); //Add bulletSprite
+							}
 							player.displayInventory(inventoryBox); //display inventory correctly
 							player.getSprite().setLocation(program.getWidth() / 2, program.getHeight() - 100); //set player location to bottom of screen
+							player.getSprite().sendToFront(); // move player to front of the screen
 						}
 						int removeIndex = -1;
 						if (player.getInventory().size() > 0) {
