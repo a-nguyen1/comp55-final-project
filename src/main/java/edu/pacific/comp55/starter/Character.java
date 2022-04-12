@@ -9,6 +9,7 @@ public class Character {
 	private double speed;
 	private boolean isDamaged;
 	private int invincibilityCounter;
+	private int attackCooldown;
 	
 	public Character(GImage image, int hp) {
 		sprite = image;
@@ -17,7 +18,7 @@ public class Character {
 	}
 
 	public void changeHealth(int h) { 
-		health = health + h; //Either add health or remove it depending if h is positive or negative.
+		health = health + h; //Add health or remove health depending if h is positive or negative.
 	}
 	
 	public boolean isDead() { 
@@ -82,5 +83,13 @@ public class Character {
 
 	public void setInvincibilityCounter(int invincibilityCounter) {
 		this.invincibilityCounter = invincibilityCounter;
+	}
+
+	public int getAttackCooldown() {
+		return attackCooldown;
+	}
+
+	public void setAttackCooldown(int attackCooldown) {
+		this.attackCooldown = attackCooldown;
 	}
 }

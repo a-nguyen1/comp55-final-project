@@ -55,6 +55,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		GImage playerSprite = new GImage ("knight-sprite-with-sword.png", program.getWidth()/2, program.getHeight()/2);
 		player = new Player(playerSprite, 5);
 		player.setSpeed(7);
+		player.setAttackCooldown(300);
+		player.setDashCooldown(500);
 		
 		//create enemies ArrayList
 		enemies = new ArrayList<Enemy>();
@@ -196,10 +198,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					i.setLabel("");
 				}
 			}
-			if (timerCount % 300 == 0) {
+			if (timerCount % player.getAttackCooldown() == 0) {
 				player.setAttackAvailable(true); //player can now attack
 			}
-			else if (timerCount % 500 == 0) {
+			else if (timerCount % player.getDashCooldown() == 0) {
 				player.setDashAvailable(true); //player can now dash
 			}
 		}

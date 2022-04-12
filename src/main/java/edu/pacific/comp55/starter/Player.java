@@ -11,6 +11,7 @@ public class Player extends Character {
 	private Weapon weapon;
 	private ArrayList<Item> inventory;
 	private boolean dashAvailable;
+	private int dashCooldown;
 	private boolean attackAvailable;
 	private boolean bulletTraveling;
 	private int bulletDistance;
@@ -37,7 +38,6 @@ public class Player extends Character {
 		else {
 			System.out.println("No items in inventory");
 		}
-				
 	}
 	
 	public void removeFromInventory(int ind) {
@@ -133,10 +133,6 @@ public class Player extends Character {
 		this.attackAvailable = attackAvailable;
 	}
 
-	public static void main(String[] args) {
-		
-	}
-
 	public boolean isBulletTraveling() {
 		return bulletTraveling;
 	}
@@ -159,5 +155,17 @@ public class Player extends Character {
 
 	public void setBulletSprite(GImage bulletSprite) {
 		this.bulletSprite = bulletSprite;
+	}
+
+	public int getDashCooldown() {
+		return dashCooldown;
+	}
+
+	public void setDashCooldown(int dashCooldown) {
+		this.dashCooldown = dashCooldown;
+	}
+	
+	public static void main(String[] args) {
+		
 	}
 }
