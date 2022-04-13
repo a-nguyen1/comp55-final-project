@@ -70,7 +70,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		//create miniEnemy object
 		GImage miniEnemySprite = new GImage ("bigger-enemy-sprite.png", 50, 300);
 		miniEnemySprite.setSize(enemySprite.getWidth() / 2, enemySprite.getHeight() / 2);
-		Enemy miniEnemy = new Enemy(miniEnemySprite, 1); //Enemy has 1 health point.
+		Enemy miniEnemy = new Enemy(miniEnemySprite, 1); //miniEnemy has 1 health point.
 		miniEnemy.setSpeed(10);
 		enemies.add(miniEnemy); //add miniEnemy to ArrayList
 		
