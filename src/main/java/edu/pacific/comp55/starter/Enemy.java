@@ -3,7 +3,8 @@ package edu.pacific.comp55.starter;
 import acm.graphics.GImage;
 
 public class Enemy extends Character {
-	
+	private Weapon weapon;
+	private boolean attackAvailable;
 	public Enemy(GImage image, int hp) {
 		super(image, hp);
 	}
@@ -24,6 +25,22 @@ public class Enemy extends Character {
 		return xDiff <= width && yDiff <= height; //returns true if x,y coordinates are within 100 in x direction and y direction
 	} 
 	
+	public Weapon getWeapon() {
+		return weapon;
+	}
+
+	public void setWeapon(Weapon weapon) {
+		this.weapon = weapon;
+	}
+
+	public boolean isAttackAvailable() {
+		return attackAvailable;
+	}
+
+	public void setAttackAvailable(boolean attackAvailable) {
+		this.attackAvailable = attackAvailable;
+	}
+
 	public static void main(String[] args) {
 
 	}
