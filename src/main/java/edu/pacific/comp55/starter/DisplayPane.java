@@ -125,8 +125,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			playerHealth.remove(0);
 		}
 		
-		ArrayList<GImage> health  = player.displayHealth();
-		for (GImage heart : health) {
+		playerHealth = player.displayHealth();
+		for (GImage heart : playerHealth) {
 			heart.setSize(50,50);
 			program.add(heart);
 		}
@@ -186,7 +186,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							player.changeHealth(-1);
 							updateHealth();
 							System.out.println("Player hit: " + player.getHealth());
-							
 						}
 						else {
 							System.out.println("Player not hit: " + player.getHealth());
