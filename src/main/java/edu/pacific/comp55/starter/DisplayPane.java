@@ -53,6 +53,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		itemLabel.put("closedDoor", "Press e to unlock door.");
 		itemLabel.put("openDoor", "Press e to enter next room.");
 		itemLabel.put("heart", "Press e to pick up heart.");
+		itemLabel.put("chest", "Press e to open chest.");
 		
 		//create player object with knight sprite as default.
 		GImage playerSprite = new GImage ("knight-sprite-with-sword.png", program.getWidth()/2, program.getHeight()/2);
