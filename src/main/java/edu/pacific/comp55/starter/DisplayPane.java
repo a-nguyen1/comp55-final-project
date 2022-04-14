@@ -1,18 +1,16 @@
 package edu.pacific.comp55.starter;
-import java.awt.MouseInfo;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList; // for ArrayList
-import java.util.HashMap;
+import java.util.HashMap; // for HashMap
 
 import javax.swing.Timer; // for Timer
 
 import acm.graphics.GImage; // for GImage
-import acm.graphics.GLabel;
-import acm.graphics.GObject;
-import acm.graphics.GRect;
+import acm.graphics.GObject; // for GObject
+import acm.graphics.GRect; // for GRect
 
 public class DisplayPane extends GraphicsPane implements ActionListener{
 	private MainApplication program;
@@ -125,14 +123,16 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	public void createRoom(int r) { //TODO create room
 		
 	}
+	
 	public void updateHealth() {
 		while (playerHealth.size() > 0) {
 			program.remove(playerHealth.get(0));
 			playerHealth.remove(0);
 		}
 		
-		ArrayList<GImage> health  = player.displayHealth();
-		for (GImage heart : health) {
+		playerHealth = player.displayHealth();
+		for (GImage heart : playerHealth) {
+			heart.setSize(50,50);
 			program.add(heart);
 		}
 	}
@@ -191,7 +191,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							player.changeHealth(-1);
 							updateHealth();
 							System.out.println("Player hit: " + player.getHealth());
-							
 						}
 						else {
 							System.out.println("Player not hit: " + player.getHealth());

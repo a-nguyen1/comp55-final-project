@@ -35,7 +35,7 @@ public class Player extends Character {
 		}
 		return playerHealth;
 	}
-	public void printInventory() {
+	public void printInventory() { //print player inventory
 		if (inventory.size() > 0) {
 			System.out.println("Items in player inventory: ");
 			for (int x = 0; x < inventory.size(); x++) {
@@ -98,15 +98,15 @@ public class Player extends Character {
 	}
 	
 	public void displayInventory(GRect inventoryBox) {
+		int offsetFromHealth = 50;
 		if (inventory.size() > 0) {
-			
 			int x = 0;
 			for (Item i: inventory) {
-				i.getSprite().setLocation(50 * getHealth() + 25 + x, 12.5);
+				i.getSprite().setLocation(50 * getHealth() + offsetFromHealth + x, 12.5);
 				x += 25;
 			}
 			inventoryBox.setSize(25 * inventory.size(), 25); // resize inventory box
-			inventoryBox.setLocation(25 + 50 * getHealth(), 12.5); // set location of inventory box
+			inventoryBox.setLocation(offsetFromHealth + 50 * getHealth(), 12.5); // set location of inventory box
 			inventoryBox.setVisible(true); // show inventory box
 		}
 		else {

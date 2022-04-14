@@ -1,19 +1,28 @@
 package edu.pacific.comp55.starter;
-import java.util.ArrayList; // for arraylist
-import javax.swing.*; // for timer
+import java.util.ArrayList; // for ArrayList
+
+import acm.graphics.GImage; // for GImage
 
 public class Room {
-	private Timer timer;
+	//has player location
+	//has items
+	//has enemies
+	//has background tile
 	private String roomType;
-	private Player player;
 	private ArrayList<Item> items;
+	private ArrayList<Enemy> enemies;
+	private GImage backgroundTile;
 	
-	public Room() {
+	public Room(String roomName) {
 		
 	}
 	
-	public void addPlayer() { //TODO add player to room
-		
+	public void setPlayerLocation(Player p, double x, double y) {
+		p.getSprite().setLocation(x, y);
+	}
+	
+	public void setItemLocation(Item i, double x, double y) {
+		i.getSprite().setLocation(x, y);
 	}
 	
 	public void addEnemies() { //TODO add enemies to room
