@@ -61,13 +61,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 		//create enemy object
 		GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 120);
-		Enemy enemy = new Enemy(enemySprite, 2); //Enemy has 2 health points.
+		Enemy enemy = new Enemy(enemySprite, 2, "close range"); //Enemy has 2 health points.
 		enemy.setSpeed(5);
 		enemies.add(enemy); //add enemy to ArrayList
 		
 		//Second enemy object
 		GImage enemySprite2 = new GImage ("goblin-sprite.png", 530, 120);
-		Enemy enemy2 = new Enemy(enemySprite2, 2); //Enemy has 2 health points.
+		Enemy enemy2 = new Enemy(enemySprite2, 2, "close range"); //Enemy has 2 health points.
 		enemy2.setSpeed(5);
 		enemies.add(enemy2); //add enemy to ArrayList
 		
@@ -118,6 +118,17 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	public void createRoom(int r) { //TODO create room
 		
+	}
+	public void updateHealth() {
+		while (playerHealth.size() > 0) {
+			program.remove(playerHealth.get(0));
+			playerHealth.remove(0);
+		}
+		
+		ArrayList<GImage> health  = player.displayHealth();
+		for (GImage heart : health) {
+			program.add(heart);
+		}
 	}
 	
 	@Override
@@ -170,6 +181,19 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					}
 					if (enemy.overlapping(player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getWidth(), player.getSprite().getHeight())) {
 						playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // player moves away from enemy
+						if (enemy.getEnemyType() == "close range") {
+							player.changeHealth(-1);
+							updateHealth();
+							System.out.println("Player hit: " + player.getHealth());
+							
+						}
+						else {
+							System.out.println("Player not hit: " + player.getHealth());
+						}
+						
+						//if (player.isDead()) {
+							//program.remove(playerSprite);
+						//}
 					}
 				}
 			}
@@ -205,7 +229,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 		}
 	}
-
+	
 	@Override
 	public void showContents() {
 		for (GImage tile: backgroundTiles) { //Add all tiles to the screen.

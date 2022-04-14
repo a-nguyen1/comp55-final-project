@@ -28,6 +28,13 @@ public class Player extends Character {
 		bulletSprite.setVisible(false); 
 	}
 	
+	public ArrayList<GImage> displayHealth() {
+		ArrayList<GImage> playerHealth = new ArrayList<GImage>(); 
+		for (int x = 0; x < getHealth(); x++) { //add hearts based on player health
+			playerHealth.add(new GImage("Heart.png", x*50, 0)); 
+		}
+		return playerHealth;
+	}
 	public void printInventory() {
 		if (inventory.size() > 0) {
 			System.out.println("Items in player inventory: ");

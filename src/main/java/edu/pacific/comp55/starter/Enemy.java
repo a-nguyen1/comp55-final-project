@@ -5,8 +5,11 @@ import acm.graphics.GImage;
 public class Enemy extends Character {
 	private Weapon weapon;
 	private boolean attackAvailable;
-	public Enemy(GImage image, int hp) {
+	private String enemyType;
+	
+	public Enemy(GImage image, int hp, String enemyName) {
 		super(image, hp);
+		setEnemyType(enemyName);
 	}
 	
 	public static boolean playerInRange() {
@@ -43,6 +46,14 @@ public class Enemy extends Character {
 
 	public static void main(String[] args) {
 
+	}
+
+	public String getEnemyType() {
+		return enemyType;
+	}
+
+	public void setEnemyType(String enemyType) {
+		this.enemyType = enemyType;
 	}
 
 
