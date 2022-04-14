@@ -6,20 +6,18 @@ public class Enemy extends Character {
 	private Weapon weapon;
 	private boolean attackAvailable;
 	private String enemyType;
+	private int detectionRange;
 	
 	public Enemy(GImage image, int hp, String enemyName) {
 		super(image, hp);
 		setEnemyType(enemyName);
-	}
-	
-	public static boolean playerInRange() {
-		return true;
+		detectionRange = 100; // detection range is 100 by default
 	}
 	
 	public boolean canInteract(double x, double y) {
 		double xDiff = Math.abs(x - super.getSprite().getX()); // find difference in x coordinates
 		double yDiff = Math.abs(y - super.getSprite().getY()); // find difference in y coordinates
-		return xDiff <= 100 && yDiff <= 100; //returns true if x,y coordinates are within 100 in x direction and y direction
+		return xDiff <= detectionRange && yDiff <= detectionRange; //returns true if x,y coordinates are within 100 in x direction and y direction
 	}
 	
 	public boolean overlapping(double x, double y, double width, double height) {
@@ -54,6 +52,14 @@ public class Enemy extends Character {
 
 	public void setEnemyType(String enemyType) {
 		this.enemyType = enemyType;
+	}
+
+	public int getDetectionRange() {
+		return detectionRange;
+	}
+
+	public void setDetectionRange(int detectionRange) {
+		this.detectionRange = detectionRange;
 	}
 
 
