@@ -127,6 +127,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 		ArrayList<GImage> health  = player.displayHealth();
 		for (GImage heart : health) {
+			heart.setSize(50,50);
 			program.add(heart);
 		}
 	}
