@@ -117,6 +117,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	public void createRoom(int r) { //TODO create room
 		
 	}
+	
 	public void updateHealth() {
 		while (playerHealth.size() > 0) {
 			program.remove(playerHealth.get(0));
