@@ -23,6 +23,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private String displayType; // to display current game state (lose/win/playing)
 	private ArrayList<Level> levels;
 	private ArrayList<Item> items; // items to display on the level.
+	private Chest chest;
 	private HashMap<String, String> itemLabel; 
 	private int currentLevel;
 	private int currentRoom;
@@ -86,6 +87,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		heartSprite.setSize(25, 25); //Resize sprite to make it smaller.
 		PickUpItem heart = new PickUpItem(heartSprite, "heart");
 		items.add(heart);
+		
+		//create chest object
+		GImage chestSprite = new GImage ("chest.png", 500, 200);
+		chestSprite.setSize(25, 25);
+		chest = new Chest(chestSprite, "chest");
 		
 		//create door object
 		GImage doorSprite = new GImage ("closedDoor.png", program.getWidth() / 2, 100); //Create a new sprite for door.
@@ -261,6 +267,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			program.add(enemy.getSprite()); 
 		}
 		program.add(inventoryBox); //Add inventory box to the screen.
+		program.add(chest.getSprite());
 	}
 
 	@Override
