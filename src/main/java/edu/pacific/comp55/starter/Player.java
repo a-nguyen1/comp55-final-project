@@ -35,7 +35,7 @@ public class Player extends Character {
 		}
 		return playerHealth;
 	}
-	public void printInventory() {
+	public void printInventory() { //print player inventory
 		if (inventory.size() > 0) {
 			System.out.println("Items in player inventory: ");
 			for (int x = 0; x < inventory.size(); x++) {

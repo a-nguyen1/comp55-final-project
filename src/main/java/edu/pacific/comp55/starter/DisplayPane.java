@@ -1,18 +1,16 @@
 package edu.pacific.comp55.starter;
-import java.awt.MouseInfo;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList; // for ArrayList
-import java.util.HashMap;
+import java.util.HashMap; // for HashMap
 
 import javax.swing.Timer; // for Timer
 
 import acm.graphics.GImage; // for GImage
-import acm.graphics.GLabel;
-import acm.graphics.GObject;
-import acm.graphics.GRect;
+import acm.graphics.GObject; // for GObject
+import acm.graphics.GRect; // for GRect
 
 public class DisplayPane extends GraphicsPane implements ActionListener{
 	private MainApplication program;

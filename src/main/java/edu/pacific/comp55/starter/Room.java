@@ -3,17 +3,19 @@ import java.util.ArrayList; // for arraylist
 import javax.swing.*; // for timer
 
 public class Room {
-	private Timer timer;
 	private String roomType;
-	private Player player;
 	private ArrayList<Item> items;
 	
-	public Room() {
+	public Room(String roomName) {
 		
 	}
 	
-	public void addPlayer() { //TODO add player to room
-		
+	public void setPlayerLocation(Player p, double x, double y) {
+		p.getSprite().setLocation(x, y);
+	}
+	
+	public void setItemLocation(Item i, double x, double y) {
+		i.getSprite().setLocation(x, y);
 	}
 	
 	public void addEnemies() { //TODO add enemies to room
