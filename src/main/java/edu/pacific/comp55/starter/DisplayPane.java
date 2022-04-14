@@ -60,10 +60,16 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		enemies = new ArrayList<Enemy>();
 		
 		//create enemy object
-		GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 50);
+		GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 120);
 		Enemy enemy = new Enemy(enemySprite, 2); //Enemy has 2 health points.
 		enemy.setSpeed(5);
 		enemies.add(enemy); //add enemy to ArrayList
+		
+		//Second enemy object
+		GImage enemySprite2 = new GImage ("goblin-sprite.png", 530, 120);
+		Enemy enemy2 = new Enemy(enemySprite2, 2); //Enemy has 2 health points.
+		enemy2.setSpeed(5);
+		enemies.add(enemy2); //add enemy to ArrayList
 		
 		//create inventory box
 		inventoryBox = new GRect(50, 0, 0, 0);
