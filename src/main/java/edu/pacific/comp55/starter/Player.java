@@ -28,6 +28,14 @@ public class Player extends Character {
 		bulletSprite.setVisible(false); 
 	}
 	
+	public ArrayList<GImage> displayInventory() {
+		ArrayList<GImage> inventoryDisplay = new ArrayList<GImage>(); 
+		for (int x = 0; x < inventory.size(); x++) { //add items based on player inventory
+			inventoryDisplay.add(inventory.get(x).getSprite()); 
+		}
+		return inventoryDisplay;
+	}
+	
 	public ArrayList<GImage> displayHealth() {
 		ArrayList<GImage> playerHealth = new ArrayList<GImage>(); 
 		for (int x = 0; x < getHealth(); x++) { //add hearts based on player health
@@ -97,7 +105,7 @@ public class Player extends Character {
 		return weapon;
 	}
 	
-	public void displayInventory(GRect inventoryBox) {
+	public void displayInventoryBox(GRect inventoryBox) {
 		int offsetFromHealth = 50;
 		if (inventory.size() > 0) {
 			int x = 0;
@@ -112,8 +120,6 @@ public class Player extends Character {
 		else {
 			inventoryBox.setVisible(false); // make inventory box invisible
 		}
-		
-		
 	}
 	
 	public ArrayList<Item> getInventory() {

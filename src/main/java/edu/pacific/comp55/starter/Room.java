@@ -8,18 +8,25 @@ public class Room {
 	//has items
 	//has enemies
 	//has background tile
-	private String roomType;
 	private ArrayList<Item> items;
 	private ArrayList<Enemy> enemies;
 	private String backgroundTileName;
+	private double width; // width of program
+	private double height; // height of program
+	private int room; // room number
+	private int level; // level number 
 	
-	public Room(int num) {
-		if (num == 0) {
+	public Room(int levelNumber, int roomNumber, double w, double h) {
+		level = levelNumber;
+		room = roomNumber;
+		if (level <= 1) {
 			backgroundTileName = "GrayTile.png";
 		} 
-		else {
+		else { // levelNumber > 1
 			backgroundTileName = "OrangeTile.png";
 		}
+		width = w;
+		height = h;
 	}
 	
 	public void setPlayerLocation(Player p, double x, double y) {
@@ -35,14 +42,39 @@ public class Room {
 	}
 	
 	public ArrayList<Enemy> getEnemies() {
-		return enemies; //TODO add enemies to room
+		enemies = new ArrayList<Enemy>(); // initialize enemy array list
+		
+		//create enemy object
+		GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 120);
+		Enemy enemy = new Enemy(enemySprite, 2, "close range"); //Enemy has 2 health points.
+		enemy.setSpeed(5);
+		enemies.add(enemy); //add enemy to ArrayList
+		
+		//Second enemy object
+		GImage enemySprite2 = new GImage ("goblin-sprite.png", 530, 120);
+		Enemy enemy2 = new Enemy(enemySprite2, 2, "close range"); //Enemy has 2 health points.
+		enemy2.setSpeed(5);
+		enemies.add(enemy2); //add enemy to ArrayList
+		
+		//TODO implement long range enemy
+		
+		//Third enemy object (long range)
+		/*GImage enemySprite3 = new GImage ("bigger-enemy-sprite.png", 300, 300);
+		Enemy enemy3 = new Enemy(enemySprite3, 2, "long range"); //Enemy has 2 health points.
+		enemy3.setSpeed(5);
+		enemies.add(enemy3); //add enemy to ArrayList*/
+		
+		return enemies; 
 	}
 	
 	public ArrayList<Item> getItems() {
-		items = new ArrayList<Item>(); // initialize item array
+		items = new ArrayList<Item>(); // initialize item array list
 		
-		//create key object
-		GImage keySprite = new GImage ("keyImage.png", 200, 200); //Create a new sprite for key.
+		// randomize values for key location
+		double x = 100 + Math.random() * (width - 200); //randomize x so not at edge of screen (offset by 100)
+		double y = 100 + Math.random() * (height - 200); //randomize y so not at edge of screen (offset by 100)
+		
+		GImage keySprite = new GImage ("keyImage.png", x, y); //Create a new sprite for key.
 		keySprite.setSize(25, 25); //Resize sprite to make it smaller.
 		PickUpItem key = new PickUpItem(keySprite, "key"); //Create key as Item object.
 		items.add(key);
@@ -63,11 +95,8 @@ public class Room {
 		GImage doorSprite = new GImage ("closedDoor.png", 300, 100); //Create a new sprite for door.
 		Door door = new Door(doorSprite, "closedDoor"); //Create door as Item object.
 		items.add(door);
-		return items; //TODO add items to room
-	}
-	
-	public void nextRoom() { //TODO move to next room
 		
+		return items; 
 	}
 
 	public static void main(String[] args) {

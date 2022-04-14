@@ -17,6 +17,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	private ArrayList<GImage> backgroundTiles;
 	private ArrayList<GImage> playerHealth;
+	private ArrayList<GImage> playerInventory;
 	private ArrayList<GImage> bossHealth; // TODO implement boss health
 	private String displayType; // to display current game state (lose/win/playing)
 	private ArrayList<Level> levels;
@@ -39,10 +40,14 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		super();
 		program = app;
 		
-		//set background tile
-		setBackground("GrayTile.png");
+		currentLevel = 1;
+		currentRoom = 1;
 		
-		items = new ArrayList<Item>();
+		playerHealth = new ArrayList<GImage>(); // initialize playerHealth
+		playerInventory = new ArrayList<GImage>(); // initialize playerInventory
+		items = new ArrayList<Item>(); // initialize items in room
+		enemies = new ArrayList<Enemy>(); // initialize enemy array list
+		
 		itemLabel = new HashMap<String, String>();
 		itemLabel.put("key", "Press e to pick up key.");
 		itemLabel.put("closedDoor", "Press e to unlock door.");
@@ -54,37 +59,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		player = new Player(playerSprite, 5);
 		player.setSpeed(7);
 		
-		//create enemies ArrayList
-		enemies = new ArrayList<Enemy>();
-		
-		//create enemy object
-		GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 120);
-		Enemy enemy = new Enemy(enemySprite, 2, "close range"); //Enemy has 2 health points.
-		enemy.setSpeed(5);
-		enemies.add(enemy); //add enemy to ArrayList
-		
-		//Second enemy object
-		GImage enemySprite2 = new GImage ("goblin-sprite.png", 530, 120);
-		Enemy enemy2 = new Enemy(enemySprite2, 2, "close range"); //Enemy has 2 health points.
-		enemy2.setSpeed(5);
-		enemies.add(enemy2); //add enemy to ArrayList
-		
-		//Third enemy object (long range)
-		GImage enemySprite3 = new GImage ("bigger-enemy-sprite.png", 300, 300);
-		Enemy enemy3 = new Enemy(enemySprite3, 2, "long range"); //Enemy has 2 health points.
-		enemy3.setSpeed(5);
-		enemies.add(enemy3); //add enemy to ArrayList
-		
 		//create inventory box
 		inventoryBox = new GRect(50, 0, 0, 0);
 		inventoryBox.setVisible(false);
 		
-		//initialize playerHealth
-		playerHealth = new ArrayList<GImage>();
-		
-		//create timer object and start timer
-		timer = new Timer(0, this);
-		timer.start();
+		timer = new Timer(0, this); // create timer object 
+		timer.start(); // start timer
 	}
 
 	public void setBackground(String tileFile) {
@@ -100,18 +80,40 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 	}
 	
-	public void createRoom(int r) { //TODO create room
-		Room currentRoom = new Room(r);
+	public void createRoom(int roomNum) {
+		Room newRoom = new Room(currentLevel, roomNum, program.getWidth(), program.getHeight());
+		items = newRoom.getItems();
+		enemies = newRoom.getEnemies();
+		
 		program.removeAll();
-		items = currentRoom.getItems();
+		
+		setBackground(newRoom.getTileName()); //Set background tile
 		for (GImage tile: backgroundTiles) { //Add all tiles to the screen.
 			program.add(tile);
 		}
+		/*
+		for (Item i : items) {
+			if (i.getItemType() == "key") { //reset key to default values
+				((PickUpItem)i).setInInventory(false);
+			}
+			else if (i.getItemType() == "openDoor") { //reset door to default values
+				i.setItemType("closedDoor");
+				((Door)i).setLocked(true);
+				i.setSprite(new GImage ("closedDoor.png", 300, 100));
+				itemLabel.put("closedDoor", "Press e to unlock door.");
+				program.add(i.getLabel());
+			}
+			if (i instanceof PickUpItem && !((PickUpItem)i).getInInventory()) { // check if item is not in player inventory
+				program.add(i.getLabel()); //Add PickUp item label to the screen.
+			}
+			program.add(i.getSprite()); //Add item sprite to the screen.
+		}
+		*/
+		
 		for (Item i : items) {
 			program.add(i.getSprite()); //Add item sprite to the screen.
 			program.add(i.getLabel()); //Add item label to the screen.
 		}
-		updateHealth();
 		//TODO add weapon to screen and make player weapon show in player hand 
 		if (program.isCloseRangeWeapon()) {
 			Weapon weapon = new Weapon(new GImage("sword.png"), "close range weapon"); 
@@ -125,24 +127,39 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			player.setWeapon(weapon);
 			program.add(player.getBulletSprite());
 		}
-		program.add(player.getSprite()); //Add player sprite to screen.
 		for (Enemy enemy: enemies) { // loop for all enemies
 			program.add(enemy.getSprite()); //Add enemy sprite to screen.
 		}
 		program.add(inventoryBox); //Add inventory box to the screen.
+		updateHealth(); // update player health display
+		updateInventory(); // update player inventory display
+		program.add(player.getSprite()); //Add player sprite to screen.
 	}
 	
 	public void updateHealth() {
-		while (playerHealth.size() > 0) {
+		while (playerHealth.size() > 0) { // remove all hearts from screen
 			program.remove(playerHealth.get(0));
 			playerHealth.remove(0);
 		}
 		
 		playerHealth = player.displayHealth();
-		for (GImage heart : playerHealth) {
+		for (GImage heart : playerHealth) { // display all hearts
 			heart.setSize(50,50);
 			program.add(heart);
 		}
+	}
+	
+	public void updateInventory() { 
+		while (playerInventory.size() > 0) { // remove all inventory items from screen
+			program.remove(playerInventory.get(0));
+			playerInventory.remove(0);
+		}
+		playerInventory = player.displayInventory();
+		for (GImage i : playerInventory) { // display all inventory items
+			i.setSize(25, 25);
+			program.add(i);
+		}
+		player.displayInventoryBox(inventoryBox); // display inventory box accordingly
 	}
 	
 	@Override
@@ -203,7 +220,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						else {
 							System.out.println("Player not hit: " + player.getHealth());
 						}
-						
 						//if (player.isDead()) {
 							//program.remove(playerSprite);
 						//}
@@ -245,35 +261,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	@Override
 	public void showContents() {
-		createRoom(0);
-		/*
-		for (GImage tile: backgroundTiles) { //Add all tiles to the screen.
-			program.add(tile);
-		}
-		for (Item i : items) {
-			program.add(i.getSprite()); //Add item sprite to the screen.
-			program.add(i.getLabel()); //Add item label to the screen.
-		}
-		updateHealth();
-		//TODO add weapon to screen and make player weapon show in player hand 
-		if (program.isCloseRangeWeapon()) {
-			Weapon weapon = new Weapon(new GImage("sword.png"), "close range weapon"); 
-			weapon.setRange(50);
-			player.setWeapon(weapon);
-		}
-		else { //long range weapon selected
-			player.setSprite(new GImage ("wizardSprite.png", program.getWidth()/2, program.getHeight()/2));
-			Weapon weapon = new Weapon(new GImage("bow.png"), "long range weapon");
-			weapon.setRange(200);
-			player.setWeapon(weapon);
-			program.add(player.getBulletSprite());
-		}
-		program.add(player.getSprite()); //Add player sprite to screen.
-		for (Enemy enemy: enemies) { //Add all enemy sprites to screen.
-			program.add(enemy.getSprite()); 
-		}
-		program.add(inventoryBox); //Add inventory box to the screen.
-		*/
+		createRoom(currentRoom); // currentRoom is initially at 1
 	}
 
 	@Override
@@ -355,53 +343,16 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				//if nearest item is a PickUpItem
 				if (nearestItem instanceof PickUpItem && !((PickUpItem) nearestItem).getInInventory()) { // check if PickUpItem and if not in inventory
 					player.addToInventory(nearestItem); // add item to player inventory
-					player.displayInventory(inventoryBox);
 					((PickUpItem) nearestItem).setInInventory(true);
 					program.remove(nearestItem.getLabel()); // remove item label
+					updateInventory();
 				}
 				else if (nearestItem instanceof Door) { //if nearest item is a Door
 					boolean doorStateBefore = !((Door)nearestItem).getLocked(); // to check if door is already opened
 					boolean unlockedDoor = ((Door)nearestItem).unlock(player.getInventory()); // to check if door is unlocked
 					if (unlockedDoor){
 						if (doorStateBefore == unlockedDoor) { // door has already been opened, so create next room
-							program.removeAll(); //remove all objects
-							for (GImage tile: backgroundTiles) { // add background tiles
-								program.add(tile);
-							}
-							for (Item i : items) {
-								if (i.getItemType() == "key") { //reset key to default values and randomize location
-									double x = 100 + Math.random() * (program.getWidth() - 200); //randomize x so key not at edge of screen
-									double y = 100 + Math.random() * (program.getHeight() - 200); //randomize y so key not at edge of screen
-									i.getSprite().setLocation(x, y);
-									((PickUpItem)i).setInInventory(false);
-								}
-								else if (i.getItemType() == "openDoor") { //reset door to default values
-									i.setItemType("closedDoor");
-									((Door)i).setLocked(true);
-									i.setSprite(new GImage ("closedDoor.png", 300, 100));
-									itemLabel.put("closedDoor", "Press e to unlock door.");
-									program.add(i.getLabel());
-								}
-								program.add(i.getSprite()); //Add item sprite to the screen.
-								if (i instanceof PickUpItem && !((PickUpItem)i).getInInventory()) { // check if item is not in player inventory
-									program.add(i.getLabel()); //Add PickUp item label to the screen.
-								}
-							}
-							for (GImage heart: playerHealth) { // add all hearts to display
-								heart.setSize(50,50);
-								program.add(heart);
-							}
-							for (Enemy enemy: enemies) { //Add all enemy sprites to screen.
-								program.add(enemy.getSprite()); 
-							}
-							program.add(player.getSprite()); //Add player sprite to screen.
-							program.add(inventoryBox); //Add inventory box to the screen.
-							if (!program.isCloseRangeWeapon()) { // check if weapon is long range
-								program.add(player.getBulletSprite()); //Add bulletSprite
-							}
-							player.displayInventory(inventoryBox); //display inventory correctly
-							player.getSprite().setLocation(program.getWidth() / 2 - player.getSprite().getWidth() / 2, program.getHeight() - 100); //set player location to bottom of screen
-							player.getSprite().sendToFront(); // move player to front of the screen
+							createRoom(currentRoom + 1); // create next room
 						}
 						int removeIndex = -1;
 						if (player.getInventory().size() > 0) {
