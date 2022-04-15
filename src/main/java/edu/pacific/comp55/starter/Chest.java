@@ -4,12 +4,36 @@ import java.util.ArrayList; // for arrayList
 
 public class Chest extends Item {
 	private GImage openChest;
+	private ArrayList<Item> items;
+	private boolean isChestOpen;
 
 	public Chest(GImage image, String name) { // image is when chest closed
 		super(image, name);
+		isChestOpen = false;
 	}
 
+	public ArrayList<Item> releaseItems() {
+		items = new ArrayList<Item>(); // initialize item array list
+		GImage heartSprite = new GImage ("Heart.png", super.getSprite().getX() - 25, super.getSprite().getY()); //Create a new sprite for heart.
+		heartSprite.setSize(25, 25); //Resize sprite to make it smaller.
+		PickUpItem heart = new PickUpItem(heartSprite, "heart");
+		items.add(heart);
+		GImage heartSprite2 = new GImage ("Heart.png", super.getSprite().getX() + 25, super.getSprite().getY() + 25); //Create a new sprite for heart.
+		heartSprite.setSize(25, 25); //Resize sprite to make it smaller.
+		PickUpItem heart2 = new PickUpItem(heartSprite2, "heart");
+		items.add(heart2);
+		return items;
+	}
+	
 	public static void main(String[] args) {
 
+	}
+
+	public boolean isChestOpen() {
+		return isChestOpen;
+	}
+
+	public void setChestOpen(boolean isChestOpen) {
+		this.isChestOpen = isChestOpen;
 	}
 }

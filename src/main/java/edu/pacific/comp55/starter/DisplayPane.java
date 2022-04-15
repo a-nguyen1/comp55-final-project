@@ -28,7 +28,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private int currentRoom;
 	private double mouseX;
 	private double mouseY;
-	private boolean isChestOpen;
 	
 	//Class objects
 	private Player player;
@@ -45,7 +44,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 		currentLevel = 1;
 		currentRoom = 1;
-		isChestOpen = false;
 		
 		playerHealth = new ArrayList<GImage>(); // initialize playerHealth
 		playerInventory = new ArrayList<GImage>(); // initialize playerInventory
@@ -233,6 +231,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					i.setLabel("");
 				}
 			}
+			
 			if (timerCount % 300 == 0) {
 				player.setAttackAvailable(true); //player can now attack
 			}
@@ -267,6 +266,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
             System.out.println("X: " + x + "\nY: " + y);
             double weaponRange = player.getWeapon().getRange();
             GRectangle attackArea = new GRectangle(e.getX(), e.getY(), weaponRange, weaponRange);
+            System.out.println("Attack area " + attackArea.getX() + ", " + attackArea.getY());
 			ArrayList<Integer> removeEnemyIndex = new ArrayList<Integer>();
 			for (int z = 0; z < enemies.size(); z++) { // loop for all enemies
 				Enemy enemy = enemies.get(z);
@@ -337,19 +337,23 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					updateInventory();
 				}
 				else if (nearestItem instanceof Chest) {
-					if (!isChestOpen) {
-						GImage openChestSprite = new GImage("open-chest.png", 500, 200); //Create an open chest sprite for switch.
+					if (!((Chest) nearestItem).isChestOpen()) {
+						GImage openChestSprite = new GImage("open-chest.png", nearestItem.getSprite().getX(), nearestItem.getSprite().getY()); //Create an open chest sprite for switch.
 						openChestSprite.setSize(25, 25);
-						program.remove(items.get(2).getSprite()); //Remove closed chest sprite.
-						items.get(2).setSprite(openChestSprite); //set the sprite to the open chest.
+						program.remove(nearestItem.getSprite()); //Remove closed chest sprite.
+						nearestItem.setSprite(openChestSprite); //set the sprite to the open chest.
 						program.add(openChestSprite); //Add open chest sprite.
-						GImage heartSprite2 = new GImage("Heart.png", 480, 200); 
-						GImage heartSprite3 = new GImage("Heart.png", 520, 200);
-						program.add(heartSprite2);
-						program.add(heartSprite3);
-						System.out.println("Chest is now open");
+						ArrayList<Item> itemsToShow = ((Chest) nearestItem).releaseItems();
+						for (Item i : itemsToShow) { //Add the chest items to screen.
+							program.add(i.getSprite()); //add items from chest to screen.
+							program.add(i.getLabel()); //add label to screen.
+							items.add(i); //add item to items.
+							
+						}
+						((Chest) nearestItem).setChestOpen(true); //Chest is open.
+						program.remove(nearestItem.getLabel()); //Remove chest label.
+						player.getSprite().sendToFront();
 					}
-					isChestOpen = true;
 					
 				}
 				else if (nearestItem instanceof Door) { //if nearest item is a Door
