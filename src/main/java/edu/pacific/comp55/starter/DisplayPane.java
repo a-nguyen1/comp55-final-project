@@ -359,7 +359,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						items.get(2).setSprite(openChestSprite); //set the sprite to the open chest.
 						program.add(openChestSprite); //Add open chest sprite.
 						GImage heartSprite2 = new GImage("Heart.png", 480, 200); 
+						GImage heartSprite3 = new GImage("Heart.png", 520, 200);
 						program.add(heartSprite2);
+						program.add(heartSprite3);
+						System.out.println("Chest is now open");
 					}
 					isChestOpen = true;
 					
