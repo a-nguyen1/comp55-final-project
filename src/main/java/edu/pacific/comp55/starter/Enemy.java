@@ -20,12 +20,6 @@ public class Enemy extends Character {
 		return xDiff <= detectionRange && yDiff <= detectionRange; //returns true if x,y coordinates are within 100 in x direction and y direction
 	}
 	
-	public boolean overlapping(double x, double y, double width, double height) {
-		double xDiff = Math.abs(x - super.getSprite().getX()); // find difference in x coordinates
-		double yDiff = Math.abs(y - super.getSprite().getY()); // find difference in y coordinates
-		return xDiff <= width && yDiff <= height; //returns true if x,y coordinates are within 100 in x direction and y direction
-	} 
-	
 	public Weapon getWeapon() {
 		return weapon;
 	}

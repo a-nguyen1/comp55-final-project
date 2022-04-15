@@ -11,6 +11,7 @@ import javax.swing.Timer; // for Timer
 import acm.graphics.GImage; // for GImage
 import acm.graphics.GObject; // for GObject
 import acm.graphics.GRect; // for GRect
+import acm.graphics.GRectangle;
 
 public class DisplayPane extends GraphicsPane implements ActionListener{
 	private MainApplication program;
@@ -95,24 +96,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		for (GImage tile: backgroundTiles) { //Add all tiles to the screen.
 			program.add(tile);
 		}
-		/*
-		for (Item i : items) {
-			if (i.getItemType() == "key") { //reset key to default values
-				((PickUpItem)i).setInInventory(false);
-			}
-			else if (i.getItemType() == "openDoor") { //reset door to default values
-				i.setItemType("closedDoor");
-				((Door)i).setLocked(true);
-				i.setSprite(new GImage ("closedDoor.png", 300, 100));
-				itemLabel.put("closedDoor", "Press e to unlock door.");
-				program.add(i.getLabel());
-			}
-			if (i instanceof PickUpItem && !((PickUpItem)i).getInInventory()) { // check if item is not in player inventory
-				program.add(i.getLabel()); //Add PickUp item label to the screen.
-			}
-			program.add(i.getSprite()); //Add item sprite to the screen.
-		}
-		*/
 		
 		for (Item i : items) {
 			program.add(i.getSprite()); //Add item sprite to the screen.
@@ -120,14 +103,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		//TODO add weapon to screen and make player weapon show in player hand 
 		if (program.isCloseRangeWeapon()) {
-			Weapon weapon = new Weapon(new GImage("sword.png"), "close range weapon"); 
-			weapon.setRange(50);
+			Weapon weapon = new Weapon(new GImage("sword.png"), "close range weapon", 50);
 			player.setWeapon(weapon);
 		}
 		else { //long range weapon selected
 			player.setSprite(new GImage ("wizardSprite.png", program.getWidth()/2, program.getHeight()/2));
-			Weapon weapon = new Weapon(new GImage("bow.png"), "long range weapon");
-			weapon.setRange(200);
+			Weapon weapon = new Weapon(new GImage("bow.png"), "long range weapon", 200);
 			player.setWeapon(weapon);
 			program.add(player.getBulletSprite());
 		}
@@ -178,8 +159,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					GImage bulletSprite = player.getBulletSprite();
 					player.setBulletDistance(player.getBulletDistance() + 1);
 					bulletSprite.movePolar(1, player.getWeapon().getAngle()); // move towards mouse click   
-					double xDiff = Math.abs(bulletSprite.getX() + bulletSprite.getWidth()/2 - (enemySprite.getX() + enemySprite.getWidth() / 2)); // find difference in x coordinates
-					double yDiff = Math.abs(bulletSprite.getY() + bulletSprite.getHeight()/2 - (enemySprite.getY() + enemySprite.getHeight() / 2)); // find difference in y coordinates
 					if (enemy.isDamaged()) {
 						enemy.setInvincibilityCounter(enemy.getInvincibilityCounter() + 1); //enemy is invincible for a time.
 						if (enemy.getInvincibilityCounter() > 100) { //enemy is not invincible.
@@ -188,7 +167,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						}
 					}
 					else {
-						if (xDiff <= enemySprite.getWidth() && yDiff <= enemySprite.getHeight()) { //returns true if x,y coordinates are within enemy
+						if (Collision.check(bulletSprite.getBounds(), enemy.getSprite().getBounds())) { //returns true if enemy collides with bullet 
 							enemy.changeHealth(-1);
 							enemy.setDamaged(true); //Enemy is damaged.
 							System.out.println(enemy.getHealth());
@@ -214,7 +193,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					if (timerCount % 100 == 0) {
 						enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // enemy moves towards player
 					}
-					if (enemy.overlapping(player.getSprite().getX(), player.getSprite().getY(), player.getSprite().getWidth(), player.getSprite().getHeight())) {
+					if (Collision.check(enemy.getSprite().getBounds(), player.getSprite().getBounds())) {
 						playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // player moves away from enemy
 						if (enemy.getEnemyType() == "close range") {
 							player.changeHealth(-1);
@@ -224,9 +203,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						else {
 							System.out.println("Player not hit: " + player.getHealth());
 						}
-						//if (player.isDead()) {
-							//program.remove(playerSprite);
-						//}
+						if (player.isDead()) {
+							System.out.println("Player is dead");
+						}
 					}
 				}
 			}
@@ -280,25 +259,32 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	}
 	
 	@Override
-	public void mouseClicked(MouseEvent e) { //TODO implement close range attack
+	public void mouseClicked(MouseEvent e) { //TODO implement close range attack (change so e.getX and e.getY are scaled down near player)
 		if (program.isCloseRangeWeapon()) {
+			double x = e.getX() - (player.getSprite().getX() + (player.getSprite().getWidth() / 2)); //x is set to horizontal distance between mouse and middle of playerSprite
+            double y = e.getY() - (player.getSprite().getY() + (player.getSprite().getHeight() / 2));  //y is set to vertical distance between mouse and middle of playerSprite
+            //System.out.println("Angle: " + 180 * Math.atan2(-y, x) / Math.PI);
+            System.out.println("X: " + x + "\nY: " + y);
+            double weaponRange = player.getWeapon().getRange();
+            GRectangle attackArea = new GRectangle(e.getX(), e.getY(), weaponRange, weaponRange);
 			ArrayList<Integer> removeEnemyIndex = new ArrayList<Integer>();
-			for (int x = 0; x < enemies.size(); x++) {
-				Enemy enemy = enemies.get(x);
-				if (player.canInteract(enemy.getSprite().getX(), enemy.getSprite().getY())) { //player in range of enemy.
+			for (int z = 0; z < enemies.size(); z++) { // loop for all enemies
+				Enemy enemy = enemies.get(z);
+				if (Collision.check(attackArea, enemy.getSprite().getBounds())) { //player in range of enemy.
 					System.out.println("Enemy is hit.");
 					enemy.changeHealth(-1); //Reduce health by 1.
+					//TODO set enemy invincibility
 					if (enemy.isDead()) { //Enemy has no health.
-						removeEnemyIndex.add(x); // add index to ArrayList
+						removeEnemyIndex.add(z); // add index to ArrayList
 						program.remove(enemy.getSprite()); //Remove enemy sprite from the screen since it is dead.
 						System.out.println("Enemy is dead.");
 					}
 				}
 			}
 			if (removeEnemyIndex.size() > 0) { // remove all dead enemies
-				for (int y = 0; y < removeEnemyIndex.size(); y++) {
-					System.out.println(removeEnemyIndex.get(y));
-					enemies.remove((int)removeEnemyIndex.get(y));
+				for (int w = 0; w < removeEnemyIndex.size(); w++) {
+					System.out.println(removeEnemyIndex.get(w));
+					enemies.remove((int)removeEnemyIndex.get(w));
 				}
 			}
 		}
@@ -310,10 +296,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	            double x = e.getX() - ( playerSprite.getX() + (player.getSprite().getWidth() / 2));
 	            //y is set to vertical distance between mouse and middle of playerSprite
 	            double y = e.getY() - (playerSprite.getY() + (player.getSprite().getHeight() / 2));
-	            y = - y;
-	            player.getWeapon().setAngle(180 * Math.atan2(y, x) / Math.PI);	
+	            player.getWeapon().setAngle(180 * Math.atan2(-y, x) / Math.PI);	
 				bulletSprite.setVisible(true);
-				player.setBulletTraveling(true);
+				player.setBulletTraveling(true); // move bulletSprite under actionPerformed() method
 				bulletSprite.setLocation( playerSprite.getX() + (player.getSprite().getWidth() / 2) - bulletSprite.getWidth() / 2, playerSprite.getY() + (player.getSprite().getHeight() / 2) - bulletSprite.getHeight() / 2);
 			}
 		}
@@ -385,6 +370,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								player.removeFromInventory(removeIndex); // remove key from player inventory
 								if (nearestItem.getItemType() == "closedDoor") { // change door to open door
 									nearestItem.setItemType("openDoor");
+									program.remove(nearestItem.getSprite()); // remove closed door GImage from screen
 									program.add(((Door)nearestItem).getOpenDoor()); // add open door GImage to screen
 									((GObject)player.getSprite()).sendToFront(); // send player to the front of the screen
 								}

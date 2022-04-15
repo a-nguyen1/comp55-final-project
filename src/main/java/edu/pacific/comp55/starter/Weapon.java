@@ -6,8 +6,9 @@ public class Weapon extends Item {
 	private int range;
 	private double angle;
 	
-	public Weapon(GImage image, String name) {
+	public Weapon(GImage image, String name, int weaponRange) {
 		super(image, name);
+		range = weaponRange;
 	}
 	
 	public void setRange(int r) {
