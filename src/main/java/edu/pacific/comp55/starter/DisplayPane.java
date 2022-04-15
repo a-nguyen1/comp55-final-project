@@ -9,6 +9,7 @@ import java.util.HashMap; // for HashMap
 import javax.swing.Timer; // for Timer
 
 import acm.graphics.GImage; // for GImage
+import acm.graphics.GLabel;
 import acm.graphics.GObject; // for GObject
 import acm.graphics.GRect; // for GRect
 import acm.graphics.GRectangle;
@@ -45,6 +46,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		currentLevel = 1;
 		currentRoom = 1;
 		
+		bossHealth = new ArrayList<GImage>(); //initialize bossHealth
 		playerHealth = new ArrayList<GImage>(); // initialize playerHealth
 		playerInventory = new ArrayList<GImage>(); // initialize playerInventory
 		items = new ArrayList<Item>(); // initialize items in room
@@ -113,6 +115,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		for (Enemy enemy: enemies) { // loop for all enemies
 			program.add(enemy.getSprite()); //Add enemy sprite to screen.
 		}
+		if (currentRoom > 2) {
+			GLabel bossLabel = new GLabel("Big Goblin", 700, 25);
+			program.add(bossLabel);
+		}
+		
 		program.add(inventoryBox); //Add inventory box to the screen.
 		updateHealth(); // update player health display
 		updateInventory(); // update player inventory display
@@ -120,16 +127,28 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	}
 	
 	public void updateHealth() {
-		while (playerHealth.size() > 0) { // remove all hearts from screen
+		while (playerHealth.size() > 0) { // remove all player hearts from screen
 			program.remove(playerHealth.get(0));
 			playerHealth.remove(0);
 		}
 		
 		playerHealth = player.displayHealth();
-		for (GImage heart : playerHealth) { // display all hearts
+		for (GImage heart : playerHealth) { // display all player hearts
 			heart.setSize(50,50);
 			program.add(heart);
 		}
+		if (currentRoom > 2) {
+			while (bossHealth.size() > 0) { // remove all boss hearts from screen
+				program.remove(bossHealth.get(0));
+				bossHealth.remove(0);
+			}
+			bossHealth = ((Boss) enemies.get(0)).displayHealth();
+			for (GImage heart : bossHealth) { // display all boss hearts
+				heart.setSize(50,50);
+				program.add(heart);
+			}
+		}
+		
 	}
 	
 	public void updateInventory() { 
@@ -167,6 +186,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					else {
 						if (Collision.check(bulletSprite.getBounds(), enemy.getSprite().getBounds())) { //returns true if enemy collides with bullet 
 							enemy.changeHealth(-1);
+							if (currentRoom > 2) {
+								updateHealth();
+							}
 							enemy.setDamaged(true); //Enemy is damaged.
 							System.out.println(enemy.getHealth());
 							if (enemy.isDead()) { //Enemy has no health.
@@ -273,6 +295,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				if (Collision.check(attackArea, enemy.getSprite().getBounds())) { //player in range of enemy.
 					System.out.println("Enemy is hit.");
 					enemy.changeHealth(-1); //Reduce health by 1.
+					if (currentRoom > 2) {
+						updateHealth();
+					}
+					
 					//TODO set enemy invincibility
 					if (enemy.isDead()) { //Enemy has no health.
 						removeEnemyIndex.add(z); // add index to ArrayList
@@ -361,7 +387,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					boolean unlockedDoor = ((Door)nearestItem).unlock(player.getInventory()); // to check if door is unlocked
 					if (unlockedDoor){
 						if (doorStateBefore == unlockedDoor) { // door has already been opened, so create next room
-							createRoom(currentRoom + 1); // create next room
+							currentRoom++;
+							createRoom(currentRoom); // create next room
 						}
 						int removeIndex = -1;
 						if (player.getInventory().size() > 0) {

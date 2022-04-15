@@ -19,7 +19,7 @@ public class Room {
 	public Room(int levelNumber, int roomNumber, double w, double h) {
 		level = levelNumber;
 		room = roomNumber;
-		if (level <= 1) {
+		if (room <= 2) {
 			backgroundTileName = "GrayTile.png";
 		} 
 		else { // levelNumber > 1
@@ -43,26 +43,37 @@ public class Room {
 	
 	public ArrayList<Enemy> getEnemies() {
 		enemies = new ArrayList<Enemy>(); // initialize enemy array list
+		if (room <= 2) {
+			
+			//create enemy object
+			GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 120);
+			Enemy enemy = new Enemy(enemySprite, 2, "close range"); //Enemy has 2 health points.
+			enemy.setSpeed(5);
+			enemies.add(enemy); //add enemy to ArrayList
+			
+			//Second enemy object
+			GImage enemySprite2 = new GImage ("goblin-sprite.png", 530, 120);
+			Enemy enemy2 = new Enemy(enemySprite2, 2, "close range"); //Enemy has 2 health points.
+			enemy2.setSpeed(5);
+			enemies.add(enemy2); //add enemy to ArrayList
+			
+			//TODO implement long range enemy
+			
+			//Third enemy object (long range)
+			/*GImage enemySprite3 = new GImage ("bigger-enemy-sprite.png", 300, 300);
+			Enemy enemy3 = new Enemy(enemySprite3, 2, "long range"); //Enemy has 2 health points.
+			enemy3.setSpeed(5);
+			enemies.add(enemy3); //add enemy to ArrayList*/
+		}
+		else {
+			GImage bossSprite = new GImage ("bigger-enemy-sprite.png", 300, 120);
+			Boss boss = new Boss(bossSprite, 5, "close range"); //Boss has 5 health points.
+			boss.setSpeed(10);
+			boss.setDetectionRange(800);
+			enemies.add(boss); //add enemy to ArrayList
+			
+		}
 		
-		//create enemy object
-		GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 120);
-		Enemy enemy = new Enemy(enemySprite, 2, "close range"); //Enemy has 2 health points.
-		enemy.setSpeed(5);
-		enemies.add(enemy); //add enemy to ArrayList
-		
-		//Second enemy object
-		GImage enemySprite2 = new GImage ("goblin-sprite.png", 530, 120);
-		Enemy enemy2 = new Enemy(enemySprite2, 2, "close range"); //Enemy has 2 health points.
-		enemy2.setSpeed(5);
-		enemies.add(enemy2); //add enemy to ArrayList
-		
-		//TODO implement long range enemy
-		
-		//Third enemy object (long range)
-		/*GImage enemySprite3 = new GImage ("bigger-enemy-sprite.png", 300, 300);
-		Enemy enemy3 = new Enemy(enemySprite3, 2, "long range"); //Enemy has 2 health points.
-		enemy3.setSpeed(5);
-		enemies.add(enemy3); //add enemy to ArrayList*/
 		
 		return enemies; 
 	}

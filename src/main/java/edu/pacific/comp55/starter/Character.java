@@ -1,4 +1,6 @@
 package edu.pacific.comp55.starter;
+import java.util.ArrayList;
+
 import acm.graphics.GImage;
 
 public class Character {
@@ -16,7 +18,8 @@ public class Character {
 		health = hp;
 		isDamaged = false;
 	}
-
+	
+	
 	public void changeHealth(int h) { 
 		health = health + h; //Add health or remove health depending if h is positive or negative.
 	}
