@@ -86,7 +86,7 @@ public class Room {
 		items.add(heart);
 				
 		//create chest object
-		GImage chestSprite = new GImage ("chest.png", 500, 200);
+		GImage chestSprite = new GImage ("closed-chest.png", 500, 200);
 		chestSprite.setSize(25, 25);
 		Chest chest = new Chest(chestSprite, "chest");
 		items.add(chest);

@@ -27,6 +27,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private int currentRoom;
 	private double mouseX;
 	private double mouseY;
+	private boolean isChestOpen;
 	
 	//Class objects
 	private Player player;
@@ -35,6 +36,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private Timer timer;
 	
 	private int timerCount;
+	//GImage openChestSprite = new GImage("open-chest.png", 500, 200); //Create an open chest sprite for switch.
 	
 	public DisplayPane(MainApplication app) {
 		super();
@@ -42,6 +44,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 		currentLevel = 1;
 		currentRoom = 1;
+		isChestOpen = false;
 		
 		playerHealth = new ArrayList<GImage>(); // initialize playerHealth
 		playerInventory = new ArrayList<GImage>(); // initialize playerInventory
@@ -347,6 +350,18 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					((PickUpItem) nearestItem).setInInventory(true);
 					program.remove(nearestItem.getLabel()); // remove item label
 					updateInventory();
+				}
+				else if (nearestItem instanceof Chest) {
+					if (!isChestOpen) {
+						GImage openChestSprite = new GImage("open-chest.png", 500, 200); //Create an open chest sprite for switch.
+						openChestSprite.setSize(25, 25);
+						program.remove(items.get(2).getSprite()); //Remove closed chest sprite.
+						items.get(2).setSprite(openChestSprite); //set the sprite to the open chest.
+						program.add(openChestSprite); //Add open chest sprite.
+						//GImage heartSprite2 = new GImage("") 
+					}
+					isChestOpen = true;
+					
 				}
 				else if (nearestItem instanceof Door) { //if nearest item is a Door
 					boolean doorStateBefore = !((Door)nearestItem).getLocked(); // to check if door is already opened
