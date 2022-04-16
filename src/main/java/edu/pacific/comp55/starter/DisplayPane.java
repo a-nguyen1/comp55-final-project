@@ -220,10 +220,17 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						if (enemy.getEnemyType() == "close range") {
 							player.changeHealth(-1);
 							updateHealth();
-							System.out.println("Player hit: " + player.getHealth());
+							System.out.println("Player hit by close enemy: " + player.getHealth());
 						}
-						else {
-							System.out.println("Player not hit: " + player.getHealth());
+						else if (enemy.getEnemyType() == "long range") {
+							player.changeHealth(-1);
+							updateHealth();
+							System.out.println("Player hit by long enemy: " + player.getHealth());
+						}
+						else if (enemy.getEnemyType() == "Big Goblin"){
+							player.changeHealth(-2);
+							updateHealth();
+							System.out.println("Player hit by boss: " + player.getHealth());
 						}
 						if (player.isDead()) {
 							System.out.println("Player is dead");
