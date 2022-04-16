@@ -68,10 +68,14 @@ public class Character {
 		this.speed = speed;
 	}
 	
-	public static void main(String[] args) {
-
+	public void move(double x, double y) {
+		getSprite().move(x, y);
 	}
-
+	
+	public void movePolar(double r, double theta) {
+		getSprite().movePolar(r, theta);
+	}
+	
 	public boolean isDamaged() {
 		return isDamaged;
 	}
@@ -94,5 +98,9 @@ public class Character {
 
 	public void setAttackCooldown(int attackCooldown) {
 		this.attackCooldown = attackCooldown;
+	}
+	
+	public static void main(String[] args) {
+
 	}
 }
