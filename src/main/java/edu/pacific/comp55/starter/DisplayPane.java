@@ -116,8 +116,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			program.add(enemy.getSprite()); //Add enemy sprite to screen.
 		}
 		if (currentRoom > 2) {
-			GLabel bossLabel = new GLabel("Big Goblin", 700, 25);
-			program.add(bossLabel);
+			((Boss) enemies.get(0)).setBossLabel(new GLabel("Big Goblin", 700, 25));
+			program.add(((Boss) enemies.get(0)).getBossLabel());
 		}
 		
 		program.add(inventoryBox); //Add inventory box to the screen.
@@ -143,6 +143,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				bossHealth.remove(0);
 			}
 			bossHealth = ((Boss) enemies.get(0)).displayHealth();
+			if (enemies.get(0).isDead()) {
+				program.remove(((Boss) enemies.get(0)).getBossLabel());
+			}
 			for (GImage heart : bossHealth) { // display all boss hearts
 				heart.setSize(50,50);
 				program.add(heart);

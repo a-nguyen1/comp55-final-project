@@ -67,6 +67,7 @@ public class Room {
 		}
 		else {
 			GImage bossSprite = new GImage ("bigger-enemy-sprite.png", 300, 120);
+			bossSprite.setSize(50,50);
 			Boss boss = new Boss(bossSprite, 5, "close range"); //Boss has 5 health points.
 			boss.setSpeed(10);
 			boss.setDetectionRange(800);
