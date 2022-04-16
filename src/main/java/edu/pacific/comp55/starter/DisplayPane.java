@@ -102,7 +102,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		//TODO add weapon to screen and make player weapon show in player hand 
 		if (program.isCloseRangeWeapon()) {
-			Weapon weapon = new Weapon(new GImage("sword.png"), "close range weapon", 50);
+			Weapon weapon = new Weapon(new GImage("sword.png"), "close range weapon", 35);
 			player.setWeapon(weapon);
 		}
 		else { //long range weapon selected
@@ -153,7 +153,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 	}
 	
-	public void updateInventory() { 
+	public void updateInventory() {
 		while (playerInventory.size() > 0) { // remove all inventory items from screen
 			program.remove(playerInventory.get(0));
 			playerInventory.remove(0);
@@ -289,24 +289,74 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	@Override
 	public void mouseClicked(MouseEvent e) { //TODO implement close range attack (change so e.getX and e.getY are scaled down near player)
+		GImage playerSprite = player.getSprite();
 		if (program.isCloseRangeWeapon()) {
-			double x = e.getX() - (player.getSprite().getX() + (player.getSprite().getWidth() / 2)); //x is set to horizontal distance between mouse and middle of playerSprite
-            double y = e.getY() - (player.getSprite().getY() + (player.getSprite().getHeight() / 2));  //y is set to vertical distance between mouse and middle of playerSprite
-            //System.out.println("Angle: " + 180 * Math.atan2(-y, x) / Math.PI);
-            System.out.println("X: " + x + "\nY: " + y);
+			double x = e.getX() - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between mouse and middle of playerSprite
+            double y = e.getY() - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between mouse and middle of playerSprite
+            double angle = 180 * Math.atan2(-y, x) / Math.PI;
+            double xOffset;
+            double yOffset;
             double weaponRange = player.getWeapon().getRange();
-            GRectangle attackArea = new GRectangle(e.getX(), e.getY(), weaponRange, weaponRange);
-            System.out.println("Attack area " + attackArea.getX() + ", " + attackArea.getY());
+            if (angle >= 0) {
+            	if (angle > 90) {
+            		if (angle > 135) { // angle > 135
+            			xOffset = - weaponRange - player.getSprite().getWidth() / 2;
+            			yOffset = - weaponRange;
+            		}
+            		else { // 90 < angle <= 135
+            			xOffset = - weaponRange;
+            			yOffset = - weaponRange - player.getSprite().getHeight() / 2;
+            		}
+            	}
+            	else { 
+            		if (angle <= 45) { // 0 <= angle <= 45
+            			xOffset = player.getSprite().getWidth() / 2;
+            			yOffset = - weaponRange;
+            		}
+            		else { // 45 < angle <= 90
+            			xOffset = 0;
+            			yOffset = - weaponRange - player.getSprite().getHeight() / 2;
+            		}
+            	}
+            }
+            else { // angle < 0
+            	if (angle < -90) {
+            		if (angle < -135) { // angle < -135
+            			xOffset = - weaponRange - player.getSprite().getWidth() / 2;
+            			yOffset = 0;
+            		}
+            		else { // -90 > angle >= -135
+            			xOffset = - weaponRange;
+            			yOffset = player.getSprite().getHeight() / 2;
+            		}
+            	}
+            	else { 
+            		if (angle >= -45) { // 0 > angle >= -45
+            			xOffset = player.getSprite().getWidth() / 2;
+            			yOffset = 0;
+            		}
+            		else { // -45 > angle >= -90
+            			xOffset = 0;
+            			yOffset = player.getSprite().getHeight() / 2;
+            		}
+            	}
+            }
+            // TODO create attackArea based on angle
+            // System.out.println("Angle: " + angle);
+            GRectangle attackArea = new GRectangle(xOffset + playerSprite.getX() + playerSprite.getWidth() / 2, yOffset + playerSprite.getY() + playerSprite.getHeight() / 2, weaponRange, weaponRange);
+            GImage attack = new GImage("door.png", xOffset + playerSprite.getX() + playerSprite.getWidth() / 2, yOffset + playerSprite.getY() + playerSprite.getHeight() / 2);
+            attack.setSize(weaponRange, weaponRange);
+            program.add(attack);
+            //System.out.println("Attack area " + attackArea.getX() + ", " + attackArea.getY());
 			ArrayList<Integer> removeEnemyIndex = new ArrayList<Integer>();
 			for (int z = 0; z < enemies.size(); z++) { // loop for all enemies
 				Enemy enemy = enemies.get(z);
-				if (Collision.check(attackArea, enemy.getSprite().getBounds())) { //player in range of enemy.
+				if (Collision.check(attackArea.getBounds(), enemy.getSprite().getBounds())) { //player in range of enemy.
 					System.out.println("Enemy is hit.");
 					enemy.changeHealth(-1); //Reduce health by 1.
 					if (currentRoom > 2) {
 						updateHealth();
 					}
-					
 					//TODO set enemy invincibility
 					if (enemy.isDead()) { //Enemy has no health.
 						removeEnemyIndex.add(z); // add index to ArrayList
@@ -325,7 +375,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		else { // long range attack
 			if (player.isAttackAvailable()) {
 				GImage bulletSprite = player.getBulletSprite();
-				GImage playerSprite = player.getSprite();
 				//x is set to horizontal distance between mouse and middle of playerSprite
 	            double x = e.getX() - ( playerSprite.getX() + (playerSprite.getWidth() / 2));
 	            //y is set to vertical distance between mouse and middle of playerSprite
