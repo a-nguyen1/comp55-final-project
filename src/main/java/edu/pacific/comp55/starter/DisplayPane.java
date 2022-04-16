@@ -37,7 +37,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private Timer timer;
 	
 	private int timerCount;
-	//GImage openChestSprite = new GImage("open-chest.png", 500, 200); //Create an open chest sprite for switch.
 	
 	public DisplayPane(MainApplication app) {
 		super();
@@ -256,7 +255,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					i.setLabel("");
 				}
 			}
-			
 			if (timerCount % 300 == 0) {
 				player.setAttackAvailable(true); //player can now attack
 			}
@@ -322,13 +320,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				GImage bulletSprite = player.getBulletSprite();
 				GImage playerSprite = player.getSprite();
 				//x is set to horizontal distance between mouse and middle of playerSprite
-	            double x = e.getX() - ( playerSprite.getX() + (player.getSprite().getWidth() / 2));
+	            double x = e.getX() - ( playerSprite.getX() + (playerSprite.getWidth() / 2));
 	            //y is set to vertical distance between mouse and middle of playerSprite
-	            double y = e.getY() - (playerSprite.getY() + (player.getSprite().getHeight() / 2));
+	            double y = e.getY() - (playerSprite.getY() + (playerSprite.getHeight() / 2));
 	            player.getWeapon().setAngle(180 * Math.atan2(-y, x) / Math.PI);	
 				bulletSprite.setVisible(true);
 				player.setBulletTraveling(true); // move bulletSprite under actionPerformed() method
-				bulletSprite.setLocation( playerSprite.getX() + (player.getSprite().getWidth() / 2) - bulletSprite.getWidth() / 2, playerSprite.getY() + (player.getSprite().getHeight() / 2) - bulletSprite.getHeight() / 2);
+				bulletSprite.setLocation( playerSprite.getX() + (playerSprite.getWidth() / 2) - bulletSprite.getWidth() / 2, playerSprite.getY() + (playerSprite.getHeight() / 2) - bulletSprite.getHeight() / 2);
 			}
 		}
 		player.setAttackAvailable(false); // Initiate attack cool down.
@@ -350,7 +348,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			timer.stop();
 			player.setDashAvailable(false);
 			// x is set to horizontal distance between mouse and middle of playerSprite
-			double x = mouseX - (playerSprite.getX() +playerSprite.getWidth() / 2);
+			double x = mouseX - (playerSprite.getX() + playerSprite.getWidth() / 2);
 			// y is set to vertical distance between mouse and middle of playerSprite
 			double y = mouseY - (playerSprite.getY() + playerSprite.getHeight() / 2);
 			playerSprite.movePolar(player.getSpeed() * player.getSpeed() * 2, 180 * Math.atan2(-y, x) / Math.PI); // dash in direction of mouse
@@ -381,7 +379,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						}
 						((Chest) nearestItem).setChestOpen(true); //Chest is open.
 						program.remove(nearestItem.getLabel()); //Remove chest label.
-						player.getSprite().sendToFront();
+						playerSprite.sendToFront();
 					}
 					
 				}
@@ -406,7 +404,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 									nearestItem.setItemType("openDoor");
 									program.remove(nearestItem.getSprite()); // remove closed door GImage from screen
 									program.add(((Door)nearestItem).getOpenDoor()); // add open door GImage to screen
-									((GObject)player.getSprite()).sendToFront(); // send player to the front of the screen
+									((GObject)playerSprite).sendToFront(); // send player to the front of the screen
 								}
 							} 
 						}

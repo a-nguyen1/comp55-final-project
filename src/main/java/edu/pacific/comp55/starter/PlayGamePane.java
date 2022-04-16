@@ -2,50 +2,51 @@ package edu.pacific.comp55.starter;
 import java.awt.event.MouseEvent;
 
 import acm.graphics.GImage;
+import acm.graphics.GLabel;
 import acm.graphics.GObject;
 
 public class PlayGamePane extends GraphicsPane {
 	private MainApplication program; // you will use program to get access to
 										// all of the GraphicsProgram calls
-	private GImage longRangeWeapon;
-	private GParagraph para;
-	private GImage closeRangeWeapon;
+	private GImage longRangeCharacter;
+	private GImage closeRangeCharacter;
+	private GLabel chooseCharacterLabel;
 	
 	public PlayGamePane(MainApplication app) {
 		this.program = app;
-		longRangeWeapon = new GImage("bow.png", program.getWidth() * 2 / 3, 200);
-		closeRangeWeapon = new GImage("sword.png", program.getWidth() / 3, 200);
-		para = new GParagraph("Choose Your Weapon", program.getWidth() / 3, 100);
-		para.setFont("Arial-24");
+		longRangeCharacter = new GImage("wizardSprite.png", program.getWidth() * 2 / 3, 200);
+		closeRangeCharacter = new GImage("knight-sprite-with-sword.png", program.getWidth() / 3, 200);
+		chooseCharacterLabel = new GLabel("Choose Your Character", program.getWidth() / 3, 100);
+		chooseCharacterLabel.setFont("Arial-24");
 	}
 
 	@Override
 	public void showContents() {
-		program.add(longRangeWeapon);
-		program.add(closeRangeWeapon);
-		program.add(para);
+		program.add(longRangeCharacter);
+		program.add(closeRangeCharacter);
+		program.add(chooseCharacterLabel);
 	}
 
 	@Override
 	public void hideContents() {
-		program.remove(longRangeWeapon);
-		program.remove(closeRangeWeapon);
-		program.remove(para);
+		program.remove(longRangeCharacter);
+		program.remove(closeRangeCharacter);
+		program.remove(chooseCharacterLabel);
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		GObject obj = program.getElementAt(e.getX(), e.getY());
-		if (obj == longRangeWeapon) {
+		if (obj == longRangeCharacter) {
 			program.setCloseRangeWeapon(false);
 			startGame();
-		} else if (obj == closeRangeWeapon){
+		} else if (obj == closeRangeCharacter){
 			program.setCloseRangeWeapon(true);
 			startGame();
 		}
 	}
 	public void startGame() {
-		program.remove(para);
+		program.remove(chooseCharacterLabel);
 		program.switchTo(2); //Switch to DisplayPane.
 	}
  }
