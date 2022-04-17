@@ -177,6 +177,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	
 	public void GameOver() {
+		GRect blackBackground = new GRect(0, 0, program.getWidth(), program.getHeight());
+		blackBackground.setFillColor(Color.BLACK);
+		blackBackground.setFilled(true);
+		program.add(blackBackground);
 		GLabel g= new GLabel (" G A M E  O V E R", 175,300);
 		g.setFont(new Font("Merriweather", Font.BOLD, 50));
 		g.setColor(Color.RED);
@@ -261,16 +265,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							System.out.println("Player hit by boss: " + player.getHealth());
 						}
 						if (player.isDead()) {
-							System.out.println("Player is dead");
 							program.removeAll();
-							if (currentRoom <= 2) { 
-								for (Enemy e1 : enemies) {
-									enemies.remove(e1); //Remove all enemies 
-								}
+							while (enemies.size() > 0) { // remove all enemies from ArrayList
+								enemies.remove(0);
 							}
-							//need to remove boss
 							GameOver();
-							
 						}
 					}
 					if (enemy.getEnemyType() == "long range") {
@@ -525,7 +524,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						itemLabel.put("closedDoor", "A key is needed."); 
 					}
 				}
-				//if nearest item is a Chest, open the chest
 				//if nearest item is a Weapon, swap player's current weapon with new weapon
 			}
 			
