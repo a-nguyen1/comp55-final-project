@@ -108,7 +108,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			program.add(i.getLabel()); //Add item label to the screen.
 		}
 		//TODO add weapon to screen and make player weapon show in player hand if possible
-		if (program.isCloseRangeWeapon()) {
+		if (program.isCloseRangeWeapon()) { // close range weapon selected
 			Weapon weapon = new Weapon(new GImage("sword.png"), "close range weapon", 25);
 			player.setWeapon(weapon);
 			attackArea.setVisible(false);
@@ -162,7 +162,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				program.add(heart);
 			}
 		}
-		
 	}
 	
 	public void updateInventory() {
@@ -178,13 +177,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		player.displayInventoryBox(inventoryBox); // display inventory box accordingly
 	}
 	
-	
-	public void GameOver() {
+	public void gameOver() {
 		GRect blackBackground = new GRect(0, 0, program.getWidth(), program.getHeight());
 		blackBackground.setFillColor(Color.BLACK);
 		blackBackground.setFilled(true);
 		program.add(blackBackground);
-		GLabel g= new GLabel (" G A M E  O V E R", 175,300);
+		GLabel g= new GLabel (" G A M E  O V E R", 175, 300);
 		g.setFont(new Font("Merriweather", Font.BOLD, 50));
 		g.setColor(Color.RED);
 		program.add(g);
@@ -229,6 +227,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							System.out.println(enemy.getHealth());
 							if (enemy.isDead()) { //Enemy has no health.
 								removeEnemyIndex.add(z); // add index to ArrayList
+								if (enemy.getEnemyType() == "long range") {
+									program.remove(enemy.getBulletSprite()); // remove bullet from screen
+								}
 								program.remove(enemy.getSprite()); //Remove enemy sprite from the screen since it is dead.
 								System.out.println("Enemy is dead.");
 							}
@@ -266,7 +267,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								while (enemies.size() > 0) { // remove all enemies from ArrayList
 									enemies.remove(0);
 								}
-								GameOver();
+								gameOver();
 							}
 						}
 					}
@@ -322,22 +323,24 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							while (enemies.size() > 0) { // remove all enemies from ArrayList
 								enemies.remove(0);
 							}
-							GameOver();
+							gameOver();
 						}
 					}
-					if (enemy.getEnemyType() == "long range" && enemy.isAttackAvailable()) {
-						GImage bulletSprite = enemy.getBulletSprite();
-						//x is set to horizontal distance between mouse and middle of playerSprite
-			            x = enemySprite.getX() - ( playerSprite.getX() + (playerSprite.getWidth() / 2));
-			            //y is set to vertical distance between mouse and middle of playerSprite
-			            y = enemySprite.getY() - (playerSprite.getY() + (playerSprite.getHeight() / 2));
-			            enemy.getWeapon().setAngle(180 * Math.atan2(-y, x) / Math.PI - 180);	
-						if (!enemy.isBulletTraveling()) { // set initial bullet location when not in motion
-							bulletSprite.setLocation(enemySprite.getX() + (enemySprite.getWidth() / 2) - bulletSprite.getWidth() / 2, enemySprite.getY() + (enemySprite.getHeight() / 2) - bulletSprite.getHeight() / 2);
+					if (enemy.getEnemyType() == "long range" ) {
+						if (enemy.isAttackAvailable()) {
+							GImage bulletSprite = enemy.getBulletSprite();
+							//x is set to horizontal distance between mouse and middle of playerSprite
+							x = enemySprite.getX() - ( playerSprite.getX() + (playerSprite.getWidth() / 2));
+			            	//y is set to vertical distance between mouse and middle of playerSprite
+			            	y = enemySprite.getY() - (playerSprite.getY() + (playerSprite.getHeight() / 2));
+			            	enemy.getWeapon().setAngle(180 * Math.atan2(-y, x) / Math.PI - 180);	
+							if (!enemy.isBulletTraveling()) { // set initial bullet location and enemy attack sprite when not in motion
+								bulletSprite.setLocation(enemySprite.getX() + (enemySprite.getWidth() / 2) - bulletSprite.getWidth() / 2, enemySprite.getY() + (enemySprite.getHeight() / 2) - bulletSprite.getHeight() / 2);
+							}
+							bulletSprite.setVisible(true);
+							enemy.setBulletTraveling(true); // move bulletSprite under actionPerformed() method
+							enemy.setAttackAvailable(false); //enemy can't attack for a time
 						}
-			            bulletSprite.setVisible(true);
-						enemy.setBulletTraveling(true); // move bulletSprite under actionPerformed() method
-						enemy.setAttackAvailable(false); //enemy can't attack for a time
 					}
 				}
 			}
@@ -370,10 +373,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				if (timerCount % 200 == 0) {
 					player.setAttackAvailable(true); //player can now attack
 				}
-				else if (timerCount % 500 == 0) {
+				if (timerCount % 500 == 0) {
 					player.setDashAvailable(true); //player can now dash
-					for (Enemy e2 : enemies) {
-						e2.setAttackAvailable(true); //enemy can now attack
+					for (Enemy e1 : enemies) {
+						e1.setAttackAvailable(true); //enemy can now attack
 					}
 				}
 			}
@@ -477,6 +480,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						}
 						if (enemy.isDead()) { //Enemy has no health.
 							removeEnemyIndex.add(z); // add index to ArrayList
+							if (enemy.getEnemyType() == "long range") {
+								program.remove(enemy.getBulletSprite()); // remove bullet from screen
+							}
 							program.remove(enemy.getSprite()); //Remove enemy sprite from the screen since it is dead.
 							System.out.println("Enemy is dead.");
 						}

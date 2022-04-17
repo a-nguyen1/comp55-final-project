@@ -57,10 +57,8 @@ public class Room {
 			enemy2.setSpeed(5);
 			enemies.add(enemy2); //add enemy to ArrayList
 			
-			//TODO implement long range enemy
-			
 			//Third enemy object (long range)
-			GImage enemySprite3 = new GImage ("FlyingGoblinIdle.png", 300, 300);
+			GImage enemySprite3 = new GImage ("FlyingGoblinAttack.png", 300, 300);
 			Enemy enemy3 = new Enemy(enemySprite3, 2, "long range"); //Enemy has 2 health points.
 			enemy3.setSpeed(5);
 			enemy3.setDetectionRange(300);
@@ -76,10 +74,7 @@ public class Room {
 			boss.setSpeed(10);
 			boss.setDetectionRange(800);
 			enemies.add(boss); //add enemy to ArrayList
-			
 		}
-		
-		
 		return enemies; 
 	}
 	
