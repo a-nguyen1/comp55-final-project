@@ -568,6 +568,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							currentRoom++;
 							createRoom(currentRoom); // create next room
 						}
+						//TODO make removal of key from inventory a method.
 						int removeIndex = -1;
 						if (player.getInventory().size() > 0) {
 							for (int x = 0; x < player.getInventory().size(); x++) {
@@ -592,6 +593,28 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				}
 				//if nearest item is a Weapon, swap player's current weapon with new weapon
 			}
+		}
+		//Player revival if there are hearts in the inventory.
+		else if (keyCode == 82) { // r
+			//TODO make this a method.
+			int removeIndex = -1;
+			int healthIncreaseAcc = 0; //Determine how many times to increase player health.
+			if (player.getInventory().size() > 0) {
+				for (int x = 0; x < player.getInventory().size(); x++) {
+					if (player.getInventory().get(x).getItemType() == "heart") { //Check if there is a heart in the inventory.
+						removeIndex = x;
+						healthIncreaseAcc += 1; //to count how many hearts to add to player health.
+					}
+				}
+				if (removeIndex >= 0) { //check if the player has the heart to remove
+					player.removeFromInventory(removeIndex); //Remove the heart from the inventory.
+					System.out.println("revive");
+				}
+			}
+			updateInventory(); //Update the changes.
+			player.changeHealth(healthIncreaseAcc); //add one health to player for now.
+			updateHealth(); 
+			
 		}
 		// for normalizing diagonal movement
 		if (Math.abs(player.getMoveX()) == 1 && Math.abs(player.getMoveY()) == 1) { // check if diagonal movement is happening
