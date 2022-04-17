@@ -175,7 +175,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	public void GameOver() {
 		GLabel g= new GLabel (" G A M E  O V E R", 175,300);
 		g.setFont(new Font("Merriweather", Font.BOLD, 50));
-		g.setColor(Color.WHITE);
+		g.setColor(Color.RED);
 		program.add(g);
 	}
 
@@ -247,6 +247,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						}
 						if (player.isDead()) {
 							System.out.println("Player is dead");
+							program.removeAll();
+							if (currentRoom <= 2) { 
+								for (Enemy e1 : enemies) {
+									enemies.remove(e1); //Remove all enemies 
+								}
+							}
+							//need to remove boss
 							GameOver();
 						}
 					}
