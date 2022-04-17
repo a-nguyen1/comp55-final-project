@@ -1,4 +1,6 @@
 package edu.pacific.comp55.starter;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -169,6 +171,14 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		player.displayInventoryBox(inventoryBox); // display inventory box accordingly
 	}
 	
+	
+	public void GameOver() {
+		GLabel g= new GLabel (" G A M E  O V E R", 175,300);
+		g.setFont(new Font("Merriweather", Font.BOLD, 50));
+		g.setColor(Color.WHITE);
+		program.add(g);
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		GImage playerSprite = player.getSprite();
@@ -237,6 +247,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						}
 						if (player.isDead()) {
 							System.out.println("Player is dead");
+							GameOver();
 						}
 					}
 				}
