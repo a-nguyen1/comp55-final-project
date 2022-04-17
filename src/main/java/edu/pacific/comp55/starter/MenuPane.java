@@ -23,7 +23,7 @@ public class MenuPane extends GraphicsPane {
 		howToPlay = new GButton("How to Play", program.getWidth()/2.5, program.getHeight()/3, 100, 100);
 		howToPlay.setFillColor(Color.GREEN);
 		
-		musicButtonText = "Music On";
+		musicButtonText = "Audio ON";
 		music = new GButton(musicButtonText, program.getWidth()/2.5, ((program.getHeight()*2)/3)-70, 100, 100);
 		music.setFillColor(Color.GREEN);
 	}
@@ -52,19 +52,21 @@ public class MenuPane extends GraphicsPane {
 			program.switchTo(1); // switch to howToPlay pane
 		}
 		else if (obj == music){
-			if (musicButtonText == "Music On") { // toggle music button from on to off
+			if (musicButtonText == "Audio ON") { // toggle audio button from ON to OFF
 				program.remove(music);
-				musicButtonText = "Music Off";
+				musicButtonText = "Audio OFF";
 				music = new GButton(musicButtonText, program.getWidth()/2.5, ((program.getHeight()*2)/3)-70, 100, 100);
 				music.setFillColor(Color.RED);
 				program.add(music);
+				//TODO set audio OFF here
 			}
-			else { // toggle music button from off to on
+			else { // toggle audio button from OFF to ON
 				program.remove(music);
-				musicButtonText = "Music On";
+				musicButtonText = "Audio ON";
 				music = new GButton(musicButtonText, program.getWidth()/2.5, ((program.getHeight()*2)/3)-70, 100, 100);
 				music.setFillColor(Color.GREEN);
 				program.add(music);
+				//TODO set audio ON here
 			}
 		}
 	}
