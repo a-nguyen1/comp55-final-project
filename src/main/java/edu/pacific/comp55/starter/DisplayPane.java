@@ -38,6 +38,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private GRect inventoryBox;
 	private Timer timer;
 	private SoundEffect sounds;
+	private AudioPlayer backgroundMusic = new AudioPlayer();
 	
 	private int timerCount;
 	
@@ -55,7 +56,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		enemies = new ArrayList<Enemy>(); // initialize enemy array list
 		AudioPlayer p = new AudioPlayer();
 		sounds = new SoundEffect(p, "");
-		
+		backgroundMusic = new AudioPlayer();
 		
 		itemLabel = new HashMap<String, String>();
 		itemLabel.put("key", "Press e to pick up key.");
@@ -128,6 +129,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 		}
 		if (currentRoom > 2) {
+			backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
+			backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play boss background music
 			((Boss) enemies.get(0)).setBossLabel(new GLabel("Big Goblin", 700, 25));
 			program.add(((Boss) enemies.get(0)).getBossLabel());
 		}
@@ -178,6 +181,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	}
 	
 	public void gameOver() {
+		backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
+		backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
+		backgroundMusic.playSound("sounds", "game_over.wav", false); // play game over sound
 		GRect blackBackground = new GRect(0, 0, program.getWidth(), program.getHeight());
 		blackBackground.setFillColor(Color.BLACK);
 		blackBackground.setFilled(true);
@@ -386,6 +392,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	@Override
 	public void showContents() {
 		createRoom(currentRoom); // currentRoom is initially at 1
+		backgroundMusic.playSound("sounds", "basic_loop.wav", true); // play background music
 	}
 
 	@Override
