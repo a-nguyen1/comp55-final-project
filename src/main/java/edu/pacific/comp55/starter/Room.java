@@ -60,10 +60,11 @@ public class Room {
 			//TODO implement long range enemy
 			
 			//Third enemy object (long range)
-			/*GImage enemySprite3 = new GImage ("bigger-enemy-sprite.png", 300, 300);
+			GImage enemySprite3 = new GImage ("FlyingGoblinIdle.png", 300, 300);
 			Enemy enemy3 = new Enemy(enemySprite3, 2, "long range"); //Enemy has 2 health points.
 			enemy3.setSpeed(5);
-			enemies.add(enemy3); //add enemy to ArrayList*/
+			enemy3.setDetectionRange(300);
+			enemies.add(enemy3); //add enemy to ArrayList
 		}
 		else {
 			GImage bossSprite = new GImage ("bigger-enemy-sprite.png", 300, 120);

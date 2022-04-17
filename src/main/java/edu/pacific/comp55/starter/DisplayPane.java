@@ -217,6 +217,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					double y = (enemySprite.getY() + enemySprite.getHeight() / 2) - (playerSprite.getY() + playerSprite.getHeight() / 2);
 					if (timerCount % 100 == 0) {
 						enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // enemy moves towards player
+						if (enemy.getEnemyType() == "long range") {
+							enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI)); // enemy moves away from player
+						}
 					}
 					if (Collision.check(enemy.getSprite().getBounds(), player.getSprite().getBounds())) {
 						playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // player moves away from enemy
@@ -238,6 +241,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						if (player.isDead()) {
 							System.out.println("Player is dead");
 						}
+					}
+					if (enemy.getEnemyType() == "long range") {
+						//TODO implement long range enemy attack
 					}
 				}
 			}
@@ -275,7 +281,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				}
 			}
 		}
-		
 	}
 	
 	@Override
