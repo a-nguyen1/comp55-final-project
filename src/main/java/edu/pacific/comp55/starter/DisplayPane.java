@@ -412,7 +412,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						if (currentRoom > 2) {
 							updateHealth();
 						}
-						//TODO set enemy invincibility
+						//TODO set enemy invincibility if needed
 						if (enemy.isDead()) { //Enemy has no health.
 							removeEnemyIndex.add(z); // add index to ArrayList
 							program.remove(enemy.getSprite()); //Remove enemy sprite from the screen since it is dead.
@@ -524,7 +524,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				}
 				//if nearest item is a Weapon, swap player's current weapon with new weapon
 			}
-			
 		}
 		// for normalizing diagonal movement
 		if (Math.abs(player.getMoveX()) == 1 && Math.abs(player.getMoveY()) == 1) { // check if diagonal movement is happening
