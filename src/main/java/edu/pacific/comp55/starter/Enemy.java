@@ -19,6 +19,7 @@ public class Enemy extends Character {
 		setBulletDistance(0);
 		bulletSprite = new GImage("lightningBallSprite.png", getSprite().getX() + getSprite().getWidth() / 2, getSprite().getY() + getSprite().getHeight() / 2);
 		bulletSprite.setVisible(false);
+		attackAvailable = false;
 	}
 	
 	public boolean canInteract(double x, double y) {

@@ -107,7 +107,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			program.add(i.getSprite()); //Add item sprite to the screen.
 			program.add(i.getLabel()); //Add item label to the screen.
 		}
-		//TODO add weapon to screen and make player weapon show in player hand 
+		//TODO add weapon to screen and make player weapon show in player hand if possible
 		if (program.isCloseRangeWeapon()) {
 			Weapon weapon = new Weapon(new GImage("sword.png"), "close range weapon", 25);
 			player.setWeapon(weapon);
@@ -224,9 +224,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						if (Collision.check(bulletSprite.getBounds(), enemy.getSprite().getBounds())) { //returns true if enemy collides with bullet 
 							playSound(enemies.get(0).getEnemyType(), p); //play enemy grunt sound.
 							enemy.changeHealth(-1);
-							if (currentRoom > 2) {
-								updateHealth();
-							}
+							updateHealth();
 							enemy.setDamaged(true); //Enemy is damaged.
 							System.out.println(enemy.getHealth());
 							if (enemy.isDead()) { //Enemy has no health.
@@ -260,9 +258,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							//TODO player grunts
 							//playSound(enemies.get(0).getEnemyType(), p); //play player grunt sound.
 							player.changeHealth(-1);
-							if (currentRoom > 2) {
-								updateHealth();
-							}
+							updateHealth();
 							player.setDamaged(true); //player is damaged.
 							System.out.println(player.getHealth());
 							if (player.isDead()) {
@@ -330,15 +326,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						}
 					}
 					if (enemy.getEnemyType() == "long range" && enemy.isAttackAvailable()) {
-						//TODO implement long range enemy attack
 						GImage bulletSprite = enemy.getBulletSprite();
 						//x is set to horizontal distance between mouse and middle of playerSprite
 			            x = enemySprite.getX() - ( playerSprite.getX() + (playerSprite.getWidth() / 2));
 			            //y is set to vertical distance between mouse and middle of playerSprite
 			            y = enemySprite.getY() - (playerSprite.getY() + (playerSprite.getHeight() / 2));
 			            enemy.getWeapon().setAngle(180 * Math.atan2(-y, x) / Math.PI - 180);	
-			            System.out.println(180 * Math.atan2(-y, x) / Math.PI - 180);
-						if (!enemy.isBulletTraveling()) {
+						if (!enemy.isBulletTraveling()) { // set initial bullet location when not in motion
 							bulletSprite.setLocation(enemySprite.getX() + (enemySprite.getWidth() / 2) - bulletSprite.getWidth() / 2, enemySprite.getY() + (enemySprite.getHeight() / 2) - bulletSprite.getHeight() / 2);
 						}
 			            bulletSprite.setVisible(true);
@@ -376,13 +370,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				if (timerCount % 200 == 0) {
 					player.setAttackAvailable(true); //player can now attack
 				}
-				else if (timerCount % 400 == 0) {
-					for (Enemy e2 : enemies) {
-						e2.setAttackAvailable(true); //enemy can attack now.
-					}
-				}
 				else if (timerCount % 500 == 0) {
 					player.setDashAvailable(true); //player can now dash
+					for (Enemy e2 : enemies) {
+						e2.setAttackAvailable(true); //enemy can now attack
+					}
 				}
 			}
 		}
@@ -405,9 +397,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	}
 	
 	@Override
-	public void mouseClicked(MouseEvent e) { //TODO implement close range attack
+	public void mouseClicked(MouseEvent e) { 
 		GImage playerSprite = player.getSprite();
-		AudioPlayer p = sounds.getPlayer(); //Get the audio player object to play the sound.
+		AudioPlayer p = sounds.getPlayer(); // Get the audio player object to play the sound.
 		if (player.isAttackAvailable()) {
 			if (program.isCloseRangeWeapon()) {
 				double x = e.getX() - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between mouse and middle of playerSprite
@@ -483,7 +475,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						if (currentRoom > 2) {
 							updateHealth();
 						}
-						//TODO set enemy invincibility if needed
 						if (enemy.isDead()) { //Enemy has no health.
 							removeEnemyIndex.add(z); // add index to ArrayList
 							program.remove(enemy.getSprite()); //Remove enemy sprite from the screen since it is dead.
