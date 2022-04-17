@@ -15,8 +15,8 @@ public class Enemy extends Character {
 		super(image, hp);
 		setEnemyType(enemyName);
 		detectionRange = 100; // detection range is 100 by default
-		bulletTraveling = false;
-		bulletDistance = 0;
+		setBulletTraveling(false);
+		setBulletDistance(0);
 		bulletSprite = new GImage("lightningBallSprite.png", getSprite().getX() + getSprite().getWidth() / 2, getSprite().getY() + getSprite().getHeight() / 2);
 		bulletSprite.setVisible(false);
 	}
@@ -73,5 +73,29 @@ public class Enemy extends Character {
 
 	public static void main(String[] args) {
 
+	}
+
+	public boolean isBulletTraveling() {
+		return bulletTraveling;
+	}
+
+	public void setBulletTraveling(boolean bulletTraveling) {
+		this.bulletTraveling = bulletTraveling;
+	}
+
+	public int getBulletDistance() {
+		return bulletDistance;
+	}
+
+	public void setBulletDistance(int bulletDistance) {
+		this.bulletDistance = bulletDistance;
+	}
+	
+	public void setBulletSprite(GImage bullet) {
+		bulletSprite = bullet;
+	}
+	
+	public GImage getBulletSprite() {
+		return bulletSprite;
 	}
 }

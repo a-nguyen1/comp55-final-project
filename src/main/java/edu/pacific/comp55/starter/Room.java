@@ -64,6 +64,9 @@ public class Room {
 			Enemy enemy3 = new Enemy(enemySprite3, 2, "long range"); //Enemy has 2 health points.
 			enemy3.setSpeed(5);
 			enemy3.setDetectionRange(300);
+			GImage weaponSprite = new GImage("bow.png");
+			Weapon weapon = new Weapon(weaponSprite, "mouth", 400);
+			enemy3.setWeapon(weapon);
 			enemies.add(enemy3); //add enemy to ArrayList
 		}
 		else {

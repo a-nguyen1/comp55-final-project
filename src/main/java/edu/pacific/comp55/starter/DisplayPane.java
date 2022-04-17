@@ -123,6 +123,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		for (Enemy enemy: enemies) { // loop for all enemies
 			program.add(enemy.getSprite()); //Add enemy sprite to screen.
+			if (enemy.getEnemyType() == "long range") {
+				program.add(enemy.getBulletSprite());
+			}
 		}
 		if (currentRoom > 2) {
 			((Boss) enemies.get(0)).setBossLabel(new GLabel("Big Goblin", 700, 25));
@@ -240,6 +243,45 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						bulletSprite.setVisible(false);
 					}
 				}
+				
+				if (enemy.isBulletTraveling()) {
+					GImage bulletSprite = enemy.getBulletSprite();
+					enemy.setBulletDistance(enemy.getBulletDistance() + 1);
+					bulletSprite.movePolar(1, enemy.getWeapon().getAngle()); // move towards mouse click   
+					if (player.isDamaged()) {
+						player.setInvincibilityCounter(player.getInvincibilityCounter() + 1); //player is invincible for a time.
+						if (player.getInvincibilityCounter() > 100) { //player is not invincible.
+							player.setDamaged(false);
+							player.setInvincibilityCounter(0); 
+						}
+					}
+					else {
+						if (Collision.check(bulletSprite.getBounds(), player.getSprite().getBounds())) { //returns true if enemy collides with bullet 
+							//TODO player grunts
+							//playSound(enemies.get(0).getEnemyType(), p); //play player grunt sound.
+							player.changeHealth(-1);
+							if (currentRoom > 2) {
+								updateHealth();
+							}
+							player.setDamaged(true); //player is damaged.
+							System.out.println(player.getHealth());
+							if (player.isDead()) {
+								program.removeAll();
+								while (enemies.size() > 0) { // remove all enemies from ArrayList
+									enemies.remove(0);
+								}
+								GameOver();
+							}
+						}
+					}
+					if (enemy.getBulletDistance() >= enemy.getWeapon().getRange()) {
+						enemy.setBulletTraveling(false);
+						bulletSprite.setLocation(enemySprite.getX() + enemySprite.getWidth() / 2 - bulletSprite.getWidth() / 2, enemySprite.getY() + enemySprite.getHeight() / 2 - bulletSprite.getHeight() / 2);
+						enemy.setBulletDistance(0);
+						bulletSprite.setVisible(false);
+					}
+				}
+				
 				if (enemy.canInteract(playerSprite.getX(), playerSprite.getY())) { //enemy detects player
 					// x is set to horizontal distance between enemy and player
 					double x = (enemySprite.getX() + enemySprite.getWidth() / 2) - (playerSprite.getX() + playerSprite.getWidth() / 2);
@@ -251,6 +293,17 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI)); // enemy moves away from player
 						}
 					}
+					// setting bounds for enemy
+					if (enemySprite.getLocation().getX() < 5) {
+						enemySprite.setLocation(5, enemySprite.getY());
+					} else if (enemySprite.getLocation().getY() < 5) { 
+						enemySprite.setLocation(enemySprite.getX(), 5);
+					} else if (enemySprite.getLocation().getX() + enemySprite.getWidth() * 1.75 > program.getWidth()) {
+						enemySprite.setLocation(program.getWidth() - enemySprite.getWidth() * 1.75,enemySprite.getY());
+					} else if (enemySprite.getLocation().getY() + enemySprite.getHeight() * 3 > program.getHeight()) {
+						enemySprite.setLocation(enemySprite.getX(), program.getHeight() - enemySprite.getHeight() * 3);
+					} 
+					
 					if (Collision.check(enemy.getSprite().getBounds(), player.getSprite().getBounds())) {
 						playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // player moves away from enemy
 						if (enemy.getEnemyType() == "close range") {
@@ -276,8 +329,21 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							GameOver();
 						}
 					}
-					if (enemy.getEnemyType() == "long range") {
+					if (enemy.getEnemyType() == "long range" && enemy.isAttackAvailable()) {
 						//TODO implement long range enemy attack
+						GImage bulletSprite = enemy.getBulletSprite();
+						//x is set to horizontal distance between mouse and middle of playerSprite
+			            x = enemySprite.getX() - ( playerSprite.getX() + (playerSprite.getWidth() / 2));
+			            //y is set to vertical distance between mouse and middle of playerSprite
+			            y = enemySprite.getY() - (playerSprite.getY() + (playerSprite.getHeight() / 2));
+			            enemy.getWeapon().setAngle(180 * Math.atan2(-y, x) / Math.PI - 180);	
+			            System.out.println(180 * Math.atan2(-y, x) / Math.PI - 180);
+						if (!enemy.isBulletTraveling()) {
+							bulletSprite.setLocation(enemySprite.getX() + (enemySprite.getWidth() / 2) - bulletSprite.getWidth() / 2, enemySprite.getY() + (enemySprite.getHeight() / 2) - bulletSprite.getHeight() / 2);
+						}
+			            bulletSprite.setVisible(true);
+						enemy.setBulletTraveling(true); // move bulletSprite under actionPerformed() method
+						enemy.setAttackAvailable(false); //enemy can't attack for a time
 					}
 				}
 			}
@@ -309,6 +375,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				}
 				if (timerCount % 200 == 0) {
 					player.setAttackAvailable(true); //player can now attack
+				}
+				else if (timerCount % 400 == 0) {
+					for (Enemy e2 : enemies) {
+						e2.setAttackAvailable(true); //enemy can attack now.
+					}
 				}
 				else if (timerCount % 500 == 0) {
 					player.setDashAvailable(true); //player can now dash
