@@ -186,6 +186,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		GImage playerSprite = player.getSprite();
+		AudioPlayer p = sounds.getPlayer(); //Get the audio player object to play the sound.
 		ArrayList<Integer> removeEnemyIndex = new ArrayList<Integer>(); // for removing dead enemies
 		for (int z = 0; z < enemies.size(); z++) {
 			Enemy enemy = enemies.get(z);
@@ -196,6 +197,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					player.setBulletDistance(player.getBulletDistance() + 1);
 					bulletSprite.movePolar(1, player.getWeapon().getAngle()); // move towards mouse click   
 					if (enemy.isDamaged()) {
+						if (enemies.get(0).getEnemyType() == "Big Goblin") {
+							sounds.setName("boss_goblin_grunt"); //Sound effect for boss getting hit.
+						}
+						else if (enemies.get(0).getEnemyType() == "close range") {
+							sounds.setName("small_goblin_grunt"); //Sound effect for enemy getting hit.
+						}
+						sounds.play(p); //Play enemy getting hit sound effect.
 						enemy.setInvincibilityCounter(enemy.getInvincibilityCounter() + 1); //enemy is invincible for a time.
 						if (enemy.getInvincibilityCounter() > 100) { //enemy is not invincible.
 							enemy.setDamaged(false);
@@ -251,7 +259,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						}
 						if (player.isDead()) {
 							System.out.println("Player is dead");
-							/*
 							program.removeAll();
 							if (currentRoom <= 2) { 
 								for (Enemy e1 : enemies) {
@@ -260,7 +267,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							}
 							//need to remove boss
 							GameOver();
-							*/
+							
 						}
 					}
 				}
