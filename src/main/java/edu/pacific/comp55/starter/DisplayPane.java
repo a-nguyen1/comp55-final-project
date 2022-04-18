@@ -222,13 +222,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			if (timerCount % 1 == 0) {
 				if (player.isBulletTraveling()) {
 					GImage bulletSprite = player.getBulletSprite();
-					bulletSprite = player.moveBullet(bulletSprite); // move bulletSprite towards mouse click   
+					bulletSprite = player.moveBullet(bulletSprite); // move bulletSprite towards mouse click 
 					if (enemy.isDamaged()) {
-						enemy.setInvincibilityCounter(enemy.getInvincibilityCounter() + 1); //enemy is invincible for a time.
-						if (enemy.getInvincibilityCounter() > 100) { //enemy is not invincible.
-							enemy.setDamaged(false);
-							enemy.setInvincibilityCounter(0); 
-						}
+						enemy.enemyInvincibility();
 					}
 					else {
 						if (Collision.check(bulletSprite.getBounds(), enemy.getSprite().getBounds())) { //returns true if enemy collides with bullet 
@@ -260,11 +256,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					GImage bulletSprite = enemy.getBulletSprite();  
 					bulletSprite = enemy.moveBullet(bulletSprite); //Move the bulletSprite.
 					if (player.isDamaged()) {
-						player.setInvincibilityCounter(player.getInvincibilityCounter() + 1); //player is invincible for a time.
-						if (player.getInvincibilityCounter() > 100) { //player is not invincible.
-							player.setDamaged(false);
-							player.setInvincibilityCounter(0); 
-						}
+						player.playerInvincibility();
 					}
 					else {
 						if (Collision.check(bulletSprite.getBounds(), player.getSprite().getBounds())) { //returns true if enemy collides with bullet 

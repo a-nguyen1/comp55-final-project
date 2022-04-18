@@ -65,6 +65,14 @@ public class Enemy extends Character {
 		bulletSprite.movePolar(1, getWeapon().getAngle()); // move towards mouse click
 		return bulletSprite;
 	}
+	
+	public void enemyInvincibility() {
+			setInvincibilityCounter(getInvincibilityCounter() + 1); //enemy is invincible for a time.
+			if (getInvincibilityCounter() > 100) { //enemy is not invincible.
+				setDamaged(false);
+				setInvincibilityCounter(0); 
+			}
+	}
 
 	@Override
 	public void move(double x, double y) {
