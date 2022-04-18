@@ -41,7 +41,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private SoundEffect sounds;
 	private AudioPlayer backgroundMusic;
 	
-	private int timerCount;
+	private int timerCount; // to keep track of timer
 	
 	public DisplayPane(MainApplication app) {
 		super();
