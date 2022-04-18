@@ -575,14 +575,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							currentRoom++;
 							createRoom(currentRoom); // create next room
 						}
-						//TODO make removal of key from inventory a method.
 						int removeIndex = -1;
 						if (player.getInventory().size() > 0) {
-							/*for (int x = 0; x < player.getInventory().size(); x++) {
-								if (player.getInventory().get(x).getItemType() == "key") { // check for key in player inventory
-									removeIndex = x;
-								}
-							}*/
 							removeIndex = player.searchItemIndex(player, removeIndex, "key");
 							if (removeIndex >= 0) { // check if player has key to remove
 								player.removeFromInventory(removeIndex); // remove key from player inventory
@@ -604,24 +598,15 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		//Player revival if there are hearts in the inventory.
 		else if (keyCode == 82) { // r
-			//TODO make this a method.
 			int removeIndex = -1;
-			//int healthIncreaseAcc = 0; //Determine how many times to increase player health.
 			if (player.getInventory().size() > 0) {
-				/*for (int x = 0; x < player.getInventory().size(); x++) {
-					if (player.getInventory().get(x).getItemType() == "heart") { //Check if there is a heart in the inventory.
-						removeIndex = x;
-						//healthIncreaseAcc += 1; //to count how many hearts to add to player health.
-					}
-				}*/
 				removeIndex = player.searchItemIndex(player, removeIndex, "heart");
 				if (removeIndex >= 0) { //check if the player has the heart to remove
 					player.removeFromInventory(removeIndex); //Remove the heart from the inventory.
-					System.out.println("revive");
+					System.out.println("Heart consumed");
+					player.changeHealth(1); //add one health to player for now.
 				}
 			}
-			
-			player.changeHealth(1); //add one health to player for now.
 			updateHealth(); 
 			updateInventory(); //Update the changes.
 			
