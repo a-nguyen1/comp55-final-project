@@ -188,6 +188,21 @@ public class Player extends Character {
 		this.dashCooldown = dashCooldown;
 	}
 	
+	public GImage moveBullet(GImage bulletSpirte) {
+		bulletSprite = getBulletSprite();
+		setBulletDistance(getBulletDistance() + 1);
+		bulletSprite.movePolar(1, getWeapon().getAngle());
+		return bulletSprite;
+	}
+	
+	public void playerInvincibility() {
+		setInvincibilityCounter(getInvincibilityCounter() + 1); //player is invincible for a time.
+		if (getInvincibilityCounter() > 100) { //player is not invincible.
+			setDamaged(false);
+			setInvincibilityCounter(0); 
+		}
+	}
+	
 	@Override
 	public void move(double x, double y) {
 		getSprite().move(x, y);
