@@ -23,7 +23,7 @@ public class Room {
 			backgroundTileName = "GrayTile.png";
 		} 
 		else { // levelNumber > 1
-			backgroundTileName = "OrangeTile.png";
+			backgroundTileName = "GreenTile.png";
 		}
 		width = w;
 		height = h;
