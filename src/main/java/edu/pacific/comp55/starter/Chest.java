@@ -10,6 +10,9 @@ public class Chest extends Item {
 	public Chest(GImage image, String name) { // image is when chest closed
 		super(image, name);
 		isChestOpen = false;
+		//Create an open chest sprite
+		openChest = new GImage("openChest.png", getSprite().getX(), getSprite().getY()); 
+		openChest.setSize(25, 25);
 	}
 
 	public ArrayList<Item> releaseItems() {
@@ -27,6 +30,10 @@ public class Chest extends Item {
 	
 	public static void main(String[] args) {
 
+	}
+	
+	public GImage getOpenChest() {
+		return openChest;
 	}
 
 	public boolean isChestOpen() {

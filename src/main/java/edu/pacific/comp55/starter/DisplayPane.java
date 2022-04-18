@@ -27,7 +27,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private HashMap<String, String> itemLabel; 
 	private String displayType; // to display current game state (lose/win/playing)
 	private GLabel bossLabel; // to display boss name
-	private GImage attackArea;
+	private GImage attackArea; // to display player attack
 	private int currentLevel;
 	private int currentRoom;
 	private double mouseX;
@@ -188,14 +188,16 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
 		backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
 		backgroundMusic.playSound("sounds", "game_over.wav", false); // play game over sound
+		
 		GRect blackBackground = new GRect(0, 0, program.getWidth(), program.getHeight());
 		blackBackground.setFillColor(Color.BLACK);
 		blackBackground.setFilled(true);
-		program.add(blackBackground);
+		program.add(blackBackground); // add black background
+		
 		GLabel g= new GLabel (" G A M E  O V E R", 175, 300);
 		g.setFont(new Font("Merriweather", Font.BOLD, 50));
 		g.setColor(Color.RED);
-		program.add(g);
+		program.add(g); // add game over text
 	}
 	
 	public void playSound(String e, AudioPlayer p) {
@@ -555,11 +557,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				}
 				else if (nearestItem instanceof Chest) {
 					if (!((Chest) nearestItem).isChestOpen()) { // if chest is not open
-						GImage openChestSprite = new GImage("openChest.png", nearestItem.getSprite().getX(), nearestItem.getSprite().getY()); //Create an open chest sprite for switch.
-						openChestSprite.setSize(25, 25);
-						program.remove(nearestItem.getSprite()); //Remove closed chest sprite.
-						nearestItem.setSprite(openChestSprite); //set the sprite to the open chest.
-						program.add(openChestSprite); //Add open chest sprite.
+						program.remove(nearestItem.getSprite()); //Remove closed chest sprite from screen
+						nearestItem.setSprite(((Chest) nearestItem).getOpenChest()); //set the sprite to the open chest.
+						program.add(nearestItem.getSprite()); //Add open chest sprite to screen
 						items.remove(nearestItem); // remove chest from items ArrayList (so chest is not set as nearestItem)
 						ArrayList<Item> itemsToShow = ((Chest) nearestItem).releaseItems();
 						for (Item i : itemsToShow) { //Add the chest items to screen.
