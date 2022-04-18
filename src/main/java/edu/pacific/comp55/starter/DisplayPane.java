@@ -123,7 +123,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				program.add(enemy.getBulletSprite());
 			}
 		}
-		if (currentRoom > 2) { // boss room reached
+		if (currentRoom % 3 == 0) { // boss room reached (every 3rd room) TODO change later
 			if (program.isAudioOn()) {
 				backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
 				backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play boss background music
@@ -136,6 +136,23 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		updateHealth(); // update player health display
 		updateInventory(); // update player inventory display
 		program.add(player.getSprite()); //Add player sprite to screen.
+		
+		if (currentRoom >= 4) { // TODO change so this is the room after the final boss room
+			program.removeAll();
+			while (enemies.size() > 0) { // remove all enemies from ArrayList
+				enemies.remove(0);
+			}
+			while (items.size() > 0) { // remove all items from ArrayList
+				items.remove(0);
+			}
+			timer.stop(); // stop timer
+			System.out.println("Congratulations! You escaped the dungeon!");
+			if (program.isAudioOn()) {
+				backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
+				backgroundMusic.playSound("sounds", "win.wav"); // play win music
+			}
+			//TODO go to win screen
+		}
 	}
 	
 	public void updateHealth() {
@@ -149,7 +166,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			heart.setSize(50,50);
 			program.add(heart);
 		}
-		if (currentRoom > 2) {
+		if (currentRoom % 3 == 0) { // TODO change later
 			while (bossHealth.size() > 0) { // remove all boss hearts from screen
 				program.remove(bossHealth.get(0));
 				bossHealth.remove(0);

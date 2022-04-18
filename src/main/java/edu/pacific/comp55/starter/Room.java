@@ -66,7 +66,7 @@ public class Room {
 		else if (level == 3) {
 			
 		}
-		if (room <= 2) {
+		if (room % 3 != 0) { // TODO change
 			GImage enemySprite = new GImage(sprites.get("goblin"), 300, 120);
 			Enemy goblin = new Enemy(enemySprite, 2, "close range goblin");
 			enemies.add(goblin); //add enemy to ArrayList
@@ -83,7 +83,7 @@ public class Room {
 			enemy3.setWeapon(weapon);
 			enemies.add(enemy3); //add enemy to ArrayList
 		}
-		else {
+		else { // add boss to screen
 			GImage bossSprite = new GImage (sprites.get("goblin"), 300, 120);
 			bossSprite.setSize(bossSprite.getWidth() * 2, bossSprite.getHeight() * 2);
 			Boss boss = new Boss(bossSprite, 5, "boss big goblin"); //Boss has 5 health points.
