@@ -59,6 +59,12 @@ public class Enemy extends Character {
 	public void setDetectionRange(int detectionRange) {
 		this.detectionRange = detectionRange;
 	}
+	
+	public GImage moveBullet(GImage bulletSprite) {
+		setBulletDistance(getBulletDistance() + 1);
+		bulletSprite.movePolar(1, getWeapon().getAngle()); // move towards mouse click
+		return bulletSprite;
+	}
 
 	@Override
 	public void move(double x, double y) {

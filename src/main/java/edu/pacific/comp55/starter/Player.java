@@ -188,6 +188,13 @@ public class Player extends Character {
 		this.dashCooldown = dashCooldown;
 	}
 	
+	public GImage moveBullet(GImage bulletSpirte) {
+		bulletSprite = getBulletSprite();
+		setBulletDistance(getBulletDistance() + 1);
+		bulletSprite.movePolar(1, getWeapon().getAngle());
+		return bulletSprite;
+	}
+	
 	@Override
 	public void move(double x, double y) {
 		getSprite().move(x, y);
