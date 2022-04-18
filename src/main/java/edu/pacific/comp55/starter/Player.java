@@ -123,6 +123,15 @@ public class Player extends Character {
 		}
 	}
 	
+	public Integer searchItemIndex(Player player, Integer removeIndex, String itemType) {
+		for (int x = 0; x < player.getInventory().size(); x++) {
+			if (player.getInventory().get(x).getItemType() == itemType) { //Check if there is a heart in the inventory.
+				removeIndex = x;
+			}
+		}
+		return removeIndex;
+	}
+	
 	public ArrayList<Item> getInventory() {
 		return inventory;
 	}
