@@ -26,6 +26,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private ArrayList<Item> items; // items to display on the level.
 	private HashMap<String, String> itemLabel; 
 	private String displayType; // to display current game state (lose/win/playing)
+	private GLabel bossLabel; // to display boss name
 	private GImage attackArea;
 	private int currentLevel;
 	private int currentRoom;
@@ -131,10 +132,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		if (currentRoom > 2) {
 			backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
 			backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play boss background music
-			GLabel bossLabel = new GLabel("Big Goblin", program.getWidth() - 125, 25);
+			bossLabel = new GLabel("Big Goblin", program.getWidth() - 125, 25);
 			bossLabel.setFont(new Font("Serif", Font.BOLD, 20));
-			((Boss) enemies.get(0)).setBossLabel(bossLabel);
-			program.add(((Boss) enemies.get(0)).getBossLabel());
+			program.add(bossLabel);
 		}
 		program.add(inventoryBox); //Add inventory box to the screen.
 		updateHealth(); // update player health display
@@ -158,9 +158,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				program.remove(bossHealth.get(0));
 				bossHealth.remove(0);
 			}
-			bossHealth = ((Boss) enemies.get(0)).displayHealth();
-			if (enemies.get(0).isDead()) {
-				program.remove(((Boss) enemies.get(0)).getBossLabel());
+			if (enemies.get(0).isDead()) { // boss is dead
+				program.remove(bossLabel); // remove bossLabel from screen
+			}
+			else { // boss is alive
+				bossHealth = ((Boss) enemies.get(0)).displayHealth();
 			}
 			for (GImage heart : bossHealth) { // display all boss hearts
 				heart.setSize(50,50);

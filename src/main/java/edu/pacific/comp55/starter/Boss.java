@@ -7,7 +7,6 @@ import acm.graphics.GLabel;
 
 public class Boss extends Enemy {
 	private Weapon weaponDrop;
-	private GLabel bossLabel;
 	
 	public Boss(GImage image, int hp, String bossName) {
 		super(image, hp, bossName);
@@ -27,13 +26,5 @@ public class Boss extends Enemy {
 
 	public static void main(String[] args) {
 
-	}
-
-	public GLabel getBossLabel() {
-		return bossLabel;
-	}
-
-	public void setBossLabel(GLabel bossLabel) {
-		this.bossLabel = bossLabel;
 	}
 }
