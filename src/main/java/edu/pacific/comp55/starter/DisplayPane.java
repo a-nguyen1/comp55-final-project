@@ -88,10 +88,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 	}
 	
-	public void createLevel(int l) { //TODO create level
-		
-	}
-	
 	public void createRoom(int roomNum) {
 		Room newRoom = new Room(currentLevel, roomNum, program.getWidth(), program.getHeight());
 		items = newRoom.getItems();
