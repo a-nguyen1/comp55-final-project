@@ -1,5 +1,6 @@
 package edu.pacific.comp55.starter;
 import java.util.ArrayList; // for ArrayList
+import java.util.HashMap;
 
 import acm.graphics.GImage; // for GImage
 
@@ -10,6 +11,7 @@ public class Room {
 	//has background tile
 	private ArrayList<Item> items;
 	private ArrayList<Enemy> enemies;
+	private HashMap<String, String> sprites;
 	private String backgroundTileName;
 	private double width; // width of program
 	private double height; // height of program
@@ -19,14 +21,26 @@ public class Room {
 	public Room(int levelNumber, int roomNumber, double w, double h) {
 		level = levelNumber;
 		room = roomNumber;
-		if (room <= 2) {
-			backgroundTileName = "GrayTile.png";
-		} 
-		else { // levelNumber > 1
+		//set tiles based on level
+		if (level == 1) { 
 			backgroundTileName = "GreenTile.png";
+		}
+		else if (level == 2) {
+			backgroundTileName = "GrayTile.png";
+		}
+		else if (level == 3) {
+			backgroundTileName = "OrangeTile.png";
 		}
 		width = w;
 		height = h;
+		sprites = new HashMap<String, String>();
+		sprites.put("goblin", "EnemyGoblinSprite.png");
+		sprites.put("baby goblin", "EnemyGoblinBabySprite.png");
+		sprites.put("flying goblin", "EnemyGoblinFlyingSprite.png");
+		sprites.put("key", "key.png");
+		sprites.put("heart", "heart.png");
+		sprites.put("chest", "closedChest.png");
+		sprites.put("door", "closedDoor.png");
 	}
 	
 	public void setPlayerLocation(Player p, double x, double y) {
@@ -43,33 +57,36 @@ public class Room {
 	
 	public ArrayList<Enemy> getEnemies() {
 		enemies = new ArrayList<Enemy>(); // initialize enemy array list
+		if (level == 1) {
+			
+		}
+		else if (level == 2) {
+			
+		}
+		else if (level == 3) {
+			
+		}
 		if (room <= 2) {
-			//create enemy object
-			GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 120);
-			Enemy enemy = new Enemy(enemySprite, 2, "close range"); //Enemy has 2 health points.
-			enemy.setSpeed(5);
-			enemies.add(enemy); //add enemy to ArrayList
+			GImage enemySprite = new GImage(sprites.get("goblin"), 300, 120);
+			Enemy goblin = new Enemy(enemySprite, 2, "close range goblin");
+			enemies.add(goblin); //add enemy to ArrayList
 			
-			//Second enemy object
-			GImage enemySprite2 = new GImage ("goblin-sprite.png", 530, 120);
-			Enemy enemy2 = new Enemy(enemySprite2, 2, "close range"); //Enemy has 2 health points.
-			enemy2.setSpeed(5);
-			enemies.add(enemy2); //add enemy to ArrayList
+			GImage enemySprite2 = new GImage(sprites.get("baby goblin"), 530, 120);
+			Enemy babyGoblin = new Enemy(enemySprite2, 2, "close range baby goblin");
+			enemies.add(babyGoblin); //add enemy2 to ArrayList
 			
-			//Third enemy object (long range)
-			GImage enemySprite3 = new GImage ("FlyingGoblinAttack.png", 300, 300);
-			Enemy enemy3 = new Enemy(enemySprite3, 2, "long range"); //Enemy has 2 health points.
-			enemy3.setSpeed(5);
+			GImage enemySprite3 = new GImage (sprites.get("flying goblin"), 300, 300);
+			Enemy enemy3 = new Enemy(enemySprite3, 2, "long range flying goblin"); //Enemy has 2 health points.
 			enemy3.setDetectionRange(300);
-			GImage weaponSprite = new GImage("bow.png");
-			Weapon weapon = new Weapon(weaponSprite, "mouth", 400);
+			//GImage weaponSprite = new GImage("bow.png");
+			Weapon weapon = new Weapon(new GImage(""), "mouth", 400);
 			enemy3.setWeapon(weapon);
 			enemies.add(enemy3); //add enemy to ArrayList
 		}
 		else {
-			GImage bossSprite = new GImage ("bigger-enemy-sprite.png", 300, 120);
+			GImage bossSprite = new GImage (sprites.get("goblin"), 300, 120);
 			bossSprite.setSize(bossSprite.getWidth() * 2, bossSprite.getHeight() * 2);
-			Boss boss = new Boss(bossSprite, 5, "Big Goblin"); //Boss has 5 health points.
+			Boss boss = new Boss(bossSprite, 5, "boss big goblin"); //Boss has 5 health points.
 			boss.setSpeed(10);
 			boss.setDetectionRange(800);
 			enemies.add(boss); //add enemy to ArrayList
@@ -84,25 +101,25 @@ public class Room {
 		double x = 100 + Math.random() * (width - 200); //randomize x so not at edge of screen (offset by 100)
 		double y = 100 + Math.random() * (height - 200); //randomize y so not at edge of screen (offset by 100)
 		
-		GImage keySprite = new GImage ("keyImage.png", x, y); //Create a new sprite for key.
+		GImage keySprite = new GImage (sprites.get("key"), x, y); //Create a new sprite for key.
 		keySprite.setSize(25, 25); //Resize sprite to make it smaller.
 		PickUpItem key = new PickUpItem(keySprite, "key"); //Create key as Item object.
 		items.add(key);
 		
 		//create heart object
-		GImage heartSprite = new GImage ("Heart.png", 150, 300); //Create a new sprite for heart.
+		GImage heartSprite = new GImage (sprites.get("heart"), 150, 300); //Create a new sprite for heart.
 		heartSprite.setSize(25, 25); //Resize sprite to make it smaller.
 		PickUpItem heart = new PickUpItem(heartSprite, "heart");
 		items.add(heart);
 				
 		//create chest object
-		GImage chestSprite = new GImage ("closedChest.png", 500, 200);
+		GImage chestSprite = new GImage (sprites.get("chest"), 500, 200);
 		chestSprite.setSize(25, 25);
 		Chest chest = new Chest(chestSprite, "chest");
 		items.add(chest);
-				
+		
 		//create door object
-		GImage doorSprite = new GImage ("closedDoor.png", 300, 100); //Create a new sprite for door.
+		GImage doorSprite = new GImage (sprites.get("door"), 300, 100); //Create a new sprite for door.
 		Door door = new Door(doorSprite, "closedDoor"); //Create door as Item object.
 		items.add(door);
 		

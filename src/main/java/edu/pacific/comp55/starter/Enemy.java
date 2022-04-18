@@ -11,15 +11,16 @@ public class Enemy extends Character {
 	private int bulletDistance;
 	private GImage bulletSprite;
 	
-	public Enemy(GImage image, int hp, String enemyName) {
-		super(image, hp);
+	public Enemy(GImage image, int health, String enemyName) {
+		super(image, health);
 		setEnemyType(enemyName);
-		detectionRange = 100; // detection range is 100 by default
 		setBulletTraveling(false);
 		setBulletDistance(0);
 		bulletSprite = new GImage("poisonBallSprite.png", getSprite().getX() + getSprite().getWidth() / 2, getSprite().getY() + getSprite().getHeight() / 2);
 		bulletSprite.setVisible(false);
 		attackAvailable = false;
+		detectionRange = 100; // detection range is 100 by default
+		super.setSpeed(5); // speed is 5 by default
 	}
 	
 	public boolean canInteract(double x, double y) {

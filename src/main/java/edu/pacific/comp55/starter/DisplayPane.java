@@ -22,7 +22,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private ArrayList<GImage> playerHealth;
 	private ArrayList<GImage> playerInventory;
 	private ArrayList<GImage> bossHealth;
-	private ArrayList<Level> levels;
 	private ArrayList<Item> items; // items to display on the level.
 	private HashMap<String, String> itemLabel; 
 	private String displayType; // to display current game state (lose/win/playing)
@@ -67,7 +66,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		itemLabel.put("chest", "Press e to open chest.");
 		
 		//create player object with knight sprite as default.
-		GImage playerSprite = new GImage ("knight-sprite-with-sword.png", program.getWidth()/2, program.getHeight()/2);
+		GImage playerSprite = new GImage ("PlayerKnightSprite.png", program.getWidth()/2, program.getHeight()/2);
 		player = new Player(playerSprite, 5);
 		player.setSpeed(7);
 		attackArea = new GImage("TopRight.png"); // initialize attack area
@@ -124,7 +123,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		for (Enemy enemy: enemies) { // loop for all enemies
 			program.add(enemy.getSprite()); //Add enemy sprite to screen.
-			if (enemy.getEnemyType() == "long range") {
+			if (enemy.getEnemyType().contains("long range")) {
 				program.add(enemy.getBulletSprite());
 			}
 		}
@@ -206,10 +205,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	}
 	
 	public void playSound(String e, AudioPlayer p) {
-		if (e == "Big Goblin") {
+		if (e.contains("big goblin")) {
 			sounds.setName("boss_goblin_grunt"); //Sound effect for boss getting hit.
 		}
-		else if (e == "close range") {
+		else if (e.contains("goblin")) {
 			sounds.setName("small_goblin_grunt"); //Sound effect for enemy getting hit.
 		}
 		if (program.isAudioOn()) {
@@ -241,7 +240,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							System.out.println(enemy.getHealth());
 							if (enemy.isDead()) { //Enemy has no health.
 								removeEnemyIndex.add(z); // add index to ArrayList
-								if (enemy.getEnemyType() == "long range") {
+								if (enemy.getEnemyType().contains("long range")) {
 									program.remove(enemy.getBulletSprite()); // remove bullet from screen
 								}
 								program.remove(enemy.getSprite()); //Remove enemy sprite from the screen since it is dead.
@@ -296,7 +295,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					double y = (enemySprite.getY() + enemySprite.getHeight() / 2) - (playerSprite.getY() + playerSprite.getHeight() / 2);
 					if (timerCount % 100 == 0) {
 						enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // enemy moves towards player
-						if (enemy.getEnemyType() == "long range") {
+						if (enemy.getEnemyType().contains("long range")) {
 							enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI)); // enemy moves away from player
 						}
 					}
@@ -313,20 +312,20 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					
 					if (Collision.check(enemy.getSprite().getBounds(), player.getSprite().getBounds())) { // player collides with enemy
 						playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // player moves away from enemy
-						if (enemy.getEnemyType() == "close range") {
-							player.changeHealth(-1);
-							updateHealth();
-							System.out.println("Player hit by close enemy: " + player.getHealth());
-						}
-						else if (enemy.getEnemyType() == "long range") {
-							player.changeHealth(-1);
-							updateHealth();
-							System.out.println("Player hit by long enemy: " + player.getHealth());
-						}
-						else if (enemy.getEnemyType() == "Big Goblin"){
+						if (enemy.getEnemyType().contains("boss")){
 							player.changeHealth(-2);
 							updateHealth();
-							System.out.println("Player hit by boss: " + player.getHealth());
+							System.out.println("Player touched by boss: " + player.getHealth());
+						}
+						else if (enemy.getEnemyType().contains("close range")) {
+							player.changeHealth(-1);
+							updateHealth();
+							System.out.println("Player touched by close range enemy: " + player.getHealth());
+						}
+						else if (enemy.getEnemyType().contains("long range")) {
+							player.changeHealth(-1);
+							updateHealth();
+							System.out.println("Player touched by long range enemy: " + player.getHealth());
 						}
 						if (player.isDead()) {
 							program.removeAll();
@@ -336,7 +335,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							gameOver();
 						}
 					}
-					if (enemy.getEnemyType() == "long range" ) {
+					if (enemy.getEnemyType().contains("long range")) {
 						if (enemy.isAttackAvailable()) {
 							GImage bulletSprite = enemy.getBulletSprite();
 							//x is set to horizontal distance between mouse and middle of playerSprite
@@ -494,7 +493,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						}
 						if (enemy.isDead()) { //Enemy has no health.
 							removeEnemyIndex.add(z); // add index to ArrayList
-							if (enemy.getEnemyType() == "long range") {
+							if (enemy.getEnemyType().contains("long range")) {
 								program.remove(enemy.getBulletSprite()); // remove bullet from screen
 							}
 							program.remove(enemy.getSprite()); //Remove enemy sprite from the screen since it is dead.
