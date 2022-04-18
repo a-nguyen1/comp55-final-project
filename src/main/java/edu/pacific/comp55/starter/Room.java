@@ -44,7 +44,6 @@ public class Room {
 	public ArrayList<Enemy> getEnemies() {
 		enemies = new ArrayList<Enemy>(); // initialize enemy array list
 		if (room <= 2) {
-			
 			//create enemy object
 			GImage enemySprite = new GImage ("bigger-enemy-sprite.png", 300, 120);
 			Enemy enemy = new Enemy(enemySprite, 2, "close range"); //Enemy has 2 health points.
@@ -69,7 +68,7 @@ public class Room {
 		}
 		else {
 			GImage bossSprite = new GImage ("bigger-enemy-sprite.png", 300, 120);
-			bossSprite.setSize(50,50);
+			bossSprite.setSize(bossSprite.getWidth() * 2, bossSprite.getHeight() * 2);
 			Boss boss = new Boss(bossSprite, 5, "Big Goblin"); //Boss has 5 health points.
 			boss.setSpeed(10);
 			boss.setDetectionRange(800);

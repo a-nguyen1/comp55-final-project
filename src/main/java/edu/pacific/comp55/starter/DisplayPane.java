@@ -109,7 +109,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			program.add(i.getSprite()); //Add item sprite to the screen.
 			program.add(i.getLabel()); //Add item label to the screen.
 		}
-		//TODO add weapon to screen and make player weapon show in player hand if possible
 		if (program.isCloseRangeWeapon()) { // close range weapon selected
 			Weapon weapon = new Weapon(new GImage("sword.png"), "close range weapon", 25);
 			player.setWeapon(weapon);
@@ -421,10 +420,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			if (program.isCloseRangeWeapon()) {
 				double x = e.getX() - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between mouse and middle of playerSprite
 				double y = e.getY() - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between mouse and middle of playerSprite
-				double angle = 180 * Math.atan2(-y, x) / Math.PI; // calculate angle
+				double angle = 180 * Math.atan2(-y, x) / Math.PI; // calculate angle from player to mouse
 				double xOffset;
 				double yOffset;
 				double weaponRange = player.getWeapon().getRange();
+				//set attackArea image, x offset, and y offset based on angle
 				if (angle >= 0) {
 					if (angle > 90) {
 						if (angle > 135) { // angle > 135
@@ -623,10 +623,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					System.out.println("revive");
 				}
 			}
-			updateInventory(); //Update the changes.
 			player.changeHealth(healthIncreaseAcc); //add one health to player for now.
-			updateHealth(); 
-			
+			updateHealth(); //update health changes
+			updateInventory(); //update inventory changes
 		}
 		// for normalizing diagonal movement
 		if (Math.abs(player.getMoveX()) == 1 && Math.abs(player.getMoveY()) == 1) { // check if diagonal movement is happening

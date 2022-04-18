@@ -6,7 +6,7 @@ public class MainApplication extends GraphicsApplication {
 	private static final String[] SOUND_FILES = { "r2d2.mp3", "somethinlikethis.mp3" };
 
 	private HowToPlayPane howToPlay;
-	private PlayGamePane playGame;
+	private ChooseCharacterPane chooseCharacter;
 	private MenuPane menu;
 	private DisplayPane display;
 	private boolean closeRangeWeapon;
@@ -18,7 +18,7 @@ public class MainApplication extends GraphicsApplication {
 
 	public void run() {
 		howToPlay = new HowToPlayPane(this);
-		playGame = new PlayGamePane(this);
+		chooseCharacter = new ChooseCharacterPane(this);
 		menu = new MenuPane(this);
 		display = new DisplayPane(this);
 		setupInteractions();
@@ -32,7 +32,7 @@ public class MainApplication extends GraphicsApplication {
 
 	public void switchTo(int n) {
 		if (n == 0) {
-			switchToScreen(playGame);
+			switchToScreen(chooseCharacter);
 		}
 		else if (n == 1){ // n == 1
 			switchToScreen(howToPlay);

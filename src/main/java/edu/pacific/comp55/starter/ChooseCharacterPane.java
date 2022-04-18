@@ -5,14 +5,14 @@ import acm.graphics.GImage;
 import acm.graphics.GLabel;
 import acm.graphics.GObject;
 
-public class PlayGamePane extends GraphicsPane {
+public class ChooseCharacterPane extends GraphicsPane {
 	private MainApplication program; // you will use program to get access to
 										// all of the GraphicsProgram calls
 	private GImage longRangeCharacter;
 	private GImage closeRangeCharacter;
 	private GLabel chooseCharacterLabel;
 	
-	public PlayGamePane(MainApplication app) {
+	public ChooseCharacterPane(MainApplication app) {
 		this.program = app;
 		longRangeCharacter = new GImage("wizardSprite.png", program.getWidth() * 2 / 3, 200);
 		closeRangeCharacter = new GImage("knight-sprite-with-sword.png", program.getWidth() / 3, 200);
