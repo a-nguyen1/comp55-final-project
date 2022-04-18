@@ -19,8 +19,8 @@ public class Boss extends Enemy {
 	
 	public ArrayList<GImage> displayHealth() {
 		ArrayList<GImage> bossHealth = new ArrayList<GImage>(); 
-		for (int x = 0; x < getHealth(); x++) { //add hearts based on player health
-			bossHealth.add(new GImage("Heart.png", 725, x*50 + 50)); 
+		for (int x = 0; x < getHealth(); x++) { //add hearts based on boss health
+			bossHealth.add(new GImage("Heart.png", 725, x* 50 + 50)); 
 		}
 		return bossHealth;
 	}

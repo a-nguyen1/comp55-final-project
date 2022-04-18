@@ -21,7 +21,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private ArrayList<GImage> backgroundTiles;
 	private ArrayList<GImage> playerHealth;
 	private ArrayList<GImage> playerInventory;
-	private ArrayList<GImage> bossHealth; // TODO implement boss health
+	private ArrayList<GImage> bossHealth;
 	private ArrayList<Level> levels;
 	private ArrayList<Item> items; // items to display on the level.
 	private HashMap<String, String> itemLabel; 
@@ -131,7 +131,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		if (currentRoom > 2) {
 			backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
 			backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play boss background music
-			((Boss) enemies.get(0)).setBossLabel(new GLabel("Big Goblin", 700, 25));
+			GLabel bossLabel = new GLabel("Big Goblin", program.getWidth() - 125, 25);
+			bossLabel.setFont(new Font("Serif", Font.BOLD, 20));
+			((Boss) enemies.get(0)).setBossLabel(bossLabel);
 			program.add(((Boss) enemies.get(0)).getBossLabel());
 		}
 		program.add(inventoryBox); //Add inventory box to the screen.
@@ -239,6 +241,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								program.remove(enemy.getSprite()); //Remove enemy sprite from the screen since it is dead.
 								System.out.println("Enemy is dead.");
 							}
+							bulletSprite.sendToFront();
 						}
 					}
 					if (player.getBulletDistance() >= player.getWeapon().getRange()) {
@@ -550,7 +553,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				}
 				else if (nearestItem instanceof Chest) {
 					if (!((Chest) nearestItem).isChestOpen()) { // if chest is not open
-						GImage openChestSprite = new GImage("open-chest.png", nearestItem.getSprite().getX(), nearestItem.getSprite().getY()); //Create an open chest sprite for switch.
+						GImage openChestSprite = new GImage("openChest.png", nearestItem.getSprite().getX(), nearestItem.getSprite().getY()); //Create an open chest sprite for switch.
 						openChestSprite.setSize(25, 25);
 						program.remove(nearestItem.getSprite()); //Remove closed chest sprite.
 						nearestItem.setSprite(openChestSprite); //set the sprite to the open chest.
