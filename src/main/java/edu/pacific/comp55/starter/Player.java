@@ -26,6 +26,8 @@ public class Player extends Character {
 		bulletDistance = 0;
 		bulletSprite = new GImage("lightningBallSprite.png", getSprite().getX() + getSprite().getWidth() / 2, getSprite().getY() + getSprite().getHeight() / 2);
 		bulletSprite.setVisible(false); 
+		dashCooldown = 500; // set to 500 by default
+		super.setAttackCooldown(200); // set to 200 by default
 	}
 	
 	public ArrayList<GImage> displayInventory() {

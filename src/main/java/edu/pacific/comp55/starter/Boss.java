@@ -6,14 +6,14 @@ import acm.graphics.GImage;
 import acm.graphics.GLabel;
 
 public class Boss extends Enemy {
-	private Weapon weaponDrop;
+	private Weapon weaponUpgrade;
 	
 	public Boss(GImage image, int hp, String bossName) {
 		super(image, hp, bossName);
 	}
 
 	public Weapon death() {
-		return weaponDrop;
+		return weaponUpgrade;
 	}
 	
 	public ArrayList<GImage> displayHealth() {

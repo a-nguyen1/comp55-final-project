@@ -41,6 +41,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private AudioPlayer backgroundMusic;
 	
 	private int timerCount; // to keep track of timer
+	private boolean dropWeapon; // to drop weapon upgrade upon boss defeat
 	
 	public DisplayPane(MainApplication app) {
 		super();
@@ -57,6 +58,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		AudioPlayer p = new AudioPlayer();
 		sounds = new SoundEffect(p, "");
 		backgroundMusic = new AudioPlayer();
+		dropWeapon = false; // set to false by default
 		
 		itemLabel = new HashMap<String, String>();
 		itemLabel.put("key", "Press e to pick up key.");
@@ -64,6 +66,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		itemLabel.put("openDoor", "Press e to enter next room.");
 		itemLabel.put("heart", "Press e to pick up heart.");
 		itemLabel.put("chest", "Press e to open chest.");
+		itemLabel.put("upgrade", "Press e to upgrade your weapon.");
 		
 		//create player object with knight sprite as default.
 		GImage playerSprite = new GImage ("PlayerKnightSprite.png", program.getWidth()/2, program.getHeight()/2);
@@ -123,6 +126,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				program.add(enemy.getBulletSprite());
 			}
 		}
+		dropWeapon = false;
 		if (currentRoom % 3 == 0) { // boss room reached (every 3rd room) TODO change later
 			if (program.isAudioOn()) {
 				backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
@@ -172,11 +176,31 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				bossHealth.remove(0);
 			}
 			if (enemies.size() > 0) {
-				if (enemies.get(0).isDead()) { // boss is dead
-					program.remove(bossLabel); // remove bossLabel from screen
-				}
-				else { // boss is alive
-					bossHealth = ((Boss) enemies.get(0)).displayHealth();
+				for (Enemy e: enemies) { // loop through all enemies on screen
+					if (e instanceof Boss) { // check if enemy is a boss
+						if (e.isDead()) { // check if boss is dead
+							program.remove(bossLabel); // remove bossLabel from screen
+							if (!dropWeapon) {
+								GImage upgradeSprite;
+								if (program.isCloseRangeWeapon()) {
+									upgradeSprite = new GImage ("KnightUpgrade.png", e.getSprite().getX(), e.getSprite().getY()); //Create a new sprite for weapon upgrade.
+								}
+								else {
+									upgradeSprite = new GImage ("WizardUpgrade.png", e.getSprite().getX(), e.getSprite().getY()); //Create a new sprite for weapon upgrade.
+								}
+								upgradeSprite.setSize(25, 25); //Resize sprite to make it smaller.
+								Weapon upgrade = new Weapon(upgradeSprite, "upgrade");
+								items.add(upgrade); // add weaponUpgrade to items list
+								program.add(upgradeSprite); // add weapon upgrade to screen
+								program.add(upgrade.getLabel()); //add label to screen.
+								dropWeapon = true;
+								player.getSprite().sendToFront();
+							}
+						}
+						else { // boss is alive
+							bossHealth = ((Boss) enemies.get(0)).displayHealth();
+						}
+					}
 				}
 			}
 			for (GImage heart : bossHealth) { // display all boss hearts
@@ -373,8 +397,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				enemies.remove((int)removeEnemyIndex.get(y));
 			}
 		}
-		if (enemies.size() == 0) {
-			player.getBulletSprite().setVisible(false); // hide bullet if no enemies
+		if (enemies.size() == 0) { // if no enemies
+			player.getBulletSprite().setVisible(false); // hide player bullet
 		}
 		timerCount++;
 		if (timerCount % 50 == 0) {
@@ -392,15 +416,18 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						i.setLabel("");
 					}
 				}
-				if (timerCount % 200 == 0) {
+				if (timerCount % player.getAttackCooldown() == 0) {
 					player.setAttackAvailable(true); //player can now attack
 				}
-				if (timerCount % 500 == 0) {
+				if (timerCount % player.getDashCooldown() == 0) {
 					player.setDashAvailable(true); //player can now dash
+				}
+				if (timerCount % 500 == 0) {
 					for (Enemy e1 : enemies) {
 						e1.setAttackAvailable(true); //enemy can now attack
 					}
 				}
+				
 			}
 		}
 	}
@@ -610,7 +637,29 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						itemLabel.put("closedDoor", "A key is needed."); 
 					}
 				}
-				//if nearest item is a Weapon, swap player's current weapon with new weapon
+				else if (nearestItem instanceof Weapon) { 
+					// for weapon upgrade, decrease attack cool down
+					int oldAttackCooldown = player.getAttackCooldown();
+					int newAttackCooldown = oldAttackCooldown - (oldAttackCooldown / 4); // reduce attack cool down by ~25%
+					if (newAttackCooldown < 100) { // so attack cool down doesn't go to low
+						newAttackCooldown = 100;
+						// when attack cool down is low, increase weapon range
+						int oldAttackRange = player.getWeapon().getRange();
+						int newAttackRange = oldAttackRange + (oldAttackRange / 4); // increase weapon range by ~25%
+						player.getWeapon().setRange(newAttackRange); 
+						System.out.println("Old attack cooldown: " + oldAttackRange);
+						System.out.println("New attack cooldown: " + newAttackRange);
+					}
+					else {
+						System.out.println("Old attack cooldown: " + oldAttackCooldown);
+						System.out.println("New attack cooldown: " + newAttackCooldown);
+					}
+					player.setAttackCooldown(newAttackCooldown);
+					
+					items.remove(nearestItem); // remove nearestItem from list
+					program.remove(nearestItem.getSprite()); // remove weapon upgrade from screen
+					program.remove(nearestItem.getLabel()); // remove weapon label from screen
+				}
 			}
 		}
 		//Player revival if there are hearts in the inventory.

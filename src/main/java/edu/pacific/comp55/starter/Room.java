@@ -58,38 +58,36 @@ public class Room {
 	public ArrayList<Enemy> getEnemies() {
 		enemies = new ArrayList<Enemy>(); // initialize enemy array list
 		if (level == 1) {
-			
+			if (room % 3 != 0) { // TODO change
+				GImage enemySprite = new GImage(sprites.get("goblin"), 300, 120);
+				Enemy goblin = new Enemy(enemySprite, 2, "close range goblin");
+				enemies.add(goblin); //add enemy to ArrayList
+				
+				GImage enemySprite2 = new GImage(sprites.get("baby goblin"), 530, 120);
+				Enemy babyGoblin = new Enemy(enemySprite2, 2, "close range baby goblin");
+				enemies.add(babyGoblin); //add enemy2 to ArrayList
+				
+				GImage enemySprite3 = new GImage (sprites.get("flying goblin"), 300, 300);
+				Enemy enemy3 = new Enemy(enemySprite3, 2, "long range flying goblin"); //Enemy has 2 health points.
+				enemy3.setDetectionRange(300);
+				Weapon weapon = new Weapon(new GImage(""), "mouth", 400);
+				enemy3.setWeapon(weapon);
+				enemies.add(enemy3); //add enemy to ArrayList
+			}
+			else { // add boss to screen
+				GImage bossSprite = new GImage (sprites.get("goblin"), 300, 120);
+				bossSprite.setSize(bossSprite.getWidth() * 2, bossSprite.getHeight() * 2);
+				Boss boss = new Boss(bossSprite, 5, "boss big goblin"); //Boss has 5 health points.
+				boss.setSpeed(10);
+				boss.setDetectionRange(800);
+				enemies.add(boss); //add enemy to ArrayList
+			}
 		}
 		else if (level == 2) {
 			
 		}
 		else if (level == 3) {
 			
-		}
-		if (room % 3 != 0) { // TODO change
-			GImage enemySprite = new GImage(sprites.get("goblin"), 300, 120);
-			Enemy goblin = new Enemy(enemySprite, 2, "close range goblin");
-			enemies.add(goblin); //add enemy to ArrayList
-			
-			GImage enemySprite2 = new GImage(sprites.get("baby goblin"), 530, 120);
-			Enemy babyGoblin = new Enemy(enemySprite2, 2, "close range baby goblin");
-			enemies.add(babyGoblin); //add enemy2 to ArrayList
-			
-			GImage enemySprite3 = new GImage (sprites.get("flying goblin"), 300, 300);
-			Enemy enemy3 = new Enemy(enemySprite3, 2, "long range flying goblin"); //Enemy has 2 health points.
-			enemy3.setDetectionRange(300);
-			//GImage weaponSprite = new GImage("bow.png");
-			Weapon weapon = new Weapon(new GImage(""), "mouth", 400);
-			enemy3.setWeapon(weapon);
-			enemies.add(enemy3); //add enemy to ArrayList
-		}
-		else { // add boss to screen
-			GImage bossSprite = new GImage (sprites.get("goblin"), 300, 120);
-			bossSprite.setSize(bossSprite.getWidth() * 2, bossSprite.getHeight() * 2);
-			Boss boss = new Boss(bossSprite, 5, "boss big goblin"); //Boss has 5 health points.
-			boss.setSpeed(10);
-			boss.setDetectionRange(800);
-			enemies.add(boss); //add enemy to ArrayList
 		}
 		return enemies; 
 	}

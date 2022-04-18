@@ -11,6 +11,10 @@ public class Weapon extends Item {
 		range = weaponRange;
 	}
 	
+	public Weapon(GImage image, String name) { // for weapon upgrade
+		super(image, name);
+	}
+
 	public void setRange(int r) {
 		range = r;
 	}
