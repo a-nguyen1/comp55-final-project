@@ -39,7 +39,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private GRect inventoryBox;
 	private Timer timer;
 	private SoundEffect sounds;
-	private AudioPlayer backgroundMusic = new AudioPlayer();
+	private AudioPlayer backgroundMusic;
 	
 	private int timerCount;
 	
@@ -129,8 +129,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 		}
 		if (currentRoom > 2) { // boss room reached
-			backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
-			backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play boss background music
+			if (program.isAudioOn()) {
+				backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
+				backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play boss background music
+			}
 			bossLabel = new GLabel("Big Goblin", program.getWidth() - 125, 25);
 			bossLabel.setFont(new Font("Serif", Font.BOLD, 20));
 			program.add(bossLabel);
@@ -186,9 +188,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	}
 	
 	public void gameOver() {
-		backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
-		backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
-		backgroundMusic.playSound("sounds", "game_over.wav", false); // play game over sound
+		if (program.isAudioOn()) {
+			backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
+			backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
+			backgroundMusic.playSound("sounds", "game_over.wav", false); // play game over sound
+		}
 		
 		GRect blackBackground = new GRect(0, 0, program.getWidth(), program.getHeight());
 		blackBackground.setFillColor(Color.BLACK);
@@ -208,7 +212,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		else if (e == "close range") {
 			sounds.setName("small_goblin_grunt"); //Sound effect for enemy getting hit.
 		}
-		sounds.play(p); //Play enemy getting hit sound effect.
+		if (program.isAudioOn()) {
+			sounds.play(p); //Play enemy getting hit sound effect.
+		}
 	}
 
 	@Override
@@ -269,11 +275,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						}
 					}
 					else {
-						if (Collision.check(bulletSprite.getBounds(), player.getSprite().getBounds())) { //returns true if enemy collides with bullet 
+						if (Collision.check(bulletSprite.getBounds(), player.getSprite().getBounds())) { //returns true if player collides with bullet 
 							//TODO player grunts
 							//playSound(enemies.get(0).getEnemyType(), p); //play player grunt sound.
 							player.changeHealth(-1);
-							updateHealth();
+							updateHealth(); // update health display
 							player.setDamaged(true); //player is damaged.
 							System.out.println(player.getHealth());
 							if (player.isDead()) {
@@ -315,7 +321,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						enemySprite.setLocation(enemySprite.getX(), program.getHeight() - enemySprite.getHeight() * 3);
 					} 
 					
-					if (Collision.check(enemy.getSprite().getBounds(), player.getSprite().getBounds())) {
+					if (Collision.check(enemy.getSprite().getBounds(), player.getSprite().getBounds())) { // player collides with enemy
 						playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // player moves away from enemy
 						if (enemy.getEnemyType() == "close range") {
 							player.changeHealth(-1);
@@ -400,7 +406,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	@Override
 	public void showContents() {
 		createRoom(currentRoom); // currentRoom is initially at 1
-		backgroundMusic.playSound("sounds", "basic_loop.wav", true); // play background music
+		if (program.isAudioOn()) {
+			backgroundMusic.playSound("sounds", "basic_loop.wav", true); // play background music
+		}
 	}
 
 	@Override

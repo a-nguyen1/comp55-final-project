@@ -10,6 +10,7 @@ public class MainApplication extends GraphicsApplication {
 	private MenuPane menu;
 	private DisplayPane display;
 	private boolean closeRangeWeapon;
+	private boolean audioOn;
 	private int count;
 
 	public void init() {
@@ -21,6 +22,7 @@ public class MainApplication extends GraphicsApplication {
 		chooseCharacter = new ChooseCharacterPane(this);
 		menu = new MenuPane(this);
 		display = new DisplayPane(this);
+		audioOn = true; // audio is on by default
 		setupInteractions();
 		switchToMenu();
 	}
@@ -57,5 +59,13 @@ public class MainApplication extends GraphicsApplication {
 
 	public void setCloseRangeWeapon(boolean closeRangeWeapon) {
 		this.closeRangeWeapon = closeRangeWeapon;
+	}
+
+	public boolean isAudioOn() {
+		return audioOn;
+	}
+
+	public void setAudioOn(boolean audioOn) {
+		this.audioOn = audioOn;
 	}
 }

@@ -14,7 +14,7 @@ public class HowToPlayPane extends GraphicsPane {
 	
 	public HowToPlayPane (MainApplication app) {
 		this.program = app;
-		para = new GParagraph("Press w, a, s, d to move up, down, left, right, respectively\nPress e to interact with objects\nPress SHIFT to dash in the direction of the mouse", 200, 400); //TODO change to show how to play
+		para = new GParagraph("Press w, a, s, d to move up, down, left, right, respectively\nPress SHIFT to dash in the direction of the mouse\nPress e to interact with objects\nPress r to use a heart item", 200, 400);
 		menu = new GButton("Back to Menu", program.getWidth()/2.5, program.getHeight()/3, 100, 100);
 		menu.setFillColor(Color.GREEN);
 		play = new GButton("Play", program.getWidth()/2.5, (program.getHeight()/4)-80, 100, 100);

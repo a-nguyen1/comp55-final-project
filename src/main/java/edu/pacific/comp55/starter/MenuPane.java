@@ -58,7 +58,7 @@ public class MenuPane extends GraphicsPane {
 				music = new GButton(musicButtonText, program.getWidth()/2.5, ((program.getHeight()*2)/3)-70, 100, 100);
 				music.setFillColor(Color.RED);
 				program.add(music);
-				//TODO set audio OFF here
+				program.setAudioOn(false);
 			}
 			else { // toggle audio button from OFF to ON
 				program.remove(music);
@@ -66,7 +66,7 @@ public class MenuPane extends GraphicsPane {
 				music = new GButton(musicButtonText, program.getWidth()/2.5, ((program.getHeight()*2)/3)-70, 100, 100);
 				music.setFillColor(Color.GREEN);
 				program.add(music);
-				//TODO set audio ON here
+				program.setAudioOn(true);
 			}
 		}
 	}
