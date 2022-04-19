@@ -132,7 +132,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
 				backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play boss background music
 			}
-			bossLabel = new GLabel("Big Goblin", program.getWidth() - 125, 25);
+			bossLabel = new GLabel("Falkor", program.getWidth() - 125, 25);
 			bossLabel.setFont(new Font("Serif", Font.BOLD, 20));
 			program.add(bossLabel);
 		}

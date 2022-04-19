@@ -37,6 +37,7 @@ public class Room {
 		sprites.put("goblin", "EnemyGoblinSprite.png");
 		sprites.put("baby goblin", "EnemyGoblinBabySprite.png");
 		sprites.put("flying goblin", "EnemyGoblinFlyingSprite.png");
+		sprites.put("dragon", "dragon-sprite.png");
 		sprites.put("key", "key.png");
 		sprites.put("heart", "heart.png");
 		sprites.put("chest", "closedChest.png");
@@ -75,9 +76,9 @@ public class Room {
 				enemies.add(enemy3); //add enemy to ArrayList
 			}
 			else { // add boss to screen
-				GImage bossSprite = new GImage (sprites.get("goblin"), 300, 120);
+				GImage bossSprite = new GImage (sprites.get("dragon"), 300, 120);
 				bossSprite.setSize(bossSprite.getWidth() * 2, bossSprite.getHeight() * 2);
-				Boss boss = new Boss(bossSprite, 5, "boss big goblin"); //Boss has 5 health points.
+				Boss boss = new Boss(bossSprite, 5, "dragon boss"); //Boss has 5 health points.
 				boss.setSpeed(10);
 				boss.setDetectionRange(800);
 				enemies.add(boss); //add enemy to ArrayList
