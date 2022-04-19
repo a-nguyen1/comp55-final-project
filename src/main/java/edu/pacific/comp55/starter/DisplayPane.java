@@ -139,6 +139,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		program.add(inventoryBox); //Add inventory box to the screen.
 		updateHealth(); // update player health display
 		updateInventory(); // update player inventory display
+		player.getSprite().setLocation((program.getWidth() - 1.75 * player.getSprite().getWidth()) * Math.random(), program.getHeight() - 2.25 * player.getSprite().getHeight());
 		program.add(player.getSprite()); //Add player sprite to screen.
 		
 		if (currentRoom >= 4) { // TODO change so this is the room after the final boss room
@@ -158,6 +159,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			program.setPlayerWin(true);
 			program.switchTo(3);
 		}
+		
 	}
 	
 	public void updateHealth() {
