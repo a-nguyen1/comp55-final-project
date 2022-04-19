@@ -9,9 +9,12 @@ public class MainApplication extends GraphicsApplication {
 	private ChooseCharacterPane chooseCharacter;
 	private MenuPane menu;
 	private DisplayPane display;
+	private GameEndPane gameEnd;
 	private boolean closeRangeWeapon;
 	private boolean audioOn;
+	private boolean playerWin;
 	private int count;
+	
 
 	public void init() {
 		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -22,9 +25,11 @@ public class MainApplication extends GraphicsApplication {
 		chooseCharacter = new ChooseCharacterPane(this);
 		menu = new MenuPane(this);
 		display = new DisplayPane(this);
+		gameEnd = new GameEndPane(this);
 		audioOn = true; // audio is on by default
 		setupInteractions();
 		switchToMenu();
+		 
 	}
 
 	public void switchToMenu() {
@@ -41,6 +46,9 @@ public class MainApplication extends GraphicsApplication {
 		}
 		else if (n == 2) {
 			switchToScreen(display);
+		}
+		else if (n == 3) {
+			switchToScreen(gameEnd);
 		}
 	}
 
@@ -67,5 +75,13 @@ public class MainApplication extends GraphicsApplication {
 
 	public void setAudioOn(boolean audioOn) {
 		this.audioOn = audioOn;
+	}
+
+	public boolean isPlayerWin() {
+		return playerWin;
+	}
+
+	public void setPlayerWin(boolean playerWin) {
+		this.playerWin = playerWin;
 	}
 }

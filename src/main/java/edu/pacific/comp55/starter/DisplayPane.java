@@ -155,7 +155,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
 				backgroundMusic.playSound("sounds", "win.wav"); // play win music
 			}
-			//TODO go to win screen
+			program.setPlayerWin(true);
+			program.switchTo(3);
 		}
 	}
 	
@@ -229,16 +230,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
 			backgroundMusic.playSound("sounds", "game_over.wav", false); // play game over sound
 		}
-		
-		GRect blackBackground = new GRect(0, 0, program.getWidth(), program.getHeight());
-		blackBackground.setFillColor(Color.BLACK);
-		blackBackground.setFilled(true);
-		program.add(blackBackground); // add black background
-		
-		GLabel g= new GLabel (" G A M E  O V E R", 175, 300);
-		g.setFont(new Font("Merriweather", Font.BOLD, 50));
-		g.setColor(Color.RED);
-		program.add(g); // add game over text
+		program.switchTo(3);
 	}
 	
 	public void playSound(String e, AudioPlayer p) {
@@ -479,7 +471,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	}
 	
 	@Override
-	public void mouseClicked(MouseEvent e) { 
+	public void mouseClicked(MouseEvent e) {  
 		GImage playerSprite = player.getSprite();
 		AudioPlayer p = sounds.getPlayer(); // Get the audio player object to play the sound.
 		if (player.isAttackAvailable()) {
