@@ -73,6 +73,7 @@ public class Enemy extends Character {
 				setDamaged(false);
 				setInvincibilityCounter(0); 
 			}
+			System.out.println("invincibility counter: " + getInvincibilityCounter());
 	}
 
 	@Override

@@ -78,9 +78,13 @@ public class Room {
 			else { // add boss to screen
 				GImage bossSprite = new GImage (sprites.get("dragon"), 300, 120);
 				bossSprite.setSize(bossSprite.getWidth() * 2, bossSprite.getHeight() * 2);
-				Boss boss = new Boss(bossSprite, 5, "dragon boss"); //Boss has 5 health points.
+				Boss boss = new Boss(bossSprite, 5, "long range dragon boss"); //Boss has 5 health points.
 				boss.setSpeed(10);
 				boss.setDetectionRange(800);
+				Weapon weapon = new Weapon(new GImage(""), "mouth", 500);
+				boss.setWeapon(weapon);
+				GImage bullet = new GImage("fireBallSprite.png", boss.getSprite().getX(), boss.getSprite().getY());
+				boss.setBulletSprite(bullet);
 				enemies.add(boss); //add enemy to ArrayList
 			}
 		}
