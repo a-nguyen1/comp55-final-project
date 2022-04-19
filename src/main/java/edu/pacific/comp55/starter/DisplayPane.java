@@ -305,10 +305,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				if (enemy.isBulletTraveling()) {
 					GImage bulletSprite = enemy.getBulletSprite();  
 					bulletSprite = enemy.moveBullet(bulletSprite); //Move the bulletSprite.
-					/*if (player.isDamaged()) {
+					if (player.isDamaged()) {
 						player.playerInvincibility();
 					}
-					else {*/
+					else {
 						if (Collision.check(bulletSprite.getBounds(), player.getSprite().getBounds())) { //returns true if player collides with bullet 
 							//TODO player grunts
 							//playSound(enemies.get(0).getEnemyType(), p); //play player grunt sound.
@@ -327,7 +327,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								bulletSprite = enemy.moveBullet(bulletSprite); 
 							}
 						}
-					//}
+					}
 					if (enemy.getBulletDistance() >= enemy.getWeapon().getRange()) {
 						enemy.setBulletTraveling(false);
 						bulletSprite.setLocation(enemySprite.getX() + enemySprite.getWidth() / 2 - bulletSprite.getWidth() / 2, enemySprite.getY() + enemySprite.getHeight() / 2 - bulletSprite.getHeight() / 2);
@@ -344,17 +344,18 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					if (timerCount % 100 == 0) {
 						enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // enemy moves towards player
 						if (enemy.getEnemyType().contains("long range")) {
-							if (enemy.getEnemyType().contains("dragon")) {
+							if (enemy.getEnemyType().contains("dragon boss")) {
 								String fireSpriteFile = "burningFireSprite.png";
 								if (Math.random() <= 0.5) { // 50% chance for fire to appear mirrored
 									fireSpriteFile = "burningFireMirroredSprite.png";
 								}
 								GImage fireSprite = new GImage (fireSpriteFile, enemy.getBulletSprite().getX(), enemy.getBulletSprite().getY());
 								Enemy fire = new Enemy(fireSprite, 1, "close range fire");
-								fire.setDetectionRange(25);
-								fire.setSpeed(0);
+								fire.setDetectionRange(25); // so fire can hurt player
+								fire.setSpeed(0); // so fire does not move
 								program.add(fire.getSprite()); // add fire sprite to the screen
 								enemies.add(fire); // add fire enemy to the screen
+								enemy.getSprite().sendToFront(); // send dragon to front
 							}
 							else {
 								enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI)); // enemy moves away from player
