@@ -115,7 +115,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			program.add(attackArea); // add attack area to the screen.
 		}
 		else { //long range weapon selected
-			player.setSprite(new GImage ("wizardSprite.png", program.getWidth()/2, program.getHeight()/2));
+			player.setSprite(new GImage ("PlayerWizardSprite.png", program.getWidth()/2, program.getHeight()/2));
 			Weapon weapon = new Weapon(new GImage("bow.png"), "long range weapon", 200);
 			player.setWeapon(weapon);
 			program.add(player.getBulletSprite());
