@@ -248,6 +248,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		else if (e.contains("goblin")) {
 			sounds.setName("small_goblin_grunt"); //Sound effect for enemy getting hit.
 		}
+		else if (e.contains("dragon")) {
+			sounds.setName("dragon_grunt");
+		}
 		if (program.isAudioOn()) {
 			sounds.play(p); //Play enemy getting hit sound effect.
 		}
