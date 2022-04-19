@@ -3,6 +3,7 @@ import java.util.ArrayList; // for ArrayList
 import java.util.HashMap;
 
 import acm.graphics.GImage; // for GImage
+import acm.graphics.GPoint;
 
 public class Room {
 	//has player location
@@ -11,12 +12,14 @@ public class Room {
 	//has background tile
 	private ArrayList<Item> items;
 	private ArrayList<Enemy> enemies;
+	private ArrayList<GPoint> locations;
 	private HashMap<String, String> sprites;
 	private String backgroundTileName;
 	private double width; // width of program
 	private double height; // height of program
 	private int room; // room number
 	private int level; // level number 
+
 	
 	public Room(int levelNumber, int roomNumber, double w, double h) {
 		level = levelNumber;
@@ -42,6 +45,10 @@ public class Room {
 		sprites.put("heart", "heart.png");
 		sprites.put("chest", "closedChest.png");
 		sprites.put("door", "closedDoor.png");
+		
+		locations = new ArrayList<GPoint>();
+		items = new ArrayList<Item>();
+		enemies = new ArrayList<Enemy>();
 	}
 	
 	public void setPlayerLocation(Player p, double x, double y) {
@@ -60,9 +67,9 @@ public class Room {
 		enemies = new ArrayList<Enemy>(); // initialize enemy array list
 		if (level == 1) {
 			if (room % 3 != 0) { // TODO change
-				addEnemy("goblin", 300, 120, 2, "close range goblin", 100); //add enemy to ArrayList
-				addEnemy("baby goblin", 530, 120, 2, "close range baby goblin", 100); //add enemy to ArrayList
-				addEnemy("flying goblin", 300, 300, 2, "long range flying goblin", 300, 400); //add enemy to ArrayList
+				addEnemy("goblin", randomizePoint(), 2, "close range goblin", 100); //add enemy to ArrayList
+				addEnemy("baby goblin", randomizePoint(), 2, "close range baby goblin", 100); //add enemy to ArrayList
+				addEnemy("flying goblin", randomizePoint(), 2, "long range flying goblin", 300, 400); //add enemy to ArrayList
 			}
 			else { // add boss to screen
 				addBoss(); //add enemy to ArrayList
@@ -78,6 +85,8 @@ public class Room {
 	}
 
 	private void addBoss() {
+		addLocation(300, 120);
+		
 		GImage bossSprite = new GImage (sprites.get("dragon"), 300, 120);
 		bossSprite.setSize(bossSprite.getWidth() * 2, bossSprite.getHeight() * 2);
 		Boss boss = new Boss(bossSprite, 5, "long range dragon boss"); //Boss has 5 health points.
@@ -90,7 +99,11 @@ public class Room {
 		enemies.add(boss);
 	}
 
-	private void addEnemy(String enemy, double x, double y, int health, String enemyType, int detectionRange, int weaponRange) {
+	private void addEnemy(String enemy, GPoint point, int health, String enemyType, int detectionRange, int weaponRange) {
+		double x = point.getX();
+		double y = point.getY();
+		addLocation(x,y);
+		
 		GImage enemySprite = new GImage(sprites.get(enemy), x, y);
 		Enemy enemyToAdd = new Enemy(enemySprite, health, enemyType);
 		enemyToAdd.setDetectionRange(detectionRange);
@@ -99,29 +112,66 @@ public class Room {
 		enemies.add(enemyToAdd);
 	}
 
-	private void addEnemy(String enemy, double x, double y, int health, String enemyType, int detectionRange) {
+	private void addEnemy(String enemy, GPoint point, int health, String enemyType, int detectionRange) {
+		double x = point.getX();
+		double y = point.getY();
+		addLocation(x,y);
+		
 		GImage enemySprite = new GImage(sprites.get(enemy), x, y);
 		Enemy enemyToAdd = new Enemy(enemySprite, health, enemyType);
 		enemyToAdd.setDetectionRange(detectionRange);
 		enemies.add(enemyToAdd);
 	}
+
+	private void addLocation(double x, double y) {
+		GPoint addLocation = new GPoint(x,y);
+		locations.add(addLocation);
+	}
 	
 	public ArrayList<Item> getItems() {
 		items = new ArrayList<Item>(); // initialize item array list
 		
-		// randomize values for key location
-		double x = 100 + Math.random() * (width - 200); //randomize x so not at edge of screen (offset by 100)
-		double y = 100 + Math.random() * (height - 200); //randomize y so not at edge of screen (offset by 100)
-		
-		addItem("heart", 150, 300);
-		addItem("chest", 500, 200);
-		addItem("door", 300, 100);
-		addItem("key", x, y);
+		addItem("heart", randomizePoint());
+		addItem("chest", randomizePoint());
+		addItem("door", randomizePoint());
+		addItem("key", randomizePoint());
 		
 		return items; 
 	}
 
-	private void addItem(String itemName, double x, double y) {
+	private double randomizeBetween(double min, double max) {
+		return min + Math.random() * max; //randomize between min and max
+	}
+	
+	private GPoint randomizePoint() {
+		double x = randomizeBetween(100, width - 200); //randomize x so not at edge of screen (offset by 100)
+		double y = randomizeBetween(100, height - 200); //randomize y so not at edge of screen (offset by 100)
+		GPoint returnPoint = new GPoint(x, y);
+		while (isTooClose(returnPoint)) { //Re randomize the points until point is not too close.
+			x = randomizeBetween(100, width - 200); //randomize x so not at edge of screen (offset by 100)
+			y = randomizeBetween(100, height - 200); //randomize y so not at edge of screen (offset by 100)
+			returnPoint = new GPoint(x, y);
+		}
+		return returnPoint;
+	}
+	
+	private boolean isTooClose(GPoint point) {
+		boolean returnValue = false;
+		for (GPoint p : locations) {
+			double xDiff = Math.abs(p.getX() - point.getX()); // find difference in x coordinates
+			double yDiff = Math.abs(p.getY() - point.getY()); // find difference in y coordinates
+			if (xDiff <= 50 && yDiff <= 50) {
+				returnValue = true;
+			}
+		}
+		return returnValue;
+	}
+
+	private void addItem(String itemName, GPoint point) {
+		double x = point.getX();
+		double y = point.getY();
+		addLocation(x,y);
+		
 		GImage itemSprite = new GImage (sprites.get(itemName), x, y); //Create a new sprite for key.
 		if (itemName == "key" || itemName == "heart" ) {
 			itemSprite.setSize(25, 25); //Resize sprite to make it smaller.
