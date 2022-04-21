@@ -6,6 +6,12 @@ import acm.graphics.GImage; // for GImage
 import acm.graphics.GPoint;
 
 public class Room {
+	private static final int BOSS_Y = 120;
+	private static final int BOSS_X = 300;
+	private static final int BOSS_DETECTION_RANGE = 800;
+	private static final int FLYING_GOBLIN_DETECTION_RANGE = 400;
+	private static final int BABY_GOBLIN_DETECTION_RANGE = 200;
+	private static final int NORMAL_GOBLIN_DETECTION_RANGE = 100;
 	//has player location
 	//has items
 	//has enemies
@@ -25,13 +31,13 @@ public class Room {
 		level = levelNumber;
 		room = roomNumber;
 		//set tiles based on level
-		if (level == 1) { 
+		if (room <= 6) { 
 			backgroundTileName = "GreenTile.png";
 		}
-		else if (level == 2) {
+		else if (room <= 12) {
 			backgroundTileName = "GrayTile.png";
 		}
-		else if (level == 3) {
+		else if (room <= 18) {
 			backgroundTileName = "OrangeTile.png";
 		}
 		width = w;
@@ -65,37 +71,76 @@ public class Room {
 	
 	public ArrayList<Enemy> getEnemies() {
 		enemies = new ArrayList<Enemy>(); // initialize enemy array list
-		if (level == 1) {
-			if (room % 3 != 0) { // TODO change
-				addEnemy("goblin", randomizePoint(), 2, "close range goblin", 100); //add enemy to ArrayList
-				addEnemy("baby goblin", randomizePoint(), 2, "close range baby goblin", 100); //add enemy to ArrayList
-				addEnemy("flying goblin", randomizePoint(), 2, "long range flying goblin", 300, 400); //add enemy to ArrayList
-			}
-			else { // add boss to screen
-				addBoss(); //add enemy to ArrayList
-			}
+		switch(room) {
+			case 1:
+				addEnemy("goblin", randomizePoint(), 2, "close range goblin", NORMAL_GOBLIN_DETECTION_RANGE); //add enemy to ArrayList
+				break;
+			case 2:
+				addEnemy("goblin", randomizePoint(), 2, "close range goblin", NORMAL_GOBLIN_DETECTION_RANGE); //add enemy to ArrayList
+				addEnemy("baby goblin", randomizePoint(), 1, "close range baby goblin", BABY_GOBLIN_DETECTION_RANGE); //add enemy to ArrayList
+				break;
+			case 3: 
+				addEnemy("goblin", randomizePoint(), 2, "close range goblin", NORMAL_GOBLIN_DETECTION_RANGE); //add enemy to ArrayList
+				addEnemy("baby goblin", randomizePoint(), 1, "close range baby goblin", BABY_GOBLIN_DETECTION_RANGE); //add enemy to ArrayList
+				addEnemy("flying goblin", randomizePoint(), 2, "long range flying goblin", 300, FLYING_GOBLIN_DETECTION_RANGE); //add enemy to ArrayList
+				break;
+			case 4:
+				for (int i = 0; i < 5; i++) {
+					addEnemy("baby goblin", randomizePoint(), 1, "close range baby goblin", BABY_GOBLIN_DETECTION_RANGE); //add enemy to ArrayList
+				}
+				break;
+			case 5:
+				for (int i = 0; i < 3; i++) {
+					addEnemy("flying goblin", randomizePoint(), 2, "long range flying goblin", 300, FLYING_GOBLIN_DETECTION_RANGE); //add enemy to ArrayList
+				}
+				break;
+			case 6:
+				addGoblinBoss(); //add enemy to ArrayList
+				break;
+			case 7:
+				break;
+			case 8:
+				break;
+			case 9:
+				break;
+			case 10:
+				break;
+			case 11:
+				break;
+			case 12:
+				addDragonBoss(); //add enemy to ArrayList
+				break;
+			default:
+				
+				
 		}
-		else if (level == 2) {
 			
-		}
-		else if (level == 3) {
-			
-		}
 		return enemies; 
 	}
 
-	private void addBoss() {
-		addLocation(300, 120);
+	private void addDragonBoss() {
+		addLocation(BOSS_X, BOSS_Y);
 		
-		GImage bossSprite = new GImage (sprites.get("dragon"), 300, 120);
+		GImage bossSprite = new GImage (sprites.get("dragon"), BOSS_X, BOSS_Y);
 		bossSprite.setSize(bossSprite.getWidth() * 2, bossSprite.getHeight() * 2);
 		Boss boss = new Boss(bossSprite, 5, "long range dragon boss"); //Boss has 5 health points.
 		boss.setSpeed(10);
-		boss.setDetectionRange(800);
+		boss.setDetectionRange(BOSS_DETECTION_RANGE);
+		
 		Weapon weapon = new Weapon(new GImage(""), "mouth", 500);
 		boss.setWeapon(weapon);
 		GImage bullet = new GImage("fireBallSprite.png", boss.getSprite().getX(), boss.getSprite().getY());
 		boss.setBulletSprite(bullet);
+		enemies.add(boss);
+	}
+	
+	private void addGoblinBoss() {
+		addLocation(BOSS_X, BOSS_Y);
+		GImage bossSprite = new GImage (sprites.get("goblin"), BOSS_X, BOSS_Y);
+		bossSprite.setSize(bossSprite.getWidth() * 2, bossSprite.getHeight() * 2);
+		Boss boss = new Boss(bossSprite, 5, "close range big goblin boss"); //Boss has 5 health points.
+		boss.setSpeed(10);
+		boss.setDetectionRange(BOSS_DETECTION_RANGE);
 		enemies.add(boss);
 	}
 

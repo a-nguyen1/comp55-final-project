@@ -77,7 +77,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 		//create player object with knight sprite as default.
 		GImage playerSprite = new GImage ("PlayerKnightSprite.png", program.getWidth()/2, program.getHeight()/2);
-		player = new Player(playerSprite, 5);
+		player = new Player(playerSprite, 100);
 		player.setSpeed(7);
 		attackArea = new GImage("TopRight.png"); // initialize attack area
 		
@@ -134,12 +134,19 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 		}
 		dropWeaponUpgrade = false;
-		if (currentRoom % 3 == 0) { // boss room reached (every 3rd room) TODO change later
+		if (currentRoom % 6 == 0) { // boss room reached TODO change later 
 			if (program.isAudioOn()) {
 				backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
 				backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play boss background music
 			}
-			bossLabel = new GLabel("Falkor", program.getWidth() - 125, 25);
+			if (currentRoom == 6) {
+				bossLabel = new GLabel("Big Goblin", program.getWidth() - 125, 25);
+				System.out.println("Boss label: " + bossLabel);
+			}
+			else if(currentRoom == 12) {
+				bossLabel = new GLabel("Falkor", program.getWidth() - 125, 25);
+				System.out.println("Boss label: " + bossLabel);
+			}
 			bossLabel.setFont(new Font("Serif", Font.BOLD, 20));
 			program.add(bossLabel);
 		}
@@ -149,24 +156,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		player.getSprite().setLocation((program.getWidth() - 1.75 * player.getSprite().getWidth()) * Math.random(), program.getHeight() - 2.25 * player.getSprite().getHeight());
 		program.add(player.getSprite()); //Add player sprite to screen.
 		
-		if (currentRoom >= 4) { // TODO change so this is the room after the final boss room
-			program.removeAll();
-			while (enemies.size() > 0) { // remove all enemies from ArrayList
-				enemies.remove(0);
-			}
-			while (items.size() > 0) { // remove all items from ArrayList
-				items.remove(0);
-			}
-			timer.stop(); // stop timer
-			System.out.println("Congratulations! You escaped the dungeon!");
-			if (program.isAudioOn()) {
-				backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
-				backgroundMusic.playSound("sounds", "win.wav"); // play win music
-			}
-			initializeGame(); // reset all game values
-			program.setPlayerWin(true);
-			program.switchTo(3);
-		}
+		
 		
 	}
 	
@@ -181,7 +171,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			heart.setSize(50,50);
 			program.add(heart);
 		}
-		if (currentRoom % 3 == 0) { // TODO change later
+		System.out.println(currentRoom);
+		if (currentRoom % 6 == 0) { // TODO change later
+			bossLabel.sendToFront();
+			System.out.println(bossHealth.size());
 			while (bossHealth.size() > 0) { // remove all boss hearts from screen
 				program.remove(bossHealth.get(0));
 				bossHealth.remove(0);
@@ -638,6 +631,25 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						if (doorStateBefore == unlockedDoor) { // door has already been opened, so create next room
 							currentRoom++;
 							createRoom(currentRoom); // create next room
+							if (currentRoom >= 13) { // TODO change so this is the room after the final boss room
+								program.removeAll();
+								while (enemies.size() > 0) { // remove all enemies from ArrayList
+									enemies.remove(0);
+								}
+								while (items.size() > 0) { // remove all items from ArrayList
+									items.remove(0);
+								}
+								timer.stop(); // stop timer
+								System.out.println("Congratulations! You escaped the dungeon!");
+								if (program.isAudioOn()) {
+									backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
+									backgroundMusic.playSound("sounds", "win.wav"); // play win music
+								}
+								initializeGame(); // reset all game values
+								program.setPlayerWin(true);
+								program.switchTo(3);
+							}
+							
 						}
 						int removeIndex = -1;
 						if (player.getInventory().size() > 0) {
