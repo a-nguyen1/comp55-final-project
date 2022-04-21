@@ -16,7 +16,7 @@ public class Enemy extends Character {
 		setEnemyType(enemyName);
 		setBulletTraveling(false);
 		setBulletDistance(0);
-		bulletSprite = new GImage("poisonBallSprite.png", getSprite().getX() + getSprite().getWidth() / 2, getSprite().getY() + getSprite().getHeight() / 2);
+		bulletSprite = new GImage("");
 		bulletSprite.setVisible(false);
 		attackAvailable = false;
 		detectionRange = 100; // detection range is 100 by default

@@ -11,7 +11,7 @@ import java.util.HashMap; // for HashMap
 import javax.swing.Timer; // for Timer
 
 import acm.graphics.GImage; // for GImage
-import acm.graphics.GLabel;
+import acm.graphics.GLabel; // for GLabel
 import acm.graphics.GObject; // for GObject
 import acm.graphics.GRect; // for GRect
 
@@ -47,6 +47,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		super();
 		program = app;
 		
+		timer = new Timer(0, this); // create timer object
 		initializeGame();
 	}
 
@@ -85,8 +86,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		inventoryBox = new GRect(50, 0, 0, 0);
 		inventoryBox.setVisible(false);
 		
-		timer = new Timer(0, this); // create timer object 
-		timer.start(); // start timer
+		timer.restart(); // reset timer
 	}
 
 	public void setBackground(String tileFile) {
@@ -171,7 +171,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			heart.setSize(50,50);
 			program.add(heart);
 		}
-		System.out.println(currentRoom);
+		System.out.println("curren room: " + currentRoom);
 		if (currentRoom % 6 == 0) { // TODO change later
 			bossLabel.sendToFront();
 			System.out.println(bossHealth.size());
@@ -233,9 +233,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
 			backgroundMusic.playSound("sounds", "game_over.wav", false); // play game over sound
 		}
-		updateHealth(); // player health should disappear on death
+		//updateHealth(); // player health should disappear on death
 		initializeGame(); // reset all game values
-		program.switchTo(3);
+		
+		program.switchTo(3); // switch to game end screen
 	}
 	
 	public void playSound(String e, AudioPlayer p) {
@@ -258,7 +259,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		GImage playerSprite = player.getSprite();
 		AudioPlayer p = sounds.getPlayer(); //Get the audio player object to play the sound.
 		ArrayList<Integer> removeEnemyIndex = new ArrayList<Integer>(); // for removing dead enemies
-		for (int z = 0; z < enemies.size(); z++) {
+		for (int z = 0; z < enemies.size(); z++) { // loop through all enemies
 			Enemy enemy = enemies.get(z);
 			GImage enemySprite = enemy.getSprite();
 			if (timerCount % 1 == 0) {
@@ -341,7 +342,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					if (timerCount % 100 == 0) {
 						enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // enemy moves towards player
 						if (enemy.getEnemyType().contains("long range")) { // if enemy is long range
-							if (enemy.getEnemyType().contains("dragon boss")) { // if enemy is boss
+							if (enemy.getEnemyType().contains("dragon boss")) { // if enemy is dragon boss
 								String fireSpriteFile = "burningFireSprite.png";
 								if (Math.random() <= 0.5) { // 50% chance for fire to appear mirrored
 									fireSpriteFile = "burningFireMirroredSprite.png";
@@ -631,25 +632,18 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						if (doorStateBefore == unlockedDoor) { // door has already been opened, so create next room
 							currentRoom++;
 							createRoom(currentRoom); // create next room
-							if (currentRoom >= 13) { // TODO change so this is the room after the final boss room
+							if (currentRoom >= 13) { // TODO make sure this room is after the final boss room
 								program.removeAll();
-								while (enemies.size() > 0) { // remove all enemies from ArrayList
-									enemies.remove(0);
-								}
-								while (items.size() > 0) { // remove all items from ArrayList
-									items.remove(0);
-								}
-								timer.stop(); // stop timer
 								System.out.println("Congratulations! You escaped the dungeon!");
 								if (program.isAudioOn()) {
 									backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
 									backgroundMusic.playSound("sounds", "win.wav"); // play win music
 								}
 								initializeGame(); // reset all game values
-								program.setPlayerWin(true);
-								program.switchTo(3);
+								program.setPlayerWin(true); // player wins
+								
+								program.switchTo(3); // switch to game end screen
 							}
-							
 						}
 						int removeIndex = -1;
 						if (player.getInventory().size() > 0) {

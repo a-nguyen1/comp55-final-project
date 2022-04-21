@@ -6,16 +6,18 @@ import acm.graphics.GImage; // for GImage
 import acm.graphics.GPoint;
 
 public class Room {
+	private static final int NORMAL_SPEED = 5;
+	private static final int FAST_SPEED = 10;
+	private static final int ITEM_SIZE = 25;
 	private static final int BOSS_Y = 120;
 	private static final int BOSS_X = 300;
+	private static final int BOSS_HEALTH = 5;
 	private static final int BOSS_DETECTION_RANGE = 800;
-	private static final int FLYING_GOBLIN_DETECTION_RANGE = 400;
+	private static final int FLYING_GOBLIN_WEAPON_RANGE = 400;
+	private static final int FLYING_GOBLIN_DETECTION_RANGE = 300;
 	private static final int BABY_GOBLIN_DETECTION_RANGE = 200;
 	private static final int NORMAL_GOBLIN_DETECTION_RANGE = 100;
-	//has player location
-	//has items
-	//has enemies
-	//has background tile
+
 	private ArrayList<Item> items;
 	private ArrayList<Enemy> enemies;
 	private ArrayList<GPoint> locations;
@@ -30,7 +32,7 @@ public class Room {
 	public Room(int levelNumber, int roomNumber, double w, double h) {
 		level = levelNumber;
 		room = roomNumber;
-		//set tiles based on level
+		//set tiles based on room number
 		if (room <= 6) { 
 			backgroundTileName = "GreenTile.png";
 		}
@@ -73,29 +75,29 @@ public class Room {
 		enemies = new ArrayList<Enemy>(); // initialize enemy array list
 		switch(room) {
 			case 1:
-				addEnemy("goblin", randomizePoint(), 2, "close range goblin", NORMAL_GOBLIN_DETECTION_RANGE); //add enemy to ArrayList
+				addEnemy("goblin", randomizePoint(), 2, "close range goblin", NORMAL_GOBLIN_DETECTION_RANGE, NORMAL_SPEED); 
 				break;
 			case 2:
-				addEnemy("goblin", randomizePoint(), 2, "close range goblin", NORMAL_GOBLIN_DETECTION_RANGE); //add enemy to ArrayList
-				addEnemy("baby goblin", randomizePoint(), 1, "close range baby goblin", BABY_GOBLIN_DETECTION_RANGE); //add enemy to ArrayList
+				addEnemy("goblin", randomizePoint(), 2, "close range goblin", NORMAL_GOBLIN_DETECTION_RANGE, NORMAL_SPEED); 
+				addEnemy("baby goblin", randomizePoint(), 1, "close range baby goblin", BABY_GOBLIN_DETECTION_RANGE, FAST_SPEED); 
 				break;
 			case 3: 
-				addEnemy("goblin", randomizePoint(), 2, "close range goblin", NORMAL_GOBLIN_DETECTION_RANGE); //add enemy to ArrayList
-				addEnemy("baby goblin", randomizePoint(), 1, "close range baby goblin", BABY_GOBLIN_DETECTION_RANGE); //add enemy to ArrayList
-				addEnemy("flying goblin", randomizePoint(), 2, "long range flying goblin", 300, FLYING_GOBLIN_DETECTION_RANGE); //add enemy to ArrayList
+				addEnemy("goblin", randomizePoint(), 2, "close range goblin", NORMAL_GOBLIN_DETECTION_RANGE, NORMAL_SPEED); 
+				addEnemy("baby goblin", randomizePoint(), 1, "close range baby goblin", BABY_GOBLIN_DETECTION_RANGE, FAST_SPEED); 
+				addEnemy("flying goblin", randomizePoint(), 2, "long range flying goblin", FLYING_GOBLIN_DETECTION_RANGE, FLYING_GOBLIN_WEAPON_RANGE, "poisonBallSprite.png", NORMAL_SPEED); 
 				break;
 			case 4:
 				for (int i = 0; i < 5; i++) {
-					addEnemy("baby goblin", randomizePoint(), 1, "close range baby goblin", BABY_GOBLIN_DETECTION_RANGE); //add enemy to ArrayList
+					addEnemy("baby goblin", randomizePoint(), 1, "close range baby goblin", BABY_GOBLIN_DETECTION_RANGE, FAST_SPEED);
 				}
 				break;
 			case 5:
 				for (int i = 0; i < 3; i++) {
-					addEnemy("flying goblin", randomizePoint(), 2, "long range flying goblin", 300, FLYING_GOBLIN_DETECTION_RANGE); //add enemy to ArrayList
+					addEnemy("flying goblin", randomizePoint(), 2, "long range flying goblin", FLYING_GOBLIN_DETECTION_RANGE, FLYING_GOBLIN_WEAPON_RANGE, "poisonBallSprite.png", NORMAL_SPEED);
 				}
 				break;
 			case 6:
-				addGoblinBoss(); //add enemy to ArrayList
+				addBoss("goblin", BOSS_HEALTH, "close range big goblin boss", FAST_SPEED); //add GoblinBoss
 				break;
 			case 7:
 				break;
@@ -108,43 +110,41 @@ public class Room {
 			case 11:
 				break;
 			case 12:
-				addDragonBoss(); //add enemy to ArrayList
+				addBoss("dragon", BOSS_HEALTH, "long range dragon boss", 500, "fireBallSprite.png", FAST_SPEED); //add DragonBoss
 				break;
 			default:
-				
-				
 		}
 			
 		return enemies; 
 	}
 
-	private void addDragonBoss() {
+	private void addBoss(String bossName, int health, String enemyType, int weaponRange, String bulletName, double speed) {
 		addLocation(BOSS_X, BOSS_Y);
 		
-		GImage bossSprite = new GImage (sprites.get("dragon"), BOSS_X, BOSS_Y);
+		GImage bossSprite = new GImage (sprites.get(bossName), BOSS_X, BOSS_Y);
 		bossSprite.setSize(bossSprite.getWidth() * 2, bossSprite.getHeight() * 2);
-		Boss boss = new Boss(bossSprite, 5, "long range dragon boss"); //Boss has 5 health points.
-		boss.setSpeed(10);
+		Boss boss = new Boss(bossSprite, health, enemyType); 
+		boss.setSpeed(speed);
 		boss.setDetectionRange(BOSS_DETECTION_RANGE);
 		
-		Weapon weapon = new Weapon(new GImage(""), "mouth", 500);
+		Weapon weapon = new Weapon(new GImage(""), "", 500);
 		boss.setWeapon(weapon);
-		GImage bullet = new GImage("fireBallSprite.png", boss.getSprite().getX(), boss.getSprite().getY());
+		GImage bullet = new GImage(bulletName, boss.getSprite().getX(), boss.getSprite().getY());
 		boss.setBulletSprite(bullet);
 		enemies.add(boss);
 	}
 	
-	private void addGoblinBoss() {
+	private void addBoss(String bossName, int health, String enemyType, double speed) {
 		addLocation(BOSS_X, BOSS_Y);
-		GImage bossSprite = new GImage (sprites.get("goblin"), BOSS_X, BOSS_Y);
+		GImage bossSprite = new GImage (sprites.get(bossName), BOSS_X, BOSS_Y);
 		bossSprite.setSize(bossSprite.getWidth() * 2, bossSprite.getHeight() * 2);
-		Boss boss = new Boss(bossSprite, 5, "close range big goblin boss"); //Boss has 5 health points.
-		boss.setSpeed(10);
+		Boss boss = new Boss(bossSprite, health, enemyType);
+		boss.setSpeed(speed);
 		boss.setDetectionRange(BOSS_DETECTION_RANGE);
 		enemies.add(boss);
 	}
 
-	private void addEnemy(String enemy, GPoint point, int health, String enemyType, int detectionRange, int weaponRange) {
+	private void addEnemy(String enemy, GPoint point, int health, String enemyType, int detectionRange, int weaponRange, String bulletName, double speed) {
 		double x = point.getX();
 		double y = point.getY();
 		addLocation(x,y);
@@ -152,12 +152,15 @@ public class Room {
 		GImage enemySprite = new GImage(sprites.get(enemy), x, y);
 		Enemy enemyToAdd = new Enemy(enemySprite, health, enemyType);
 		enemyToAdd.setDetectionRange(detectionRange);
+		enemyToAdd.setSpeed(speed);
 		Weapon weapon = new Weapon(new GImage(""), "", weaponRange);
 		enemyToAdd.setWeapon(weapon);
+		GImage bullet = new GImage(bulletName, enemyToAdd.getSprite().getX() + enemyToAdd.getSprite().getWidth() / 2, enemyToAdd.getSprite().getY() + enemyToAdd.getSprite().getHeight() / 2);
+		enemyToAdd.setBulletSprite(bullet);
 		enemies.add(enemyToAdd);
 	}
 
-	private void addEnemy(String enemy, GPoint point, int health, String enemyType, int detectionRange) {
+	private void addEnemy(String enemy, GPoint point, int health, String enemyType, int detectionRange, double speed) {
 		double x = point.getX();
 		double y = point.getY();
 		addLocation(x,y);
@@ -165,6 +168,7 @@ public class Room {
 		GImage enemySprite = new GImage(sprites.get(enemy), x, y);
 		Enemy enemyToAdd = new Enemy(enemySprite, health, enemyType);
 		enemyToAdd.setDetectionRange(detectionRange);
+		enemyToAdd.setSpeed(speed);
 		enemies.add(enemyToAdd);
 	}
 
@@ -219,12 +223,12 @@ public class Room {
 		
 		GImage itemSprite = new GImage (sprites.get(itemName), x, y); //Create a new sprite for key.
 		if (itemName == "key" || itemName == "heart" ) {
-			itemSprite.setSize(25, 25); //Resize sprite to make it smaller.
+			itemSprite.setSize(ITEM_SIZE, ITEM_SIZE); //Resize sprite to make it smaller.
 			PickUpItem pickUp = new PickUpItem(itemSprite, itemName); //Create key as Item object.
 			items.add(pickUp);
 		}
 		else if (itemName == "chest") {
-			itemSprite.setSize(25, 25);
+			itemSprite.setSize(ITEM_SIZE, ITEM_SIZE);
 			Chest chest = new Chest(itemSprite, "chest");
 			items.add(chest);
 		}
