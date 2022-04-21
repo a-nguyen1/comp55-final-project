@@ -41,7 +41,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private AudioPlayer backgroundMusic;
 	
 	private int timerCount; // to keep track of timer
-	private boolean dropWeapon; // to drop weapon upgrade upon boss defeat
+	private boolean dropWeaponUpgrade; // to drop weapon upgrade upon boss defeat
 	
 	public DisplayPane(MainApplication app) {
 		super();
@@ -51,8 +51,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	}
 
 	private void initializeGame() {
-		currentLevel = 1;
-		currentRoom = 1;
+		currentLevel = 1; // starting level number
+		currentRoom = 1; // starting room number
 		
 		bossHealth = new ArrayList<GImage>(); //initialize bossHealth
 		playerHealth = new ArrayList<GImage>(); // initialize playerHealth
@@ -64,7 +64,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		sounds = new SoundEffect(p, ""); // initialize sound effect player
 		backgroundMusic = new AudioPlayer(); // initialize background music player
 		
-		dropWeapon = false; // set to false by default
+		dropWeaponUpgrade = false; // set to false by default
 		program.setPlayerWin(false); // set to false by default
 		
 		itemLabel = new HashMap<String, String>();
@@ -133,7 +133,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				program.add(enemy.getBulletSprite());
 			}
 		}
-		dropWeapon = false;
+		dropWeaponUpgrade = false;
 		if (currentRoom % 3 == 0) { // boss room reached (every 3rd room) TODO change later
 			if (program.isAudioOn()) {
 				backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
@@ -191,7 +191,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					if (e instanceof Boss) { // check if enemy is a boss
 						if (e.isDead()) { // check if boss is dead
 							program.remove(bossLabel); // remove bossLabel from screen
-							if (!dropWeapon) {
+							if (!dropWeaponUpgrade) {
 								GImage upgradeSprite;
 								if (program.isCloseRangeWeapon()) {
 									upgradeSprite = new GImage ("KnightUpgrade.png", e.getSprite().getX(), e.getSprite().getY()); //Create a new sprite for weapon upgrade.
@@ -204,7 +204,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								items.add(upgrade); // add weaponUpgrade to items list
 								program.add(upgradeSprite); // add weapon upgrade to screen
 								program.add(upgrade.getLabel()); //add label to screen.
-								dropWeapon = true;
+								dropWeaponUpgrade = true;
 								player.getSprite().sendToFront();
 							}
 						}
@@ -240,6 +240,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
 			backgroundMusic.playSound("sounds", "game_over.wav", false); // play game over sound
 		}
+		updateHealth(); // player health should disappear on death
 		initializeGame(); // reset all game values
 		program.switchTo(3);
 	}
@@ -346,8 +347,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					double y = (enemySprite.getY() + enemySprite.getHeight() / 2) - (playerSprite.getY() + playerSprite.getHeight() / 2);
 					if (timerCount % 100 == 0) {
 						enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // enemy moves towards player
-						if (enemy.getEnemyType().contains("long range")) {
-							if (enemy.getEnemyType().contains("dragon boss")) {
+						if (enemy.getEnemyType().contains("long range")) { // if enemy is long range
+							if (enemy.getEnemyType().contains("dragon boss")) { // if enemy is boss
 								String fireSpriteFile = "burningFireSprite.png";
 								if (Math.random() <= 0.5) { // 50% chance for fire to appear mirrored
 									fireSpriteFile = "burningFireMirroredSprite.png";
@@ -359,22 +360,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								program.add(fire.getSprite()); // add fire sprite to the screen
 								enemies.add(fire); // add fire enemy to the screen
 								enemy.getSprite().sendToFront(); // send dragon to front
-							}
-							else {
-								enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI)); // enemy moves away from player
+							} // enemy is long range and not a boss
+							else { // long range enemy moves away from player
+								enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI));
+								setInBounds(enemy); // set long range enemy in bounds
 							}
 						}
 					}
-					// setting bounds for enemy //TODO set proper bounds for dragon
-					if (enemySprite.getLocation().getX() < 5) {
-						enemySprite.setLocation(5, enemySprite.getY());
-					} else if (enemySprite.getLocation().getY() < 5) { 
-						enemySprite.setLocation(enemySprite.getX(), 5);
-					} else if (enemySprite.getLocation().getX() + enemySprite.getWidth() * 1.75 > program.getWidth()) {
-						enemySprite.setLocation(program.getWidth() - enemySprite.getWidth() * 1.75,enemySprite.getY());
-					} else if (enemySprite.getLocation().getY() + enemySprite.getHeight() * 3 > program.getHeight()) {
-						enemySprite.setLocation(enemySprite.getX(), program.getHeight() - enemySprite.getHeight() * 3);
-					} 
 					
 					if (Collision.check(enemy.getSprite().getBounds(), player.getSprite().getBounds())) { // player collides with enemy
 						playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // player moves away from enemy
@@ -555,7 +547,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					Enemy enemy = enemies.get(z);
 					if (Collision.check(attackArea.getBounds(), enemy.getSprite().getBounds())) { //player in range of enemy.
 						System.out.println("Enemy is hit.");
-						System.out.println("Enemy: " + enemies.get(0));
+						System.out.println("Enemy: " + enemies.get(0)); //TODO fire should not play dragon sound
 						playSound(enemies.get(0).getEnemyType(), p); //play enemy grunt sound
 						enemy.changeHealth(-1); //Reduce health by 1.
 						updateHealth();
@@ -712,16 +704,30 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 		playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
 		
-		// setting bounds for player
-		if (playerSprite.getLocation().getX() < 5) {
-			playerSprite.setLocation(5, playerSprite.getY());
-		} else if (playerSprite.getLocation().getY() < 5) { 
-			playerSprite.setLocation(playerSprite.getX(), 5);
-		} else if (playerSprite.getLocation().getX() + playerSprite.getWidth() * 1.75 > program.getWidth()) {
-			playerSprite.setLocation(program.getWidth() - playerSprite.getWidth() * 1.75,playerSprite.getY());
-		} else if (playerSprite.getLocation().getY() + playerSprite.getHeight() * 2.25 > program.getHeight()) {
-			playerSprite.setLocation(playerSprite.getX(), program.getHeight() - playerSprite.getHeight() * 2.25);
-		} 
+		setInBounds(player);
+	}
+
+	private void setInBounds(Character character) { // set character sprite in bounds on the screen
+		GImage sprite = character.getSprite();
+		double x = sprite.getX();
+		double y = sprite.getY();
+		double min = 0;
+		double xMax = program.getWidth() - 1.75 * sprite.getWidth();
+		double yMax = program.getHeight() - 2.25 * sprite.getHeight();
+		if (character instanceof Enemy) { // check if character is an enemy
+			yMax = program.getHeight() - 3 * sprite.getHeight();
+		}
+		sprite.setLocation(inRange(x, min, xMax), inRange(y, min, yMax));
+	}
+	
+	public double inRange(double x, double min, double max) { // return value between minimum and maximum
+		if (x > min && x < max) {
+			return x;
+		} else if (x <= min){
+			return min + 1;
+		} else { // x >= max
+			return max - 1;
+		}
 	}
 	
 	@Override 

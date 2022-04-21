@@ -22,9 +22,6 @@ public class GameEndPane extends GraphicsPane{
 		
 		restart = new GButton("Restart", program.getWidth()/2 - 50, 400, 100, 100);
 		restart.setFillColor(Color.GREEN);
-		
-		
-		
 	}
 
 	@Override
@@ -46,7 +43,6 @@ public class GameEndPane extends GraphicsPane{
 		program.add(background); // add black background
 		program.add(message); // add game over text
 		program.add(restart);
-		
 	}
 
 	@Override
