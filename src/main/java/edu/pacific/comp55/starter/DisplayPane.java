@@ -47,6 +47,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		super();
 		program = app;
 		
+		initializeGame();
+	}
+
+	private void initializeGame() {
 		currentLevel = 1;
 		currentRoom = 1;
 		
@@ -55,10 +59,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		playerInventory = new ArrayList<GImage>(); // initialize playerInventory
 		items = new ArrayList<Item>(); // initialize items in room
 		enemies = new ArrayList<Enemy>(); // initialize enemy array list
+		
 		AudioPlayer p = new AudioPlayer();
-		sounds = new SoundEffect(p, "");
-		backgroundMusic = new AudioPlayer();
+		sounds = new SoundEffect(p, ""); // initialize sound effect player
+		backgroundMusic = new AudioPlayer(); // initialize background music player
+		
 		dropWeapon = false; // set to false by default
+		program.setPlayerWin(false); // set to false by default
 		
 		itemLabel = new HashMap<String, String>();
 		itemLabel.put("key", "Press e to pick up key.");
@@ -156,6 +163,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
 				backgroundMusic.playSound("sounds", "win.wav"); // play win music
 			}
+			initializeGame(); // reset all game values
 			program.setPlayerWin(true);
 			program.switchTo(3);
 		}
@@ -232,6 +240,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
 			backgroundMusic.playSound("sounds", "game_over.wav", false); // play game over sound
 		}
+		initializeGame(); // reset all game values
 		program.switchTo(3);
 	}
 	
