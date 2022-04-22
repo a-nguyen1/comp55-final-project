@@ -53,6 +53,7 @@ public class Room {
 		sprites.put("heart", "heart.png");
 		sprites.put("chest", "closedChest.png");
 		sprites.put("door", "closedDoor.png");
+		sprites.put("life", "thugLife.png");
 		
 		locations = new ArrayList<GPoint>();
 		items = new ArrayList<Item>();
@@ -184,6 +185,7 @@ public class Room {
 		addItem("chest", randomizePoint());
 		addItem("door", randomizePoint());
 		addItem("key", randomizePoint());
+		addItem("life", randomizePoint());
 		
 		return items; 
 	}
@@ -222,7 +224,7 @@ public class Room {
 		addLocation(x,y);
 		
 		GImage itemSprite = new GImage (sprites.get(itemName), x, y); //Create a new sprite for key.
-		if (itemName == "key" || itemName == "heart" ) {
+		if (itemName == "key" || itemName == "heart"  || itemName == "life") {
 			itemSprite.setSize(ITEM_SIZE, ITEM_SIZE); //Resize sprite to make it smaller.
 			PickUpItem pickUp = new PickUpItem(itemSprite, itemName); //Create key as Item object.
 			items.add(pickUp);

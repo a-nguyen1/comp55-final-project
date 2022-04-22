@@ -8,6 +8,8 @@ import acm.graphics.GRect;
 import acm.program.GraphicsProgram;
 
 public class Player extends Character {
+	private static final int ITEM_SIZE = 25;
+	private static final int HEART_SIZE = 50;
 	private Weapon weapon;
 	private ArrayList<Item> inventory;
 	private boolean dashAvailable;
@@ -41,7 +43,7 @@ public class Player extends Character {
 	public ArrayList<GImage> displayHealth() {
 		ArrayList<GImage> playerHealth = new ArrayList<GImage>(); 
 		for (int x = 0; x < getHealth(); x++) { //add hearts based on player health
-			playerHealth.add(new GImage("Heart.png", x*50, 0)); 
+			playerHealth.add(new GImage("Heart.png", x * HEART_SIZE, 0)); 
 		}
 		return playerHealth;
 	}
@@ -111,13 +113,13 @@ public class Player extends Character {
 	public void displayInventoryBox(GRect inventoryBox) {
 		int offsetFromHealth = 50;
 		if (inventory.size() > 0) {
-			int x = 0;
+			int itemSpriteX = 0;
 			for (Item i: inventory) {
-				i.getSprite().setLocation(50 * getHealth() + offsetFromHealth + x, 12.5);
-				x += 25;
+				i.getSprite().setLocation(HEART_SIZE * getHealth() + offsetFromHealth + itemSpriteX, ITEM_SIZE / 2);
+				itemSpriteX += ITEM_SIZE;
 			}
-			inventoryBox.setSize(25 * inventory.size(), 25); // resize inventory box
-			inventoryBox.setLocation(offsetFromHealth + 50 * getHealth(), 12.5); // set location of inventory box
+			inventoryBox.setSize(ITEM_SIZE * inventory.size(), ITEM_SIZE); // resize inventory box
+			inventoryBox.setLocation(offsetFromHealth + HEART_SIZE * getHealth(), ITEM_SIZE / 2); // set location of inventory box
 			inventoryBox.setVisible(true); // show inventory box
 		}
 		else {
@@ -127,7 +129,7 @@ public class Player extends Character {
 	
 	public int searchItemIndex(Player player, int removeIndex, String itemType) {
 		for (int x = 0; x < player.getInventory().size(); x++) {
-			if (player.getInventory().get(x).getItemType() == itemType) { //Check if there is a heart in the inventory.
+			if (player.getInventory().get(x).getItemType() == itemType) { //Check if itemType is in the inventory.
 				removeIndex = x;
 			}
 		}

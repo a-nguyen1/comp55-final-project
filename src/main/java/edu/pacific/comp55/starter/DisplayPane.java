@@ -75,10 +75,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		itemLabel.put("heart", "Press e to pick up heart.");
 		itemLabel.put("chest", "Press e to open chest.");
 		itemLabel.put("upgrade", "Press e to upgrade your weapon.");
+		itemLabel.put("life", "Press e to gain an extra life.");
 		
 		//create player object with knight sprite as default.
 		GImage playerSprite = new GImage ("PlayerKnightSprite.png", program.getWidth()/2, program.getHeight()/2);
-		player = new Player(playerSprite, 100);
+		player = new Player(playerSprite, 5);
 		player.setSpeed(7);
 		attackArea = new GImage("TopRight.png"); // initialize attack area
 		
@@ -134,7 +135,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 		}
 		dropWeaponUpgrade = false;
-		if (currentRoom % 6 == 0) { // boss room reached TODO change later 
+		if (currentRoom % 6 == 0) { // boss room reached TODO change later
 			if (program.isAudioOn()) {
 				backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
 				backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play boss background music
@@ -155,9 +156,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		updateInventory(); // update player inventory display
 		player.getSprite().setLocation((program.getWidth() - 1.75 * player.getSprite().getWidth()) * Math.random(), program.getHeight() - 2.25 * player.getSprite().getHeight());
 		program.add(player.getSprite()); //Add player sprite to screen.
-		
-		
-		
 	}
 	
 	public void updateHealth() {
@@ -171,7 +169,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			heart.setSize(50,50);
 			program.add(heart);
 		}
-		System.out.println("curren room: " + currentRoom);
+		System.out.println("current room: " + currentRoom);
 		if (currentRoom % 6 == 0) { // TODO change later
 			bossLabel.sendToFront();
 			System.out.println(bossHealth.size());
@@ -277,7 +275,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							enemy.changeHealth(-1);
 							updateHealth();
 							enemy.setDamaged(true); //Enemy is damaged.
-							System.out.println(enemy.getHealth());
+							System.out.println("enemy health: " + enemy.getHealth());
 							if (enemy.isDead()) { //Enemy has no health.
 								removeEnemyIndex.add(z); // add index to ArrayList
 								if (enemy.getEnemyType().contains("long range")) {
@@ -315,11 +313,20 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							player.setDamaged(true); //player is damaged.
 							System.out.println("player health: " + player.getHealth());
 							if (player.isDead()) {
-								program.removeAll();
-								while (enemies.size() > 0) { // remove all enemies from ArrayList
-									enemies.remove(0);
+								int lifeIndex = -1;
+								lifeIndex = player.searchItemIndex(player, lifeIndex, "life");
+								if (lifeIndex >= 0) { // check if player has life item
+									player.setHealth(5); // reset playerHealth
+									player.removeFromInventory(lifeIndex); // remove life item
+									updateInventory(); // update inventory
 								}
-								gameOver();
+								else {
+									program.removeAll();
+									while (enemies.size() > 0) { // remove all enemies from ArrayList
+										enemies.remove(0);
+									}
+									gameOver();
+								}
 							}
 							while (Collision.check(bulletSprite.getBounds(), player.getSprite().getBounds())) { // move bulletSprite until not touching player 
 								bulletSprite = enemy.moveBullet(bulletSprite); 
@@ -380,11 +387,20 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							System.out.println("Player touched by long range enemy: " + player.getHealth());
 						}
 						if (player.isDead()) {
-							program.removeAll();
-							while (enemies.size() > 0) { // remove all enemies from ArrayList
-								enemies.remove(0);
+							int lifeIndex = -1;
+							lifeIndex = player.searchItemIndex(player, lifeIndex, "life");
+							if (lifeIndex >= 0) { // check if player has life item
+								player.setHealth(5); // reset playerHealth
+								player.removeFromInventory(lifeIndex); // remove life item
+								updateInventory(); // update inventory
 							}
-							gameOver();
+							else {
+								program.removeAll();
+								while (enemies.size() > 0) { // remove all enemies from ArrayList
+									enemies.remove(0);
+								}
+								gameOver();
+							}
 						}
 					}
 					if (enemy.getEnemyType().contains("long range")) {
@@ -656,23 +672,23 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 									program.add(((Door)nearestItem).getOpenDoor()); // add open door GImage to screen
 									((GObject)playerSprite).sendToFront(); // send player to the front of the screen
 								}
-							} 
+							}
 						}
 					}
 					else {
 						itemLabel.put("closedDoor", "A key is needed."); 
 					}
 				}
-				else if (nearestItem instanceof Weapon) { 
+				else if (nearestItem instanceof Weapon) {
 					// for weapon upgrade, decrease attack cool down
 					int oldAttackCooldown = player.getAttackCooldown();
 					int newAttackCooldown = oldAttackCooldown - (oldAttackCooldown / 4); // reduce attack cool down by ~25%
-					if (newAttackCooldown < 100) { // so attack cool down doesn't go to low
+					if (newAttackCooldown < 100) { // so attack cool down doesn't go too low
 						newAttackCooldown = 100;
 						// when attack cool down is low, increase weapon range
 						int oldAttackRange = player.getWeapon().getRange();
 						int newAttackRange = oldAttackRange + (oldAttackRange / 4); // increase weapon range by ~25%
-						player.getWeapon().setRange(newAttackRange); 
+						player.getWeapon().setRange(newAttackRange);
 						System.out.println("Old attack cooldown: " + oldAttackRange);
 						System.out.println("New attack cooldown: " + newAttackRange);
 					}
@@ -688,7 +704,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				}
 			}
 		}
-		//Player revival if there are hearts in the inventory.
 		else if (keyCode == 82) { // r
 			int removeIndex = -1;
 			if (player.getInventory().size() > 0) {
