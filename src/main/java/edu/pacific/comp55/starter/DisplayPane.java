@@ -16,6 +16,8 @@ import acm.graphics.GObject; // for GObject
 import acm.graphics.GRect; // for GRect
 
 public class DisplayPane extends GraphicsPane implements ActionListener{
+	private static final int FINAL_ROOM = 12; // TODO change later
+
 	private MainApplication program;
 	
 	private ArrayList<GImage> backgroundTiles;
@@ -78,7 +80,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		itemLabel.put("life", "Press e to gain an extra life.");
 		
 		//create player object with knight sprite as default.
-		GImage playerSprite = new GImage ("PlayerKnightSprite.png", program.getWidth()/2, program.getHeight()/2);
+		GImage playerSprite = new GImage ("PlayerKnightSprite.png");
 		player = new Player(playerSprite, 5);
 		player.setSpeed(7);
 		attackArea = new GImage("TopRight.png"); // initialize attack area
@@ -115,18 +117,18 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			program.add(i.getSprite()); //Add item sprite to the screen.
 			program.add(i.getLabel()); //Add item label to the screen.
 		}
-		if (program.isCloseRangeWeapon()) { // close range weapon selected
+		if (program.isCloseRangeCharacter()) { // close range character selected
 			Weapon weapon = new Weapon(new GImage(""), "close range weapon", 25);
 			player.setWeapon(weapon);
 			attackArea.setVisible(false);
 			attackArea.setSize(weapon.getRange(), weapon.getRange());
 			program.add(attackArea); // add attack area to the screen.
 		}
-		else { //long range weapon selected
-			player.setSprite(new GImage ("PlayerWizardSprite.png", program.getWidth()/2, program.getHeight()/2));
+		else { //long range character selected
+			player.setSprite(new GImage ("PlayerWizardSprite.png"));
 			Weapon weapon = new Weapon(new GImage(""), "long range weapon", 200);
 			player.setWeapon(weapon);
-			program.add(player.getBulletSprite());
+			program.add(player.getBulletSprite()); // add bullet to the screen
 		}
 		for (Enemy enemy: enemies) { // loop for all enemies
 			program.add(enemy.getSprite()); //Add enemy sprite to screen.
@@ -135,7 +137,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 		}
 		dropWeaponUpgrade = false;
-		if (currentRoom % 6 == 0) { // boss room reached TODO change later
+		if (currentRoom % 6 == 0) { // boss room reached every 6th room TODO change later
 			if (program.isAudioOn()) {
 				backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
 				backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play boss background music
@@ -155,7 +157,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		updateHealth(); // update player health display
 		updateInventory(); // update player inventory display
 		player.getSprite().setLocation((program.getWidth() - 1.75 * player.getSprite().getWidth()) * Math.random(), program.getHeight() - 2.25 * player.getSprite().getHeight());
-		program.add(player.getSprite()); //Add player sprite to screen.
+		if (roomNum == 1) { // if first room
+			program.add(player.getSprite()); //Add player sprite to screen.
+		}
 	}
 	
 	public void updateHealth() {
@@ -184,7 +188,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							program.remove(bossLabel); // remove bossLabel from screen
 							if (!dropWeaponUpgrade) {
 								GImage upgradeSprite;
-								if (program.isCloseRangeWeapon()) {
+								if (program.isCloseRangeCharacter()) {
 									upgradeSprite = new GImage ("KnightUpgrade.png", e.getSprite().getX(), e.getSprite().getY()); //Create a new sprite for weapon upgrade.
 								}
 								else {
@@ -231,7 +235,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
 			backgroundMusic.playSound("sounds", "game_over.wav", false); // play game over sound
 		}
-		//updateHealth(); // player health should disappear on death
+		program.removeAll(); // remove all objects from screen
 		initializeGame(); // reset all game values
 		
 		program.switchTo(3); // switch to game end screen
@@ -318,6 +322,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								if (lifeIndex >= 0) { // check if player has life item
 									player.setHealth(5); // reset playerHealth
 									player.removeFromInventory(lifeIndex); // remove life item
+									updateHealth(); // update health
 									updateInventory(); // update inventory
 								}
 								else {
@@ -443,7 +448,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						}
 						String s = itemLabel.get(i.getItemType());
 						i.setLabel(s);
-						i.getLabel().setLocation(i.getSprite().getX(), i.getSprite().getY());
+						i.getLabel().setLocation(i.getSprite().getX() + i.getSprite().getWidth() / 2 - i.getLabel().getWidth() / 2, i.getSprite().getY());
 					} else {
 						i.setLabel("");
 					}
@@ -488,7 +493,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		GImage playerSprite = player.getSprite();
 		AudioPlayer p = sounds.getPlayer(); // Get the audio player object to play the sound.
 		if (player.isAttackAvailable()) {
-			if (program.isCloseRangeWeapon()) {
+			if (program.isCloseRangeCharacter()) {
 				double x = e.getX() - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between mouse and middle of playerSprite
 				double y = e.getY() - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between mouse and middle of playerSprite
 				double angle = 180 * Math.atan2(-y, x) / Math.PI; // calculate angle from player to mouse
@@ -648,15 +653,15 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						if (doorStateBefore == unlockedDoor) { // door has already been opened, so create next room
 							currentRoom++;
 							createRoom(currentRoom); // create next room
-							if (currentRoom >= 13) { // TODO make sure this room is after the final boss room
-								program.removeAll();
+							if (currentRoom > FINAL_ROOM) { 
+								program.removeAll(); // remove all objects from screen
 								System.out.println("Congratulations! You escaped the dungeon!");
 								if (program.isAudioOn()) {
 									backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
 									backgroundMusic.playSound("sounds", "win.wav"); // play win music
 								}
 								initializeGame(); // reset all game values
-								program.setPlayerWin(true); // player wins
+								program.setPlayerWin(true); // set player win
 								
 								program.switchTo(3); // switch to game end screen
 							}
@@ -726,6 +731,32 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
 		
 		setInBounds(player);
+		
+		if (!program.isPlayerWin()) {
+			GImage newPlayerSprite = new GImage("", playerSprite.getX(), playerSprite.getY());
+			if (player.getMoveX() < 0) { // player moving left
+				if (program.isCloseRangeCharacter()) {
+					newPlayerSprite.setImage("PlayerKnightSprite.png");
+					player.setSprite(newPlayerSprite);
+				}
+				else {
+					newPlayerSprite.setImage("PlayerWizardSprite.png");
+					player.setSprite(newPlayerSprite);
+				}
+			}
+			else { // player moving right
+				if (program.isCloseRangeCharacter()) {
+					newPlayerSprite.setImage("PlayerKnightMirroredSprite.png");
+					player.setSprite(newPlayerSprite);
+				}
+				else {
+					newPlayerSprite.setImage("PlayerWizardMirroredSprite.png");
+					player.setSprite(newPlayerSprite);
+				}
+			}
+			program.remove(playerSprite); // remove previous player sprite
+			program.add(newPlayerSprite); // add new player sprite
+		}
 	}
 
 	private void setInBounds(Character character) { // set character sprite in bounds on the screen

@@ -38,10 +38,10 @@ public class ChooseCharacterPane extends GraphicsPane {
 	public void mousePressed(MouseEvent e) {
 		GObject obj = program.getElementAt(e.getX(), e.getY());
 		if (obj == longRangeCharacter) {
-			program.setCloseRangeWeapon(false);
+			program.setCloseRangeCharacter(false);
 			startGame();
 		} else if (obj == closeRangeCharacter){
-			program.setCloseRangeWeapon(true);
+			program.setCloseRangeCharacter(true);
 			startGame();
 		}
 	}

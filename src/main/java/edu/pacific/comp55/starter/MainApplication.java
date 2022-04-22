@@ -10,7 +10,7 @@ public class MainApplication extends GraphicsApplication {
 	private MenuPane menu;
 	private DisplayPane display;
 	private GameEndPane gameEnd;
-	private boolean closeRangeWeapon;
+	private boolean closeRangeCharacter;
 	private boolean audioOn;
 	private boolean playerWin;
 	private int count;
@@ -61,12 +61,12 @@ public class MainApplication extends GraphicsApplication {
 		new MainApplication().start();
 	}
 
-	public boolean isCloseRangeWeapon() {
-		return closeRangeWeapon;
+	public boolean isCloseRangeCharacter() {
+		return closeRangeCharacter;
 	}
 
-	public void setCloseRangeWeapon(boolean closeRangeWeapon) {
-		this.closeRangeWeapon = closeRangeWeapon;
+	public void setCloseRangeCharacter(boolean closeRangeWeapon) {
+		this.closeRangeCharacter = closeRangeWeapon;
 	}
 
 	public boolean isAudioOn() {
