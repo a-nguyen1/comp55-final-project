@@ -16,6 +16,8 @@ import acm.graphics.GObject; // for GObject
 import acm.graphics.GRect; // for GRect
 
 public class DisplayPane extends GraphicsPane implements ActionListener{
+	private static final double SQRT_TWO_DIVIDED_BY_TWO = 0.7071067811865476;
+
 	private static final int FINAL_ROOM = 12; // TODO change later
 
 	private MainApplication program;
@@ -494,69 +496,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		AudioPlayer p = sounds.getPlayer(); // Get the audio player object to play the sound.
 		if (player.isAttackAvailable()) {
 			if (program.isCloseRangeCharacter()) {
-				double x = e.getX() - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between mouse and middle of playerSprite
-				double y = e.getY() - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between mouse and middle of playerSprite
-				double angle = 180 * Math.atan2(-y, x) / Math.PI; // calculate angle from player to mouse
-				double xOffset;
-				double yOffset;
-				double weaponRange = player.getWeapon().getRange();
-				//set attackArea image, x offset, and y offset based on angle
-				if (angle >= 0) {
-					if (angle > 90) {
-						if (angle > 135) { // angle > 135
-							attackArea.setImage("TopLeft.png");
-							xOffset = - weaponRange - player.getSprite().getWidth() / 2;
-							yOffset = - weaponRange;
-						}
-						else { // 90 < angle <= 135
-							attackArea.setImage("TopLeft.png");
-							xOffset = - weaponRange;
-							yOffset = - weaponRange - player.getSprite().getHeight() / 2;
-						}
-					}
-					else { 
-						if (angle <= 45) { // 0 <= angle <= 45
-							attackArea.setImage("TopRight.png");
-							xOffset = player.getSprite().getWidth() / 2;
-							yOffset = - weaponRange;
-						}
-						else { // 45 < angle <= 90
-							attackArea.setImage("TopRight.png");
-							xOffset = 0;
-							yOffset = - weaponRange - player.getSprite().getHeight() / 2;
-						}
-					}
-				}
-				else { // angle < 0
-					if (angle < -90) {
-						if (angle < -135) { // angle < -135
-							attackArea.setImage("BottomLeft.png");
-							xOffset = - weaponRange - player.getSprite().getWidth() / 2;
-							yOffset = 0;
-						}
-						else { // -90 > angle >= -135
-							attackArea.setImage("BottomLeft.png");
-							xOffset = - weaponRange;
-							yOffset = player.getSprite().getHeight() / 2;
-						}
-					}
-					else { 
-						if (angle >= -45) { // 0 > angle >= -45
-							attackArea.setImage("BottomRight.png");
-							xOffset = player.getSprite().getWidth() / 2;
-							yOffset = 0;
-						}
-						else { // -45 > angle >= -90
-							attackArea.setImage("BottomRight.png");
-							xOffset = 0;
-							yOffset = player.getSprite().getHeight() / 2;
-						}
-					}
-				}
-				attackArea.setLocation(xOffset + playerSprite.getX() + playerSprite.getWidth() / 2, yOffset + playerSprite.getY() + playerSprite.getHeight() / 2);
-				attackArea.setSize(weaponRange, weaponRange);
-				attackArea.sendToFront();
-				attackArea.setVisible(true);
+				setUpAttackArea(e, playerSprite);
 				ArrayList<Integer> removeEnemyIndex = new ArrayList<Integer>();
 				for (int z = 0; z < enemies.size(); z++) { // loop for all enemies
 					Enemy enemy = enemies.get(z);
@@ -596,6 +536,72 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 		}
 		player.setAttackAvailable(false); // Initiate attack cool down.
+	}
+
+	private void setUpAttackArea(MouseEvent e, GImage playerSprite) {
+		double x = e.getX() - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between mouse and middle of playerSprite
+		double y = e.getY() - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between mouse and middle of playerSprite
+		double angle = 180 * Math.atan2(-y, x) / Math.PI; // calculate angle from player to mouse
+		double xOffset;
+		double yOffset;
+		double weaponRange = player.getWeapon().getRange();
+		//set attackArea image, x offset, and y offset based on angle
+		if (angle >= 0) {
+			if (angle > 90) {
+				if (angle > 135) { // angle > 135
+					attackArea.setImage("TopLeft.png");
+					xOffset = - weaponRange - player.getSprite().getWidth() / 2;
+					yOffset = - weaponRange;
+				}
+				else { // 90 < angle <= 135
+					attackArea.setImage("TopLeft.png");
+					xOffset = - weaponRange;
+					yOffset = - weaponRange - player.getSprite().getHeight() / 2;
+				}
+			}
+			else { 
+				if (angle <= 45) { // 0 <= angle <= 45
+					attackArea.setImage("TopRight.png");
+					xOffset = player.getSprite().getWidth() / 2;
+					yOffset = - weaponRange;
+				}
+				else { // 45 < angle <= 90
+					attackArea.setImage("TopRight.png");
+					xOffset = 0;
+					yOffset = - weaponRange - player.getSprite().getHeight() / 2;
+				}
+			}
+		}
+		else { // angle < 0
+			if (angle < -90) {
+				if (angle < -135) { // angle < -135
+					attackArea.setImage("BottomLeft.png");
+					xOffset = - weaponRange - player.getSprite().getWidth() / 2;
+					yOffset = 0;
+				}
+				else { // -90 > angle >= -135
+					attackArea.setImage("BottomLeft.png");
+					xOffset = - weaponRange;
+					yOffset = player.getSprite().getHeight() / 2;
+				}
+			}
+			else { 
+				if (angle >= -45) { // 0 > angle >= -45
+					attackArea.setImage("BottomRight.png");
+					xOffset = player.getSprite().getWidth() / 2;
+					yOffset = 0;
+				}
+				else { // -45 > angle >= -90
+					attackArea.setImage("BottomRight.png");
+					xOffset = 0;
+					yOffset = player.getSprite().getHeight() / 2;
+				}
+			}
+		}
+		attackArea.setLocation(xOffset + playerSprite.getX() + playerSprite.getWidth() / 2, yOffset + playerSprite.getY() + playerSprite.getHeight() / 2);
+		attackArea.setSize(weaponRange, weaponRange);
+		attackArea.sendToFront();
+		attackArea.setVisible(true);
 	}
 	
 	@Override
@@ -724,8 +730,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		// for normalizing diagonal movement
 		if (Math.abs(player.getMoveX()) == 1 && Math.abs(player.getMoveY()) == 1) { // check if diagonal movement is happening
-			player.setMoveX(player.getMoveX() * 0.7071067811865476);
-			player.setMoveY(player.getMoveY() * 0.7071067811865476);
+			player.setMoveX(player.getMoveX() * SQRT_TWO_DIVIDED_BY_TWO);
+			player.setMoveY(player.getMoveY() * SQRT_TWO_DIVIDED_BY_TWO);
 		}
 		
 		playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
