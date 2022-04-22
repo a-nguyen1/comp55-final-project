@@ -43,7 +43,8 @@ public class Player extends Character {
 	public ArrayList<GImage> displayHealth() {
 		ArrayList<GImage> playerHealth = new ArrayList<GImage>(); 
 		for (int x = 0; x < getHealth(); x++) { //add hearts based on player health
-			playerHealth.add(new GImage("Heart.png", x * HEART_SIZE, 0)); 
+			// if health > 10, place the next row of hearts right beneath original row of hearts
+			playerHealth.add(new GImage("Heart.png", x % 10 * HEART_SIZE, 5 * (x / 10)));
 		}
 		return playerHealth;
 	}
@@ -111,15 +112,20 @@ public class Player extends Character {
 	}
 	
 	public void displayInventoryBox(GRect inventoryBox) {
-		int offsetFromHealth = 50;
+		int offsetFromHealth = 15;
 		if (inventory.size() > 0) {
-			int itemSpriteX = 0;
-			for (Item i: inventory) {
-				i.getSprite().setLocation(HEART_SIZE * getHealth() + offsetFromHealth + itemSpriteX, ITEM_SIZE / 2);
-				itemSpriteX += ITEM_SIZE;
+			for (int x = 0; x < inventory.size(); x++) {
+				Item i = inventory.get(x);
+				i.getSprite().setLocation(HEART_SIZE * Math.min(getHealth(), 10) + offsetFromHealth + x % 10 * ITEM_SIZE, ITEM_SIZE * (x / 10));
 			}
-			inventoryBox.setSize(ITEM_SIZE * inventory.size(), ITEM_SIZE); // resize inventory box
-			inventoryBox.setLocation(offsetFromHealth + HEART_SIZE * getHealth(), ITEM_SIZE / 2); // set location of inventory box
+			int inventoryBoxNum = 1; // increase height of box
+			if (inventory.size() % 10 == 0) {
+				inventoryBoxNum = 0; // when inventory size divisible by 10, do not increase height of box
+			}
+			// set size of inventory box based on number of items in inventory
+			inventoryBox.setSize(ITEM_SIZE * Math.min(inventory.size(), 10), ITEM_SIZE * (inventoryBoxNum + inventory.size() / 10));
+			// set location of inventory box
+			inventoryBox.setLocation(offsetFromHealth + HEART_SIZE * Math.min(getHealth(), 10), 0); 
 			inventoryBox.setVisible(true); // show inventory box
 		}
 		else {

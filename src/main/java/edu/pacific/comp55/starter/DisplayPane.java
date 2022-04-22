@@ -83,9 +83,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 		//create player object with knight sprite as default.
 		GImage playerSprite = new GImage ("PlayerKnightSprite.png");
-		player = new Player(playerSprite, 5);
+		player = new Player(playerSprite, 100);
 		player.setSpeed(7);
-		attackArea = new GImage("TopRight.png"); // initialize attack area
+		attackArea = new GImage(""); // initialize attack area
 		
 		//create inventory box
 		inventoryBox = new GRect(50, 0, 0, 0);
