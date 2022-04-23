@@ -213,6 +213,10 @@ public class Player extends Character {
 		}
 	}
 	
+	public void randomizeXLocation(double maxX, double y) { // randomizes x location
+		getSprite().setLocation((maxX - 1.75 * getSprite().getWidth()) * Math.random(), y - 2.25 * getSprite().getHeight());
+	}
+	
 	@Override
 	public void move(double x, double y) {
 		getSprite().move(x, y);

@@ -16,9 +16,13 @@ import acm.graphics.GObject; // for GObject
 import acm.graphics.GRect; // for GRect
 
 public class DisplayPane extends GraphicsPane implements ActionListener{
+	private static final int HEART_SIZE = 50;
+
 	private static final double SQRT_TWO_DIVIDED_BY_TWO = 0.7071067811865476;
 
 	private static final int FINAL_ROOM = 12; // TODO change later
+
+	private static final int ITEM_SIZE = 25;
 
 	private MainApplication program;
 	
@@ -81,10 +85,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		itemLabel.put("upgrade", "Press e to upgrade your weapon.");
 		itemLabel.put("life", "Press e to gain an extra life.");
 		
-		//create player object with knight sprite as default.
+		//create player object with knight sprite as default. 
 		GImage playerSprite = new GImage ("PlayerKnightSprite.png");
 		player = new Player(playerSprite, 100);
-		player.setSpeed(7);
+		player.randomizeXLocation(program.getWidth(), program.getHeight()); //Randomize player location at bottom of screen
+		player.setSpeed(7); // initialize speed
 		attackArea = new GImage(""); // initialize attack area
 		
 		//create inventory box
@@ -139,29 +144,28 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 		}
 		dropWeaponUpgrade = false;
-		if (currentRoom % 6 == 0) { // boss room reached every 6th room TODO change later
+		if (roomNum % 6 == 0) { // boss room reached every 6th room TODO change later
 			if (program.isAudioOn()) {
 				backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
 				backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play boss background music
 			}
-			if (currentRoom == 6) {
-				bossLabel = new GLabel("Big Goblin", program.getWidth() - 125, 25);
-				System.out.println("Boss label: " + bossLabel);
+			if (roomNum == 6) {
+				bossLabel = new GLabel("Big Goblin");
 			}
-			else if(currentRoom == 12) {
-				bossLabel = new GLabel("Falkor", program.getWidth() - 125, 25);
-				System.out.println("Boss label: " + bossLabel);
+			else if(roomNum == 12) {
+				bossLabel = new GLabel("Falkor");
 			}
+			System.out.println("Boss label: " + bossLabel);
+			bossLabel.setLocation(program.getWidth() - 125, inventoryBox.getHeight() + ITEM_SIZE); // set boss label based on player inventory
 			bossLabel.setFont(new Font("Serif", Font.BOLD, 20));
 			program.add(bossLabel);
 		}
 		program.add(inventoryBox); //Add inventory box to the screen.
 		updateHealth(); // update player health display
 		updateInventory(); // update player inventory display
-		player.getSprite().setLocation((program.getWidth() - 1.75 * player.getSprite().getWidth()) * Math.random(), program.getHeight() - 2.25 * player.getSprite().getHeight());
-		if (roomNum == 1) { // if first room
-			program.add(player.getSprite()); //Add player sprite to screen.
-		}
+		player.randomizeXLocation(program.getWidth(), program.getHeight()); // randomize player's location at bottom of screen
+		program.add(player.getSprite()); //Add player sprite to screen.
+		player.getSprite().sendToFront();
 	}
 	
 	public void updateHealth() {
@@ -172,7 +176,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 		playerHealth = player.displayHealth();
 		for (GImage heart : playerHealth) { // display all player hearts
-			heart.setSize(50,50);
+			heart.setSize(HEART_SIZE, HEART_SIZE);
 			program.add(heart);
 		}
 		System.out.println("current room: " + currentRoom);
@@ -196,7 +200,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								else {
 									upgradeSprite = new GImage ("WizardUpgrade.png", e.getSprite().getX(), e.getSprite().getY()); //Create a new sprite for weapon upgrade.
 								}
-								upgradeSprite.setSize(25, 25); //Resize sprite to make it smaller.
+								upgradeSprite.setSize(ITEM_SIZE, ITEM_SIZE); //Resize sprite to make it smaller.
 								Weapon upgrade = new Weapon(upgradeSprite, "upgrade");
 								items.add(upgrade); // add weaponUpgrade to items list
 								program.add(upgradeSprite); // add weapon upgrade to screen
@@ -206,13 +210,15 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							}
 						}
 						else { // boss is alive
-							bossHealth = ((Boss) e).displayHealth();
+							bossLabel.setLocation(bossLabel.getX(), inventoryBox.getHeight() + ITEM_SIZE); // update boss label based on player inventory
+							int yOffset = ITEM_SIZE * (3 + (int)(player.getInventory().size() / 10));
+							bossHealth = ((Boss) e).displayHealth(yOffset);
 						}
 					}
 				}
 			}
 			for (GImage heart : bossHealth) { // display all boss hearts
-				heart.setSize(50,50);
+				heart.setSize(HEART_SIZE, HEART_SIZE);
 				program.add(heart);
 			}
 		}
@@ -225,10 +231,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		playerInventory = player.displayInventory();
 		for (GImage i : playerInventory) { // display all inventory items
-			i.setSize(25, 25);
+			i.setSize(ITEM_SIZE, ITEM_SIZE);
 			program.add(i);
 		}
 		player.displayInventoryBox(inventoryBox); // display inventory box accordingly
+		if (currentRoom % 6 == 0) { // if in a boss room
+			updateHealth(); // if inventory is updated, boss health display should be updated too
+		}
 	}
 	
 	public void gameOver() {
@@ -238,20 +247,19 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			backgroundMusic.playSound("sounds", "game_over.wav", false); // play game over sound
 		}
 		program.removeAll(); // remove all objects from screen
-		initializeGame(); // reset all game values
-		
+		initializeGame(); // reset all game values (player win is set to false)
 		program.switchTo(3); // switch to game end screen
 	}
 	
 	public void playSound(String e, AudioPlayer p) {
 		if (e.contains("big goblin")) {
-			sounds.setName("boss_goblin_grunt"); //Sound effect for boss getting hit.
+			sounds.setName("boss_goblin_grunt"); //Sound effect for goblin boss getting hit.
 		}
 		else if (e.contains("goblin")) {
 			sounds.setName("small_goblin_grunt"); //Sound effect for enemy getting hit.
 		}
 		else if (e.contains("dragon")) {
-			sounds.setName("dragon_grunt");
+			sounds.setName("dragon_grunt"); //Sound effect for dragon boss getting hit.
 		}
 		if (program.isAudioOn()) {
 			sounds.play(p); //Play enemy getting hit sound effect.
@@ -277,7 +285,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					}
 					else {*/
 						if (Collision.check(bulletSprite.getBounds(), enemy.getSprite().getBounds())) { //returns true if enemy collides with player bullet 
-							playSound(enemies.get(0).getEnemyType(), p); //play enemy grunt sound.
+							playSound(enemy.getEnemyType(), p); //play enemy grunt sound.
 							enemy.changeHealth(-1);
 							updateHealth();
 							enemy.setDamaged(true); //Enemy is damaged.
@@ -313,7 +321,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					else {
 						if (Collision.check(bulletSprite.getBounds(), player.getSprite().getBounds())) { //returns true if player collides with bullet 
 							//TODO player grunts
-							//playSound(enemies.get(0).getEnemyType(), p); //play player grunt sound.
+							//playSound("player", p); //play player grunt sound.
 							player.changeHealth(-1);
 							updateHealth(); // update health display
 							player.setDamaged(true); //player is damaged.
@@ -399,6 +407,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							if (lifeIndex >= 0) { // check if player has life item
 								player.setHealth(5); // reset playerHealth
 								player.removeFromInventory(lifeIndex); // remove life item
+								updateHealth(); // update health
 								updateInventory(); // update inventory
 							}
 							else {
@@ -503,7 +512,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					if (Collision.check(attackArea.getBounds(), enemy.getSprite().getBounds())) { //player in range of enemy.
 						System.out.println("Enemy is hit.");
 						System.out.println("Enemy: " + enemies.get(0)); //TODO fire should not play dragon sound
-						playSound(enemies.get(0).getEnemyType(), p); //play enemy grunt sound
+						playSound(enemy.getEnemyType(), p); //play enemy grunt sound
 						enemy.changeHealth(-1); //Reduce health by 1.
 						updateHealth();
 						if (enemy.isDead()) { //Enemy has no health.
@@ -657,19 +666,18 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					boolean unlockedDoor = ((Door)nearestItem).unlock(player.getInventory()); // to check if door is unlocked
 					if (unlockedDoor){
 						if (doorStateBefore == unlockedDoor) { // door has already been opened, so create next room
-							currentRoom++;
+							currentRoom++; // increase current room number
 							createRoom(currentRoom); // create next room
-							if (currentRoom > FINAL_ROOM) { 
+							if (currentRoom > FINAL_ROOM) {
 								program.removeAll(); // remove all objects from screen
 								System.out.println("Congratulations! You escaped the dungeon!");
 								if (program.isAudioOn()) {
 									backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
 									backgroundMusic.playSound("sounds", "win.wav"); // play win music
 								}
-								initializeGame(); // reset all game values
 								program.setPlayerWin(true); // set player win
-								
 								program.switchTo(3); // switch to game end screen
+								initializeGame(); // reset all game values
 							}
 						}
 						int removeIndex = -1;
@@ -738,7 +746,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 		setInBounds(player);
 		
-		if (!program.isPlayerWin()) {
+		if (!program.isPlayerWin() && keyCode != 69) { // player has not won and e not pressed
 			GImage newPlayerSprite = new GImage("", playerSprite.getX(), playerSprite.getY());
 			if (player.getMoveX() < 0) { // player moving left
 				if (program.isCloseRangeCharacter()) {
@@ -762,6 +770,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 			program.remove(playerSprite); // remove previous player sprite
 			program.add(newPlayerSprite); // add new player sprite
+			System.out.println("newsprite");
 		}
 	}
 

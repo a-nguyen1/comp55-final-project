@@ -50,7 +50,6 @@ public class GameEndPane extends GraphicsPane{
 		program.remove(background);
 		program.remove(message);
 		program.remove(restart);
-		
 	}
 	
 	@Override
