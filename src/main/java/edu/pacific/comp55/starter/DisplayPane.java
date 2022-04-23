@@ -364,42 +364,42 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					if (timerCount % 100 == 0) {
 						enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // enemy moves towards player
 						if (enemy.getEnemyType().contains("long range")) { // if enemy is long range
-							if (enemy.getEnemyType().contains("dragon boss")) { // if enemy is dragon boss
-								String fireSpriteFile = "burningFireSprite.png";
+							if (enemy.getEnemyType().contains("dragon boss")) { // if enemy is long range dragon boss
+								String fireSpriteFileName = "burningFireSprite.png";
 								if (Math.random() <= 0.5) { // 50% chance for fire to appear mirrored
-									fireSpriteFile = "burningFireMirroredSprite.png";
+									fireSpriteFileName = "burningFireMirroredSprite.png";
 								}
-								GImage fireSprite = new GImage (fireSpriteFile, enemy.getBulletSprite().getX(), enemy.getBulletSprite().getY());
-								Enemy fire = new Enemy(fireSprite, 1, "close range fire");
-								fire.setDetectionRange(25); // so fire can hurt player
-								fire.setSpeed(0); // so fire does not move
-								program.add(fire.getSprite()); // add fire sprite to the screen
-								enemies.add(fire); // add fire enemy to the screen
-								enemy.getSprite().sendToFront(); // send dragon to front
+								summonCloseRangeEnemy(enemy, fireSpriteFileName, "fire", 1, 25, 0);
 							} // enemy is long range and not a boss
-							else { // long range enemy moves away from player
-								enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI));
+							else if (enemy.getEnemyType().contains("summoner")){ // if enemy is long range summoner
+								summonCloseRangeEnemy(enemy, "EnemySkeletonSprite.png", "skeleton", 1, 200, 5);
+								enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI)); // move long range enemy away from player
 								setInBounds(enemy); // set long range enemy in bounds
 							}
+							else {
+								enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI)); // move long range enemy away from player
+								setInBounds(enemy); // set long range enemy in bounds
+							}
+							
+							
 						}
 					}
-					
 					if (Collision.check(enemy.getSprite().getBounds(), player.getSprite().getBounds())) { // player collides with enemy
 						playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // player moves away from enemy
 						if (enemy.getEnemyType().contains("boss")) {
 							player.changeHealth(-2);
 							updateHealth();
-							System.out.println("Player touched by boss: " + player.getHealth());
+							System.out.println("Player touched by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
 						}
 						else if (enemy.getEnemyType().contains("close range")) {
 							player.changeHealth(-1);
 							updateHealth();
-							System.out.println("Player touched by close range enemy: " + player.getHealth());
+							System.out.println("Player touched by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
 						}
 						else if (enemy.getEnemyType().contains("long range")) {
 							player.changeHealth(-1);
 							updateHealth();
-							System.out.println("Player touched by long range enemy: " + player.getHealth());
+							System.out.println("Player touched by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
 						}
 						if (player.isDead()) {
 							int lifeIndex = -1;
@@ -439,11 +439,16 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 		}
 		if (removeEnemyIndex.size() > 0) { // remove all dead enemies
-			for (int y = 0; y < removeEnemyIndex.size(); y++) {
-				System.out.println("Enemy index to remove: " + removeEnemyIndex.get(y));
+			System.out.println("Removing dead enemies...");
+			for (int y = removeEnemyIndex.size() - 1; y >= 0 ; y--) {
+				System.out.println("Enemy index to remove: " + (int)removeEnemyIndex.get(y));
 				enemies.remove((int)removeEnemyIndex.get(y));
+				System.out.println("Enemy index removed: " + (int)removeEnemyIndex.get(y));
 			}
-			System.out.println("Enemies alive: " + enemies.size());
+			System.out.println("Enemies alive: ");
+			for (Enemy ene: enemies) {
+				System.out.println(ene.getEnemyType());
+			}
 		}
 		if (enemies.size() == 0) { // if no enemies
 			player.getBulletSprite().setVisible(false); // hide player bullet
@@ -478,6 +483,30 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				
 			}
 		}
+	}
+
+	private void summonCloseRangeEnemy(Enemy enemy, String spriteFileName, String name, int health, int detectionRange, int speed) {
+		GImage sprite = new GImage("");
+		if (enemy.getEnemyType().contains("dragon")) {
+			sprite = new GImage (spriteFileName, enemy.getBulletSprite().getX(), enemy.getBulletSprite().getY());
+		}
+		else {
+			int xOffset = 0;
+			if (Math.random() > 0.5) { // 50% chance
+				xOffset = 300;
+			}
+			else {
+				xOffset = -300;
+			}
+			double xValue = inRange(player.getSprite().getX() + xOffset, 0, program.getWidth()); // make x value on screen
+			sprite = new GImage (spriteFileName, xValue, player.getSprite().getY());
+		}
+		Enemy newEnemy = new Enemy(sprite, health, "close range " + name);
+		newEnemy.setDetectionRange(detectionRange); // so new enemy can detect player
+		newEnemy.setSpeed(speed); // set new enemy speed
+		program.add(newEnemy.getSprite()); // add new enemy sprite to the screen
+		enemies.add(newEnemy); // add new enemy to the screen
+		enemy.getSprite().sendToFront(); // send summoner to front
 	}
 	
 	@Override
@@ -770,7 +799,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 			program.remove(playerSprite); // remove previous player sprite
 			program.add(newPlayerSprite); // add new player sprite
-			System.out.println("newsprite");
 		}
 	}
 

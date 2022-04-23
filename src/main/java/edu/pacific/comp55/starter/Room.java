@@ -6,6 +6,7 @@ import acm.graphics.GImage; // for GImage
 import acm.graphics.GPoint;
 
 public class Room {
+	private static final int SLOW_SPEED = 3;
 	private static final int NORMAL_SPEED = 5;
 	private static final int FAST_SPEED = 10;
 	private static final int ITEM_SIZE = 25;
@@ -45,6 +46,7 @@ public class Room {
 		width = w;
 		height = h;
 		sprites = new HashMap<String, String>();
+		sprites.put("skeleton summoner", "EnemySkeletonSummonerSprite.png");
 		sprites.put("goblin", "EnemyGoblinSprite.png");
 		sprites.put("baby goblin", "EnemyGoblinBabySprite.png");
 		sprites.put("flying goblin", "EnemyGoblinFlyingSprite.png");
@@ -76,7 +78,8 @@ public class Room {
 		enemies = new ArrayList<Enemy>(); // initialize enemy array list
 		switch(room) {
 			case 1:
-				addEnemy("goblin", randomizePoint(), 2, "close range goblin", NORMAL_GOBLIN_DETECTION_RANGE, NORMAL_SPEED); 
+				addEnemy("skeleton summoner", randomizePoint(), 4, "long range skeleton summoner", 500, 300, "fireBallSprite.png", SLOW_SPEED); 
+				//addEnemy("goblin", randomizePoint(), 2, "close range goblin", NORMAL_GOBLIN_DETECTION_RANGE, NORMAL_SPEED); 
 				break;
 			case 2:
 				addEnemy("goblin", randomizePoint(), 2, "close range goblin", NORMAL_GOBLIN_DETECTION_RANGE, NORMAL_SPEED); 
