@@ -35,7 +35,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private String displayType; // to display current game state (lose/win/playing)
 	private GLabel bossLabel; // to display boss name
 	private GImage attackArea; // to display player attack
-	private int currentLevel;
 	private int currentRoom;
 	private double mouseX;
 	private double mouseY;
@@ -60,7 +59,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	}
 
 	private void initializeGame() {
-		currentLevel = 1; // starting level number
 		currentRoom = 1; // starting room number
 		
 		bossHealth = new ArrayList<GImage>(); //initialize bossHealth
@@ -109,7 +107,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	}
 	
 	public void createRoom(int roomNum) {
-		Room newRoom = new Room(currentLevel, roomNum, program.getWidth(), program.getHeight());
+		Room newRoom = new Room(roomNum, program.getWidth(), program.getHeight());
 		items = newRoom.getItems();
 		enemies = newRoom.getEnemies();
 		
@@ -165,7 +163,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		updateInventory(); // update player inventory display
 		player.randomizeXLocation(program.getWidth(), program.getHeight()); // randomize player's location at bottom of screen
 		program.add(player.getSprite()); //Add player sprite to screen.
-		player.getSprite().sendToFront();
+		player.getSprite().sendToFront(); //send player sprite to front.
 	}
 	
 	public void updateHealth() {
@@ -180,7 +178,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			program.add(heart);
 		}
 		System.out.println("current room: " + currentRoom);
-		if (currentRoom % 6 == 0) { // TODO change later
+		if (currentRoom % 6 == 0) { // every sixth room is a boss room TODO change later
 			bossLabel.sendToFront();
 			System.out.println(bossHealth.size());
 			while (bossHealth.size() > 0) { // remove all boss hearts from screen
