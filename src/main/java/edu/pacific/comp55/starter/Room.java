@@ -7,6 +7,10 @@ import acm.graphics.GPoint;
 
 public class Room {
 	
+	private static final int DEMON_MAGICIAN_WEAPON_RANGE = 400;
+
+	private static final int DEMON_MAGICIAN_DETECTION_RANGE = 250;
+
 	// minimum distance (between 2 x values and 2 y values) for difference between 2 points
 	private static final int MINIMUM_DISTANCE = 50; 
 	
@@ -71,6 +75,7 @@ public class Room {
 		sprites.put("flying goblin", "EnemyGoblinFlyingSprite.png");
 		sprites.put("dragon", "EnemyDragonSprite.png");
 		sprites.put("wizard", "EnemyWizardSprite.png");
+		sprites.put("demon magician", "demon-magician-sprite.png");
 		
 		//item sprites
 		sprites.put("key", "key.png");
@@ -150,19 +155,38 @@ public class Room {
 				addBoss("dragon", BOSS_HEALTH * 2, "long range dragon boss", BOSS_WEAPON_RANGE, "fireBallSprite.png", FAST_SPEED); //add DragonBoss
 				break;
 			case 13:
-				
+				for (int i = 0; i <= 1; i++) {
+					addEnemy("dragon", randomizePoint(), 3, "long range dragon", 200, 300, "fireBallSprite.png", NORMAL_SPEED); 
+				}
+				addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
 				break;
 			case 14:
-				
+				for (int i = 0; i <= 2; i++) {
+					addEnemy("dragon", randomizePoint(), 3, "long range dragon", 200, 300, "fireBallSprite.png", NORMAL_SPEED); 
+				}
+				for (int i = 0; i <= 1; i++) {
+					addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+				}
 				break;
 			case 15:
-				
+				addEnemy("wizard", randomizePoint(), 3, "long range wizard", 200, 300, "fireBallSprite.png", NORMAL_SPEED); 
+				for (int i = 0; i < 2; i++) {
+					addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+				}
 				break;
 			case 16:
-				
+				addEnemy("wizard", randomizePoint(), 3, "long range wizard", 200, 300, "fireBallSprite.png", NORMAL_SPEED); 
+				for (int i = 0; i < 2; i++) {
+					addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+				}
 				break;
 			case 17:
-				
+				for (int i = 0; i < 2; i++) {
+					addEnemy("wizard", randomizePoint(), 3, "long range wizard", 200, 300, "fireBallSprite.png", NORMAL_SPEED); 
+				}
+				for (int i = 0; i < 2; i++) {
+					addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+				}
 				break;
 			case 18:
 				addBoss("wizard", BOSS_HEALTH * 3, "long range wizard boss summoner", BOSS_WEAPON_RANGE, "fireSpiralSprite.png", FAST_SPEED); //add WizardBoss
@@ -207,6 +231,9 @@ public class Room {
 		addLocation(x,y);
 		
 		GImage enemySprite = new GImage(sprites.get(enemy), x, y);
+		if(enemyType.contains("demon")) {
+			enemySprite.setSize(50,50); //Shrink demon enemy down.
+		}
 		Enemy enemyToAdd = new Enemy(enemySprite, health, enemyType);
 		enemyToAdd.setDetectionRange(detectionRange);
 		enemyToAdd.setSpeed(speed);
