@@ -16,14 +16,11 @@ import acm.graphics.GObject; // for GObject
 import acm.graphics.GRect; // for GRect
 
 public class DisplayPane extends GraphicsPane implements ActionListener{
-	private static final int HEART_SIZE = 50;
-
 	private static final double SQRT_TWO_DIVIDED_BY_TWO = 0.7071067811865476;
-
-	private static final int FINAL_ROOM = 18;
-
+	private static final int HEART_SIZE = 50;
 	private static final int ITEM_SIZE = 25;
-
+	private static final int FINAL_ROOM = 2;
+	
 	private MainApplication program;
 	
 	private ArrayList<GImage> backgroundTiles;
@@ -737,7 +734,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				//if nearest item is a PickUpItem
 				if (nearestItem instanceof PickUpItem && !((PickUpItem) nearestItem).getInInventory()) { // check if PickUpItem and if not in inventory
 					player.addToInventory(nearestItem); // add item to player inventory
-					((PickUpItem) nearestItem).setInInventory(true);
+					((PickUpItem) nearestItem).setInInventory(true); // set item in inventory
 					program.remove(nearestItem.getLabel()); // remove item label
 					updateInventory();
 				}
@@ -755,7 +752,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						}
 						((Chest) nearestItem).setChestOpen(true); //Chest is open.
 						program.remove(nearestItem.getLabel()); //Remove chest label.
-						playerSprite.sendToFront();
+						playerSprite.sendToFront(); //move player to front
 					}
 				}
 				else if (nearestItem instanceof Door) { //if nearest item is a Door
@@ -791,7 +788,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							}
 						}
 					}
-					else {
+					else { // door is locked
 						itemLabel.put("closedDoor", "A key is needed."); 
 					}
 				}
@@ -799,22 +796,20 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					// for weapon upgrade, decrease attack cool down
 					int oldAttackCooldown = player.getAttackCooldown();
 					int newAttackCooldown = oldAttackCooldown - (oldAttackCooldown / 4); // reduce attack cool down by ~25%
-					if (newAttackCooldown < 100) { // so attack cool down doesn't go too low
+					if (newAttackCooldown < 100) { // so attack cool down is not too low
 						newAttackCooldown = 100;
 						// when attack cool down is low, increase weapon range
 						int oldAttackRange = player.getWeapon().getRange();
 						int newAttackRange = oldAttackRange + (oldAttackRange / 4); // increase weapon range by ~25%
 						player.getWeapon().setRange(newAttackRange);
-						System.out.println("Old attack cooldown: " + oldAttackRange);
-						System.out.println("New attack cooldown: " + newAttackRange);
+						System.out.println("Old attack range: " + oldAttackRange);
+						System.out.println("New attack range: " + newAttackRange);
 					}
-					else {
-						System.out.println("Old attack cooldown: " + oldAttackCooldown);
-						System.out.println("New attack cooldown: " + newAttackCooldown);
-					}
+					System.out.println("Old attack cooldown: " + oldAttackCooldown);
+					System.out.println("New attack cooldown: " + newAttackCooldown);
 					player.setAttackCooldown(newAttackCooldown);
 					
-					items.remove(nearestItem); // remove nearestItem from list
+					items.remove(nearestItem); // remove weapon upgrade from list
 					program.remove(nearestItem.getSprite()); // remove weapon upgrade from screen
 					program.remove(nearestItem.getLabel()); // remove weapon label from screen
 				}
@@ -880,7 +875,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		if (character instanceof Enemy) { // check if character is an enemy
 			yMax = program.getHeight() - 3 * sprite.getHeight();
 		}
-		sprite.setLocation(inRange(x, min, xMax), inRange(y, min, yMax));
+		sprite.setLocation(inRange(x, min, xMax), inRange(y, min, yMax)); // set location of sprite in bounds
 	}
 	
 	public double inRange(double x, double min, double max) { // return value between minimum and maximum

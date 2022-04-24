@@ -252,12 +252,12 @@ public class Room {
 	}
 	
 	private GPoint randomizePoint() {
-		double x = randomizeBetween(OFFSET, width - 2*OFFSET); //randomize x so not at edge of screen (offset by 100)
-		double y = randomizeBetween(OFFSET, height - 2*OFFSET); //randomize y so not at edge of screen (offset by 100)
+		double x = randomizeBetween(OFFSET, width - 2*OFFSET); //randomize x so not at edge of screen (there is an offset)
+		double y = randomizeBetween(OFFSET, height - 2*OFFSET); //randomize y so not at edge of screen (there is an offset)
 		GPoint returnPoint = new GPoint(x, y);
 		while (isTooClose(returnPoint)) { //randomize the points until point is not too close.
-			x = randomizeBetween(OFFSET, width - 2*OFFSET); //randomize x so not at edge of screen (offset by 100)
-			y = randomizeBetween(OFFSET, height - 2*OFFSET); //randomize y so not at edge of screen (offset by 100)
+			x = randomizeBetween(OFFSET, width - 2*OFFSET); //randomize x so not at edge of screen (there is an offset)
+			y = randomizeBetween(OFFSET, height - 2*OFFSET); //randomize y so not at edge of screen (there is an offset)
 			returnPoint = new GPoint(x, y);
 		}
 		return returnPoint;

@@ -79,7 +79,7 @@ public class Player extends Character {
 				i = items.get(x);
 			}
 		}	
-			return i;
+		return i;
 	}
 	
 	public double distanceToItem(Item i) {
