@@ -55,7 +55,7 @@ public class Room {
 		else if (room <= 12) {
 			backgroundTileName = "GrayTile.png";
 		}
-		else if (room <= 18) {
+		else {
 			backgroundTileName = "OrangeTile.png";
 		}
 		width = w;
@@ -165,7 +165,7 @@ public class Room {
 				
 				break;
 			case 18:
-				addBoss("wizard", BOSS_HEALTH * 3, "long range wizard summoner boss", BOSS_WEAPON_RANGE, "fireSpiralSprite.png", FAST_SPEED); //add WizardBoss
+				addBoss("wizard", BOSS_HEALTH * 3, "long range wizard boss summoner", BOSS_WEAPON_RANGE, "fireSpiralSprite.png", FAST_SPEED); //add WizardBoss
 				break;
 		}
 			

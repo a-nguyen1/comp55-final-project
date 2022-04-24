@@ -20,7 +20,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 
 	private static final double SQRT_TWO_DIVIDED_BY_TWO = 0.7071067811865476;
 
-	private static final int FINAL_ROOM = 12; // TODO change later
+	private static final int FINAL_ROOM = 18;
 
 	private static final int ITEM_SIZE = 25;
 
@@ -45,7 +45,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private ArrayList<Integer> removeEnemyIndex;
 	private GRect inventoryBox;
 	private Timer timer;
-	private SoundEffect sounds;
+	private SoundEffect soundEffect;
 	private AudioPlayer backgroundMusic;
 	
 	private int timerCount; // to keep track of timer
@@ -70,7 +70,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		removeEnemyIndex = new ArrayList<Integer>(); // initialize array list for indexes of dead enemies
 		
 		AudioPlayer p = new AudioPlayer();
-		sounds = new SoundEffect(p, ""); // initialize sound effect player
+		soundEffect = new SoundEffect(p, ""); // initialize sound effect player
 		backgroundMusic = new AudioPlayer(); // initialize background music player
 		
 		dropWeaponUpgrade = false; // set to false by default
@@ -164,14 +164,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			bossLabel.setFont(new Font("Serif", Font.BOLD, 20));
 			program.add(bossLabel);
 		}
-		else if (roomNum <= FINAL_ROOM && program.isAudioOn()) {
+		else if (roomNum == 7 && program.isAudioOn()) { // change music after 1st boss room
 			stopBackgroundMusic();
-			if (Math.random() > 0.5) {
-				backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play background music
-			}
-			else {
-				backgroundMusic.playSound("sounds", "basic_loop.wav", true); // play background music
-			}
+			backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play background music
 		}
 		
 		program.add(inventoryBox); //Add inventory box to the screen.
@@ -273,23 +268,25 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	public void playSound(String e, AudioPlayer p) {
 		if (e.contains("big goblin")) {
-			sounds.setName("boss_goblin_grunt"); //Sound effect for goblin boss getting hit.
+			soundEffect.setName("boss_goblin_grunt"); //Sound effect for goblin boss getting hit.
 		}
 		else if (e.contains("goblin")) {
-			sounds.setName("small_goblin_grunt"); //Sound effect for goblin getting hit.
+			soundEffect.setName("small_goblin_grunt"); //Sound effect for goblin getting hit.
 		}
 		else if (e.contains("dragon")) {
-			sounds.setName("dragon_grunt"); //Sound effect for dragon getting hit.
+			soundEffect.setName("dragon_grunt"); //Sound effect for dragon getting hit.
+		}
+		else {
+			soundEffect.setName("dragon_grunt"); //default sound effect TODO change this later
 		}
 		if (program.isAudioOn()) {
-			sounds.play(p); //Play enemy getting hit sound effect.
+			soundEffect.play(p); //Play sound effect.
 		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		GImage playerSprite = player.getSprite();
-		AudioPlayer p = sounds.getPlayer(); //Get the audio player object to play the sound.
 		removeEnemyIndex = new ArrayList<Integer>(); // initialize array list for indexes of dead enemies
 		for (int z = 0; z < enemies.size(); z++) { // loop through all enemies
 			Enemy enemy = enemies.get(z);
@@ -298,10 +295,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				if (player.isBulletTraveling()) {
 					GImage bulletSprite = player.getBulletSprite();
 					bulletSprite = player.moveBullet(bulletSprite); // move bulletSprite towards mouse click 
-					if (Collision.check(bulletSprite.getBounds(), enemy.getSprite().getBounds())) { //returns true if enemy collides with player bullet 
-						playSound(enemy.getEnemyType(), p); //play enemy grunt sound.
+					if (Collision.check(bulletSprite.getBounds(), enemy.getSprite().getBounds())) { //enemy collides with player bullet 
+						playSound(enemy.getEnemyType(), soundEffect.getPlayer()); //play enemy grunt sound.
 						enemy.changeHealth(-1);
-						updateHealth();
+						if (enemy instanceof Boss) {
+							updateHealth(); //update boss health
+						}
 						enemy.setDamaged(true); //Enemy is damaged.
 						System.out.println("enemy health: " + enemy.getHealth());
 						if (enemy.isDead()) { //Enemy has no health.
@@ -370,12 +369,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				}
 				
 				if (enemy.canInteract(playerSprite.getX(), playerSprite.getY())) { //enemy detects player
-					// x is set to horizontal distance between enemy and player
-					double x = (enemySprite.getX() + enemySprite.getWidth() / 2) - (playerSprite.getX() + playerSprite.getWidth() / 2);
-					// y is set to vertical distance between enemy and player
-					double y = (enemySprite.getY() + enemySprite.getHeight() / 2) - (playerSprite.getY() + playerSprite.getHeight() / 2);
 					if (timerCount % 100 == 0) {
-						enemySprite.movePolar(enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI) + 180); // enemy moves towards player
+						enemySprite.movePolar(enemy.getSpeed(), angle(enemySprite, playerSprite) + 180); // enemy moves towards player
 						if (enemy.getEnemyType().contains("long range")) { // if enemy is long range
 							if (enemy.getEnemyType().contains("dragon boss")) { // if enemy is long range dragon boss
 								String fireSpriteFileName = "burningFireSprite.png";
@@ -401,7 +396,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								int summonRatio = 15; // number of summoned enemies per summoner
 								if (numSummoned / numSummoners < summonRatio) { // maintain summon ratio
 									if (enemy.getEnemyType().contains("wizard boss")) {
-										enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI)); // move away from player
+										enemySprite.movePolar(2 * enemy.getSpeed(), angle(enemySprite, playerSprite)); // move away from player
 										if (timerCount % 1000 == 0) { // teleport interval
 											double newX = Math.random() * program.getWidth();
 											double newY = Math.random() * program.getHeight();
@@ -415,21 +410,23 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 										summonEnemy(enemy, "EnemySkeletonSummonerSprite.png", "summoned skeleton summoner", 3, 450, 350, "fireballSprite.png", 5);
 									}
 									else {
-										enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI)); // move long range enemy away from player
+										enemySprite.movePolar(2 * enemy.getSpeed(), angle(enemySprite, playerSprite)); // move long range enemy away from player
 										setInBounds(enemy); // set long range enemy in bounds
 										summonEnemy(enemy, "EnemyHeartlessSkeletonSprite.png", "summoned skeleton", 1, 300, 5);
 									}
 								}
 							}
 							else {
-								enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI)); // move long range enemy away from player
+								enemySprite.movePolar(2 * enemy.getSpeed(), angle(enemySprite, playerSprite)); // move long range enemy away from player
 								setInBounds(enemy); // set long range enemy in bounds
 							}
 						}
 						enemySprite.sendToFront(); // send enemy sprite to front
 					}
 					if (Collision.check(enemy.getSprite().getBounds(), player.getSprite().getBounds())) { // player collides with enemy
-						playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // player moves away from enemy
+						double x = (enemySprite.getX() + (enemySprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
+						double y = (enemySprite.getY() + (enemySprite.getHeight() / 2)) - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between enemy and player
+						playerSprite.movePolar(Math.sqrt(x*x+y*y), angle(enemySprite, playerSprite) + 180); // player moves away from enemy
 						if (enemy.getEnemyType().contains("boss")) {
 							player.changeHealth(-2);
 							updateHealth();
@@ -466,11 +463,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					if (enemy.getEnemyType().contains("long range")) {
 						if (enemy.isAttackAvailable()) {
 							GImage bulletSprite = enemy.getBulletSprite();
-							//x is set to horizontal distance between enemy and player
-							x = enemySprite.getX() - ( playerSprite.getX() + (playerSprite.getWidth() / 2));
-			            	//y is set to vertical distance between enemy and player
-			            	y = enemySprite.getY() - (playerSprite.getY() + (playerSprite.getHeight() / 2));
-			            	enemy.getWeapon().setAngle(180 * Math.atan2(-y, x) / Math.PI - 180);	
+			            	enemy.getWeapon().setAngle(angle(enemySprite, playerSprite) + 180);	
 							if (!enemy.isBulletTraveling()) { // set initial bullet location and enemy attack sprite when not in motion
 								bulletSprite.setLocation(enemySprite.getX() + (enemySprite.getWidth() / 2) - bulletSprite.getWidth() / 2, enemySprite.getY() + (enemySprite.getHeight() / 2) - bulletSprite.getHeight() / 2);
 							}
@@ -606,19 +599,20 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		GImage playerSprite = player.getSprite();
-		AudioPlayer p = sounds.getPlayer(); // Get the audio player object to play the sound.
 		if (player.isAttackAvailable()) {
 			if (program.isCloseRangeCharacter()) {
 				setUpAttackArea(e, playerSprite);
 				removeEnemyIndex = new ArrayList<Integer>(); // initialize array list for indexes of dead enemies
 				for (int z = 0; z < enemies.size(); z++) { // loop for all enemies
 					Enemy enemy = enemies.get(z);
-					if (Collision.check(attackArea.getBounds(), enemy.getSprite().getBounds())) { //player in range of enemy.
+					if (Collision.check(attackArea.getBounds(), enemy.getSprite().getBounds())) { //player hits enemy.
 						System.out.println("Enemy is hit.");
-						System.out.println("Enemy: " + enemies.get(0)); //TODO fire should not play dragon sound
-						playSound(enemy.getEnemyType(), p); //play enemy grunt sound
+						System.out.println("Enemy: " + enemy.getEnemyType()); 
+						playSound(enemy.getEnemyType(), soundEffect.getPlayer()); // play enemy grunt sound
 						enemy.changeHealth(-1); //Reduce health by 1.
-						updateHealth();
+						if (enemy instanceof Boss) {
+							updateHealth(); // update boss health
+						}
 						if (enemy.isDead()) { //Enemy has no health.
 							removeEnemyIndex.add(z); // add index to ArrayList
 							if (enemy.getEnemyType().contains("long range")) {
@@ -633,7 +627,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 			else { // long range attack
 				GImage bulletSprite = player.getBulletSprite();
-	            player.getWeapon().setAngle(playerToMouseAngle(e, playerSprite));	
+	            player.getWeapon().setAngle(angle(playerSprite));	
 				bulletSprite.setVisible(true);
 				player.setBulletTraveling(true); // move bulletSprite under actionPerformed() method
 				bulletSprite.setLocation(playerSprite.getX() + (playerSprite.getWidth() / 2) - bulletSprite.getWidth() / 2, playerSprite.getY() + (playerSprite.getHeight() / 2) - bulletSprite.getHeight() / 2);
@@ -643,7 +637,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	}
 
 	private void setUpAttackArea(MouseEvent e, GImage playerSprite) {
-		double angle = playerToMouseAngle(e, playerSprite);
+		double angle = angle(playerSprite);
 		double xOffset;
 		double yOffset;
 		double weaponRange = player.getWeapon().getRange();
@@ -705,10 +699,17 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		attackArea.sendToFront();
 		attackArea.setVisible(true);
 	}
-
-	private double playerToMouseAngle(MouseEvent e, GImage playerSprite) {
-		double x = e.getX() - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between mouse and middle of playerSprite
-		double y = e.getY() - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between mouse and middle of playerSprite
+	
+	private double angle(GImage enemySprite, GImage playerSprite) { // return angle between player and enemy
+		double x = (enemySprite.getX() + (enemySprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
+		double y = (enemySprite.getY() + (enemySprite.getHeight() / 2)) - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between enemy and player
+		double angle = 180 * Math.atan2(-y, x) / Math.PI; // calculate angle from player to enemy
+		return angle;
+	}
+	
+	private double angle(GImage playerSprite) { // return angle between player and mouse
+		double x = mouseX - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between mouse and middle of playerSprite
+		double y = mouseY - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between mouse and middle of playerSprite
 		double angle = 180 * Math.atan2(-y, x) / Math.PI; // calculate angle from player to mouse
 		return angle;
 	}
@@ -728,11 +729,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		} else if (keyCode == 16 && player.isDashAvailable()) { // SHIFT
 			timer.stop();
 			player.setDashAvailable(false);
-			// x is set to horizontal distance between mouse and middle of playerSprite
-			double x = mouseX - (playerSprite.getX() + playerSprite.getWidth() / 2);
-			// y is set to vertical distance between mouse and middle of playerSprite
-			double y = mouseY - (playerSprite.getY() + playerSprite.getHeight() / 2);
-			playerSprite.movePolar(player.getSpeed() * player.getSpeed() * 2, 180 * Math.atan2(-y, x) / Math.PI); // dash in direction of mouse
+			playerSprite.movePolar(player.getSpeed() * player.getSpeed() * 2, angle(playerSprite)); // dash in direction of mouse
 			timer.start();
 		} else if (keyCode == 69) { // e
 			Item nearestItem = player.nearestItem(items); //check for item nearest to player
