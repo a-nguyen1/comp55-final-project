@@ -1,5 +1,4 @@
 package edu.pacific.comp55.starter;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,10 +15,12 @@ import acm.graphics.GObject; // for GObject
 import acm.graphics.GRect; // for GRect
 
 public class DisplayPane extends GraphicsPane implements ActionListener{
+	
 	private static final double SQRT_TWO_DIVIDED_BY_TWO = 0.7071067811865476;
+	private static final int BACKGROUND_TILE_SIZE = 50;
 	private static final int HEART_SIZE = 50;
 	private static final int ITEM_SIZE = 25;
-	private static final int FINAL_ROOM = 2;
+	private static final int FINAL_ROOM = 18;
 	
 	private MainApplication program;
 	
@@ -29,7 +30,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private ArrayList<GImage> bossHealth;
 	private ArrayList<Item> items; // items to display on the level.
 	private HashMap<String, String> itemLabel; 
-	private String displayType; // to display current game state (lose/win/playing)
 	private GLabel bossLabel; // to display boss name
 	private GImage attackArea; // to display player attack
 	private int currentRoom;
@@ -66,8 +66,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		enemies = new ArrayList<Enemy>(); // initialize enemy array list
 		removeEnemyIndex = new ArrayList<Integer>(); // initialize array list for indexes of dead enemies
 		
-		AudioPlayer p = new AudioPlayer();
-		soundEffect = new SoundEffect(p, ""); // initialize sound effect player
+		soundEffect = new SoundEffect(AudioPlayer.getInstance(), ""); // initialize sound effect player
 		backgroundMusic = new AudioPlayer(); // initialize background music player
 		
 		dropWeaponUpgrade = false; // set to false by default
@@ -98,8 +97,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 
 	public void setBackground(String tileFile) {
 		backgroundTiles = new ArrayList<GImage>(); 
-		for (int x = 0; x < program.getWidth(); x += 50) { // add tiles in x direction
-			for (int y = 0; y < program.getHeight(); y += 50) { // add tiles in y direction
+		for (int x = 0; x < program.getWidth(); x += BACKGROUND_TILE_SIZE) { // add tiles in x direction
+			for (int y = 0; y < program.getHeight(); y += BACKGROUND_TILE_SIZE) { // add tiles in y direction
 				backgroundTiles.add(new GImage(tileFile, x, y));
 			}
 		}
@@ -792,14 +791,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						itemLabel.put("closedDoor", "A key is needed."); 
 					}
 				}
-				else if (nearestItem instanceof Weapon) {
-					// for weapon upgrade, decrease attack cool down
+				else if (nearestItem instanceof Weapon) { // for weapon upgrade, decrease attack cool down
 					int oldAttackCooldown = player.getAttackCooldown();
 					int newAttackCooldown = oldAttackCooldown - (oldAttackCooldown / 4); // reduce attack cool down by ~25%
-					if (newAttackCooldown < 100) { // so attack cool down is not too low
-						newAttackCooldown = 100;
-						// when attack cool down is low, increase weapon range
-						int oldAttackRange = player.getWeapon().getRange();
+					if (newAttackCooldown < 100) { // if attack cool down is too low, increase weapon range
+						newAttackCooldown = 100; // set attack cool back to minimum
+						int oldAttackRange = player.getWeapon().getRange(); 
 						int newAttackRange = oldAttackRange + (oldAttackRange / 4); // increase weapon range by ~25%
 						player.getWeapon().setRange(newAttackRange);
 						System.out.println("Old attack range: " + oldAttackRange);
@@ -822,12 +819,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				if (removeIndex >= 0) { //check if the player has the heart to remove
 					player.removeFromInventory(removeIndex); //Remove the heart from the inventory.
 					System.out.println("Heart consumed");
-					player.changeHealth(1); //add one health to player for now.
+					player.changeHealth(1); //add one health to player.
 				}
 			}
 			updateHealth(); //update health changes
 			updateInventory(); //update inventory changes
 		}
+		
 		// for normalizing diagonal movement
 		if (Math.abs(player.getMoveX()) == 1 && Math.abs(player.getMoveY()) == 1) { // check if diagonal movement is happening
 			player.setMoveX(player.getMoveX() * SQRT_TWO_DIVIDED_BY_TWO);
