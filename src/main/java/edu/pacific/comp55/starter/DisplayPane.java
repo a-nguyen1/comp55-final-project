@@ -89,7 +89,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		attackArea = new GImage(""); // initialize attack area
 		
 		//create inventory box
-		inventoryBox = new GRect(50, 0, 0, 0);
+		inventoryBox = new GRect(0, 0, 0, 0);
 		inventoryBox.setVisible(false);
 		
 		timer.restart(); // reset timer
@@ -141,7 +141,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		dropWeaponUpgrade = false;
 	
-		if (roomNum % 6 == 0) { // boss room reached every 6th room TODO change later
+		if (roomNum % 6 == 0) { // every sixth room is a boss room
 			if (program.isAudioOn()) {
 				stopBackgroundMusic();
 				backgroundMusic.playSound("sounds", "most_basic_loop.wav", true); // play boss background music
@@ -185,7 +185,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			program.add(heart);
 		}
 		System.out.println("current room: " + currentRoom);
-		if (currentRoom % 6 == 0) { // every sixth room is a boss room TODO change later
+		if (currentRoom % 6 == 0) { // every sixth room is a boss room
 			bossLabel.sendToFront();
 			System.out.println(bossHealth.size());
 			while (bossHealth.size() > 0) { // remove all boss hearts from screen
@@ -743,7 +743,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						nearestItem.setSprite(((Chest) nearestItem).getOpenChest()); //set the sprite to the open chest.
 						program.add(nearestItem.getSprite()); //Add open chest sprite to screen
 						items.remove(nearestItem); // remove chest from items ArrayList (so chest is not set as nearestItem)
-						ArrayList<Item> itemsToShow = ((Chest) nearestItem).releaseItems();
+						ArrayList<Item> itemsToShow = ((Chest) nearestItem).releaseItems(program.isCloseRangeCharacter());
 						for (Item i : itemsToShow) { //Add the chest items to screen.
 							program.add(i.getSprite()); //add items from chest to screen.
 							program.add(i.getLabel()); //add label to screen.

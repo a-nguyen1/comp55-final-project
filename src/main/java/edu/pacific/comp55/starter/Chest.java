@@ -16,17 +16,42 @@ public class Chest extends Item {
 		openChest.setSize(ITEM_SIZE, ITEM_SIZE);
 	}
 
-	public ArrayList<Item> releaseItems() {
+	public ArrayList<Item> releaseItems(boolean closeRange) {
 		items = new ArrayList<Item>(); // initialize item array list
-		GImage heartSprite = new GImage ("Heart.png", super.getSprite().getX() - ITEM_SIZE, super.getSprite().getY()); //Create a new sprite for heart.
+		double chestX = getSprite().getX();
+		double chestY = getSprite().getY();
+		double randNum = Math.random();
+		if (randNum <= 0.05) { // 5 % chance of giving weapon upgrade
+			String upgradeType = "WizardUpgrade.png"; //default weapon upgrade sprite.
+			if (closeRange) {
+				upgradeType = "KnightUpgrade.png";
+			}
+			GImage sprite = new GImage(upgradeType, chestX, chestY); //weapon upgrade sprite for knight.
+			PickUpItem upgrade = new PickUpItem(sprite, "upgrade");
+			items.add(upgrade);
+		}
+		else if (randNum <= 0.10) { // 5 % chance of giving extra life
+			GImage sprite = new GImage("thugLife.png", chestX, chestY);
+			PickUpItem life = new PickUpItem(sprite, "life");
+			items.add(life);
+		}
+		else if (randNum <= 0.20) { // 10 % chance of giving two extra hearts
+			addHeart(chestX, chestY, ITEM_SIZE);
+			addHeart(chestX, chestY, -ITEM_SIZE);
+		}
+		else {
+			addHeart(chestX, chestY, ITEM_SIZE); // 80 % chance of giving a heart
+		}
+		addHeart(chestX, chestY, 0); // always give a heart
+		
+		return items;
+	}
+
+	private void addHeart(double chestX, double chestY, double offset) {
+		GImage heartSprite = new GImage ("Heart.png", chestX, chestY + offset); //Create a new sprite for heart.
 		heartSprite.setSize(ITEM_SIZE, ITEM_SIZE); //Resize sprite to make it smaller.
 		PickUpItem heart = new PickUpItem(heartSprite, "heart");
 		items.add(heart);
-		GImage heartSprite2 = new GImage ("Heart.png", super.getSprite().getX() + ITEM_SIZE, super.getSprite().getY() + ITEM_SIZE); //Create a new sprite for heart.
-		heartSprite.setSize(ITEM_SIZE, ITEM_SIZE); //Resize sprite to make it smaller.
-		PickUpItem heart2 = new PickUpItem(heartSprite2, "heart");
-		items.add(heart2);
-		return items;
 	}
 	
 	public static void main(String[] args) {

@@ -73,7 +73,7 @@ public class Room {
 		sprites.put("wizard", "EnemyWizardSprite.png");
 		
 		//item sprites
-		sprites.put("key", "key.png"); 
+		sprites.put("key", "key.png");
 		sprites.put("heart", "heart.png");
 		sprites.put("chest", "closedChest.png");
 		sprites.put("door", "closedDoor.png");
