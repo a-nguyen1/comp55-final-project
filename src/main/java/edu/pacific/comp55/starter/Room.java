@@ -146,7 +146,7 @@ public class Room {
 				}
 				break;
 			case 12:
-				addBoss("dragon", BOSS_HEALTH, "long range dragon boss", BOSS_WEAPON_RANGE, "fireBallSprite.png", FAST_SPEED); //add DragonBoss
+				addBoss("dragon", BOSS_HEALTH * 2, "long range dragon boss", BOSS_WEAPON_RANGE, "fireBallSprite.png", FAST_SPEED); //add DragonBoss
 				break;
 			case 13:
 				

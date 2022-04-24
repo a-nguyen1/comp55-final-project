@@ -6,6 +6,7 @@ import acm.graphics.GImage;
 import acm.graphics.GLabel;
 
 public class Boss extends Enemy {
+	
 	private static final int HEART_SIZE = 50;
 	private Weapon weaponUpgrade;
 	
@@ -17,10 +18,11 @@ public class Boss extends Enemy {
 		return weaponUpgrade;
 	}
 	
-	public ArrayList<GImage> displayHealth(int yOffset) {
+	public ArrayList<GImage> displayHealth(int xOffset, int yOffset) {
 		ArrayList<GImage> bossHealth = new ArrayList<GImage>(); 
 		for (int x = 0; x < getHealth(); x++) { //add hearts based on boss health
-			bossHealth.add(new GImage("Heart.png", 725, x * HEART_SIZE + yOffset)); 
+			// if health > 5, place the next row of hearts right next to original row of hearts
+			bossHealth.add(new GImage("Heart.png", xOffset + (5 * (x / 5)), x % 5 * HEART_SIZE + yOffset)); 
 		}
 		return bossHealth;
 	}

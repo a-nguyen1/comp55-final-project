@@ -1,4 +1,5 @@
 package edu.pacific.comp55.starter;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList; // for arraylist
@@ -127,10 +128,13 @@ public class Player extends Character {
 			// set location of inventory box
 			inventoryBox.setLocation(offsetFromHealth + HEART_SIZE * Math.min(getHealth(), 10), 0); 
 			inventoryBox.setVisible(true); // show inventory box
+			inventoryBox.setFillColor(Color.white);
+			inventoryBox.setFilled(true);
 		}
 		else {
 			inventoryBox.setVisible(false); // make inventory box invisible
 		}
+		
 	}
 	
 	public int searchItemIndex(Player player, int removeIndex, String itemType) {

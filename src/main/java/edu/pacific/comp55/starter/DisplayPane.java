@@ -154,7 +154,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				bossLabel = new GLabel("Falkor");
 			}
 			System.out.println("Boss label: " + bossLabel);
-			bossLabel.setLocation(program.getWidth() - 125, inventoryBox.getHeight() + ITEM_SIZE); // set boss label based on player inventory
+			bossLabel.setLocation(program.getWidth() - 2.25 * bossLabel.getWidth(), inventoryBox.getHeight() + ITEM_SIZE); // set boss label based on player inventory
 			bossLabel.setFont(new Font("Serif", Font.BOLD, 20));
 			program.add(bossLabel);
 		}
@@ -209,8 +209,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						}
 						else { // boss is alive
 							bossLabel.setLocation(bossLabel.getX(), inventoryBox.getHeight() + ITEM_SIZE); // update boss label based on player inventory
+							int xOffset = (int)program.getWidth() - (int)(HEART_SIZE * 1.5);
 							int yOffset = ITEM_SIZE * (3 + (int)(player.getInventory().size() / 10));
-							bossHealth = ((Boss) e).displayHealth(yOffset);
+							bossHealth = ((Boss) e).displayHealth(xOffset, yOffset);
 						}
 					}
 				}
@@ -370,7 +371,23 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								summonCloseRangeEnemy(enemy, fireSpriteFileName, "fire", 1, 25, 0);
 							} // enemy is long range and not a boss
 							else if (enemy.getEnemyType().contains("summoner")){ // if enemy is long range summoner
-								summonCloseRangeEnemy(enemy, "EnemySkeletonSprite.png", "skeleton", 1, 200, 5);
+								int numSummoners = 0; // for counting the number of summoners
+								int numSummoned = 0; // for counting the number of summoned enemies
+								for (int ind = 0; ind < enemies.size(); ind++) { // loop over all enemies
+									Enemy temp = enemies.get(ind);
+									if (temp.getEnemyType().contains("summoner")) { // count summoner enemies
+										numSummoners++;
+									}
+									if (temp.getEnemyType().contains("summoned")) { // count summoned enemies
+										numSummoned++;
+									}
+								}
+								System.out.println("summoners: " + numSummoners);
+								System.out.println("summoned: " + numSummoned);
+								int summonRatio = 15; // number of summoned enemies per summoner
+								if (numSummoned / numSummoners < summonRatio) { // maintain summon ratio
+									summonCloseRangeEnemy(enemy, "EnemyHeartlessSkeletonSprite.png", "summoned skeleton", 1, 300, 5);
+								}
 								enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI)); // move long range enemy away from player
 								setInBounds(enemy); // set long range enemy in bounds
 							}
@@ -378,8 +395,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI)); // move long range enemy away from player
 								setInBounds(enemy); // set long range enemy in bounds
 							}
-							
-							
 						}
 					}
 					if (Collision.check(enemy.getSprite().getBounds(), player.getSprite().getBounds())) { // player collides with enemy
@@ -491,10 +506,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		else {
 			int xOffset = 0;
 			if (Math.random() > 0.5) { // 50% chance
-				xOffset = 300;
+				xOffset = detectionRange;
 			}
 			else {
-				xOffset = -300;
+				xOffset = -detectionRange;
 			}
 			double xValue = inRange(player.getSprite().getX() + xOffset, 0, program.getWidth()); // make x value on screen
 			sprite = new GImage (spriteFileName, xValue, player.getSprite().getY());
@@ -553,7 +568,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					}
 				}
 				if (removeEnemyIndex.size() > 0) { // remove all dead enemies
-					for (int w = 0; w < removeEnemyIndex.size(); w++) {
+					for (int w = removeEnemyIndex.size() - 1; w >= 0 ; w--) {
 						System.out.println("Enemy index to remove: " + removeEnemyIndex.get(w));
 						enemies.remove((int)removeEnemyIndex.get(w));
 					}
