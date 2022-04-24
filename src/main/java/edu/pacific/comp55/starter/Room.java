@@ -69,7 +69,8 @@ public class Room {
 		sprites.put("goblin", "EnemyGoblinSprite.png");
 		sprites.put("baby goblin", "EnemyGoblinBabySprite.png");
 		sprites.put("flying goblin", "EnemyGoblinFlyingSprite.png");
-		sprites.put("dragon", "dragon-sprite.png");
+		sprites.put("dragon", "EnemyDragonSprite.png");
+		sprites.put("wizard", "EnemyWizardSprite.png");
 		
 		//item sprites
 		sprites.put("key", "key.png"); 
@@ -164,7 +165,7 @@ public class Room {
 				
 				break;
 			case 18:
-				
+				addBoss("wizard", BOSS_HEALTH * 3, "long range wizard summoner boss", BOSS_WEAPON_RANGE, "fireSpiralSprite.png", FAST_SPEED); //add WizardBoss
 				break;
 		}
 			

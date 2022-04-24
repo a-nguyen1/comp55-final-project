@@ -134,7 +134,6 @@ public class Player extends Character {
 		else {
 			inventoryBox.setVisible(false); // make inventory box invisible
 		}
-		
 	}
 	
 	public int searchItemIndex(Player player, int removeIndex, String itemType) {

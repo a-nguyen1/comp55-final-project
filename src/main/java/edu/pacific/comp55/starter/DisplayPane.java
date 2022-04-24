@@ -42,6 +42,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	//Class objects
 	private Player player;
 	private ArrayList<Enemy> enemies;
+	private ArrayList<Integer> removeEnemyIndex;
 	private GRect inventoryBox;
 	private Timer timer;
 	private SoundEffect sounds;
@@ -66,6 +67,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		playerInventory = new ArrayList<GImage>(); // initialize playerInventory
 		items = new ArrayList<Item>(); // initialize items in room
 		enemies = new ArrayList<Enemy>(); // initialize enemy array list
+		removeEnemyIndex = new ArrayList<Integer>(); // initialize array list for indexes of dead enemies
 		
 		AudioPlayer p = new AudioPlayer();
 		sounds = new SoundEffect(p, ""); // initialize sound effect player
@@ -142,10 +144,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 		}
 		dropWeaponUpgrade = false;
+	
 		if (roomNum % 6 == 0) { // boss room reached every 6th room TODO change later
 			if (program.isAudioOn()) {
-				backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
-				backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play boss background music
+				stopBackgroundMusic();
+				backgroundMusic.playSound("sounds", "most_basic_loop.wav", true); // play boss background music
 			}
 			if (roomNum == 6) {
 				bossLabel = new GLabel("Big Goblin");
@@ -153,11 +156,24 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			else if(roomNum == 12) {
 				bossLabel = new GLabel("Falkor");
 			}
+			else if (roomNum == 18) {
+				bossLabel = new GLabel("Evil Wizard");
+			}
 			System.out.println("Boss label: " + bossLabel);
 			bossLabel.setLocation(program.getWidth() - 2.25 * bossLabel.getWidth(), inventoryBox.getHeight() + ITEM_SIZE); // set boss label based on player inventory
 			bossLabel.setFont(new Font("Serif", Font.BOLD, 20));
 			program.add(bossLabel);
 		}
+		else if (roomNum <= FINAL_ROOM && program.isAudioOn()) {
+			stopBackgroundMusic();
+			if (Math.random() > 0.5) {
+				backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play background music
+			}
+			else {
+				backgroundMusic.playSound("sounds", "basic_loop.wav", true); // play background music
+			}
+		}
+		
 		program.add(inventoryBox); //Add inventory box to the screen.
 		updateHealth(); // update player health display
 		updateInventory(); // update player inventory display
@@ -241,13 +257,18 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	public void gameOver() {
 		if (program.isAudioOn()) {
-			backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
-			backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
+			stopBackgroundMusic();
 			backgroundMusic.playSound("sounds", "game_over.wav", false); // play game over sound
 		}
 		program.removeAll(); // remove all objects from screen
 		initializeGame(); // reset all game values (player win is set to false)
 		program.switchTo(3); // switch to game end screen
+	}
+
+	private void stopBackgroundMusic() {
+		backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
+		backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop background music
+		backgroundMusic.stopSound("sounds", "most_basic_loop.wav"); // stop boss background music
 	}
 	
 	public void playSound(String e, AudioPlayer p) {
@@ -255,10 +276,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			sounds.setName("boss_goblin_grunt"); //Sound effect for goblin boss getting hit.
 		}
 		else if (e.contains("goblin")) {
-			sounds.setName("small_goblin_grunt"); //Sound effect for enemy getting hit.
+			sounds.setName("small_goblin_grunt"); //Sound effect for goblin getting hit.
 		}
 		else if (e.contains("dragon")) {
-			sounds.setName("dragon_grunt"); //Sound effect for dragon boss getting hit.
+			sounds.setName("dragon_grunt"); //Sound effect for dragon getting hit.
 		}
 		if (program.isAudioOn()) {
 			sounds.play(p); //Play enemy getting hit sound effect.
@@ -269,7 +290,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		GImage playerSprite = player.getSprite();
 		AudioPlayer p = sounds.getPlayer(); //Get the audio player object to play the sound.
-		ArrayList<Integer> removeEnemyIndex = new ArrayList<Integer>(); // for removing dead enemies
+		removeEnemyIndex = new ArrayList<Integer>(); // initialize array list for indexes of dead enemies
 		for (int z = 0; z < enemies.size(); z++) { // loop through all enemies
 			Enemy enemy = enemies.get(z);
 			GImage enemySprite = enemy.getSprite();
@@ -361,7 +382,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								if (Math.random() <= 0.5) { // 50% chance for fire to appear mirrored
 									fireSpriteFileName = "burningFireMirroredSprite.png";
 								}
-								summonCloseRangeEnemy(enemy, fireSpriteFileName, "fire", 1, 25, 0);
+								summonEnemy(enemy, fireSpriteFileName, "fire", 1, 25, 0);
 							} // enemy is long range and not a boss
 							else if (enemy.getEnemyType().contains("summoner")){ // if enemy is long range summoner
 								int numSummoners = 0; // for counting the number of summoners
@@ -379,16 +400,33 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								System.out.println("summoned: " + numSummoned);
 								int summonRatio = 15; // number of summoned enemies per summoner
 								if (numSummoned / numSummoners < summonRatio) { // maintain summon ratio
-									summonCloseRangeEnemy(enemy, "EnemyHeartlessSkeletonSprite.png", "summoned skeleton", 1, 300, 5);
+									if (enemy.getEnemyType().contains("wizard boss")) {
+										enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI)); // move away from player
+										if (timerCount % 1000 == 0) { // teleport interval
+											double newX = Math.random() * program.getWidth();
+											double newY = Math.random() * program.getHeight();
+											while (Collision.check(playerSprite.getBounds(), enemySprite.getBounds())) { // randomize location until enemy sprite will not touch player
+												newX = Math.random() * program.getWidth();
+												newY = Math.random() * program.getHeight();
+											}
+											enemySprite.setLocation(newX, newY);
+										}
+										setInBounds(enemy); // set long range enemy in bounds
+										summonEnemy(enemy, "EnemySkeletonSummonerSprite.png", "summoned skeleton summoner", 3, 450, 350, "fireballSprite.png", 5);
+									}
+									else {
+										enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI)); // move long range enemy away from player
+										setInBounds(enemy); // set long range enemy in bounds
+										summonEnemy(enemy, "EnemyHeartlessSkeletonSprite.png", "summoned skeleton", 1, 300, 5);
+									}
 								}
-								enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI)); // move long range enemy away from player
-								setInBounds(enemy); // set long range enemy in bounds
 							}
 							else {
 								enemySprite.movePolar(2 * enemy.getSpeed(), (180 * Math.atan2(-y, x) / Math.PI)); // move long range enemy away from player
 								setInBounds(enemy); // set long range enemy in bounds
 							}
 						}
+						enemySprite.sendToFront(); // send enemy sprite to front
 					}
 					if (Collision.check(enemy.getSprite().getBounds(), player.getSprite().getBounds())) { // player collides with enemy
 						playerSprite.movePolar(Math.sqrt(x*x+y*y), (180 * Math.atan2(-y, x) / Math.PI) + 180); // player moves away from enemy
@@ -428,9 +466,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					if (enemy.getEnemyType().contains("long range")) {
 						if (enemy.isAttackAvailable()) {
 							GImage bulletSprite = enemy.getBulletSprite();
-							//x is set to horizontal distance between mouse and middle of playerSprite
+							//x is set to horizontal distance between enemy and player
 							x = enemySprite.getX() - ( playerSprite.getX() + (playerSprite.getWidth() / 2));
-			            	//y is set to vertical distance between mouse and middle of playerSprite
+			            	//y is set to vertical distance between enemy and player
 			            	y = enemySprite.getY() - (playerSprite.getY() + (playerSprite.getHeight() / 2));
 			            	enemy.getWeapon().setAngle(180 * Math.atan2(-y, x) / Math.PI - 180);	
 							if (!enemy.isBulletTraveling()) { // set initial bullet location and enemy attack sprite when not in motion
@@ -445,16 +483,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 		}
 		if (removeEnemyIndex.size() > 0) { // remove all dead enemies
-			System.out.println("Removing dead enemies...");
-			for (int y = removeEnemyIndex.size() - 1; y >= 0 ; y--) {
-				System.out.println("Enemy index to remove: " + (int)removeEnemyIndex.get(y));
-				enemies.remove((int)removeEnemyIndex.get(y));
-				System.out.println("Enemy index removed: " + (int)removeEnemyIndex.get(y));
-			}
-			System.out.println("Enemies alive: ");
-			for (Enemy ene: enemies) {
-				System.out.println(ene.getEnemyType());
-			}
+			removeAllDeadEnemies();
 		}
 		if (enemies.size() == 0) { // if no enemies
 			player.getBulletSprite().setVisible(false); // hide player bullet
@@ -491,7 +520,20 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 	}
 
-	private void summonCloseRangeEnemy(Enemy enemy, String spriteFileName, String name, int health, int detectionRange, int speed) {
+	private void removeAllDeadEnemies() {
+		System.out.println("Removing dead enemies...");
+		for (int y = removeEnemyIndex.size() - 1; y >= 0 ; y--) {
+			System.out.println("Enemy index to remove: " + (int)removeEnemyIndex.get(y));
+			enemies.remove((int)removeEnemyIndex.get(y));
+			System.out.println("Enemy index removed: " + (int)removeEnemyIndex.get(y));
+		}
+		System.out.println("Enemies alive: ");
+		for (Enemy ene: enemies) {
+			System.out.println(ene.getEnemyType());
+		}
+	}
+
+	private void summonEnemy(Enemy enemy, String spriteFileName, String name, int health, int detectionRange, int speed) {
 		GImage sprite = new GImage("");
 		if (enemy.getEnemyType().contains("dragon boss")) {
 			sprite = new GImage (spriteFileName, enemy.getBulletSprite().getX(), enemy.getBulletSprite().getY());
@@ -507,9 +549,33 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			double xValue = inRange(player.getSprite().getX() + xOffset, 0, program.getWidth()); // make x value on screen
 			sprite = new GImage (spriteFileName, xValue, player.getSprite().getY());
 		}
-		Enemy newEnemy = new Enemy(sprite, health, "close range " + name);
+			Enemy newEnemy = new Enemy(sprite, health, "close range " + name);
+			newEnemy.setDetectionRange(detectionRange); // so new enemy can detect player
+			newEnemy.setSpeed(speed); // set new enemy speed
+			program.add(newEnemy.getSprite()); // add new enemy sprite to the screen
+			enemies.add(newEnemy); // add new enemy to the screen
+			enemy.getSprite().sendToFront(); // send summoner to front
+	}
+	
+	private void summonEnemy(Enemy enemy, String spriteFileName, String name, int health, int detectionRange, int weaponRange, String bulletName, int speed) {
+		GImage sprite = new GImage("");
+		int xOffset = 0;
+		if (Math.random() > 0.5) { // 50% chance
+			xOffset = detectionRange;
+		}
+		else {
+			xOffset = -detectionRange;
+		}
+		double xValue = inRange(player.getSprite().getX() + xOffset, 0, program.getWidth()); // make x value on screen
+		sprite = new GImage (spriteFileName, xValue, player.getSprite().getY());
+	
+		Enemy newEnemy = new Enemy(sprite, health, "long range " + name);
 		newEnemy.setDetectionRange(detectionRange); // so new enemy can detect player
 		newEnemy.setSpeed(speed); // set new enemy speed
+		Weapon weapon = new Weapon(new GImage(""), "", weaponRange);
+		newEnemy.setWeapon(weapon);
+		GImage bullet = new GImage(bulletName, newEnemy.getSprite().getX() + newEnemy.getSprite().getWidth() / 2, newEnemy.getSprite().getY() + newEnemy.getSprite().getHeight() / 2);
+		newEnemy.setBulletSprite(bullet);
 		program.add(newEnemy.getSprite()); // add new enemy sprite to the screen
 		enemies.add(newEnemy); // add new enemy to the screen
 		enemy.getSprite().sendToFront(); // send summoner to front
@@ -520,6 +586,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		createRoom(currentRoom); // currentRoom is initially at 1
 		if (program.isAudioOn()) {
 			backgroundMusic.playSound("sounds", "basic_loop.wav", true); // play background music
+		}
+		else {
+			stopBackgroundMusic();
 		}
 	}
 
@@ -535,13 +604,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	}
 	
 	@Override
-	public void mouseClicked(MouseEvent e) {  
+	public void mouseClicked(MouseEvent e) {
 		GImage playerSprite = player.getSprite();
 		AudioPlayer p = sounds.getPlayer(); // Get the audio player object to play the sound.
 		if (player.isAttackAvailable()) {
 			if (program.isCloseRangeCharacter()) {
 				setUpAttackArea(e, playerSprite);
-				ArrayList<Integer> removeEnemyIndex = new ArrayList<Integer>();
+				removeEnemyIndex = new ArrayList<Integer>(); // initialize array list for indexes of dead enemies
 				for (int z = 0; z < enemies.size(); z++) { // loop for all enemies
 					Enemy enemy = enemies.get(z);
 					if (Collision.check(attackArea.getBounds(), enemy.getSprite().getBounds())) { //player in range of enemy.
@@ -560,12 +629,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						}
 					}
 				}
-				if (removeEnemyIndex.size() > 0) { // remove all dead enemies
-					for (int w = removeEnemyIndex.size() - 1; w >= 0 ; w--) {
-						System.out.println("Enemy index to remove: " + removeEnemyIndex.get(w));
-						enemies.remove((int)removeEnemyIndex.get(w));
-					}
-				}
+				removeAllDeadEnemies();
 			}
 			else { // long range attack
 				GImage bulletSprite = player.getBulletSprite();
@@ -708,7 +772,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								program.removeAll(); // remove all objects from screen
 								System.out.println("Congratulations! You escaped the dungeon!");
 								if (program.isAudioOn()) {
-									backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop boss background music
+									stopBackgroundMusic();
 									backgroundMusic.playSound("sounds", "win.wav"); // play win music
 								}
 								program.setPlayerWin(true); // set player win
