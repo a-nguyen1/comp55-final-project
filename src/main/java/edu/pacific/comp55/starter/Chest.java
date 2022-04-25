@@ -21,34 +21,39 @@ public class Chest extends Item {
 		double chestX = getSprite().getX();
 		double chestY = getSprite().getY();
 		double randNum = Math.random();
-		if (randNum <= 0.05) { // 5 % chance of giving weapon upgrade
+		if (randNum <= 0.10) { // 10 % chance of giving weapon upgrade
 			String upgradeType = "WizardUpgrade.png"; //default weapon upgrade sprite.
 			if (closeRange) {
 				upgradeType = "KnightUpgrade.png";
 			}
-			GImage sprite = new GImage(upgradeType, chestX, chestY); //weapon upgrade sprite for knight.
+			GImage sprite = new GImage(upgradeType, chestX, chestY + ITEM_SIZE); //weapon upgrade sprite for knight.
 			PickUpItem upgrade = new PickUpItem(sprite, "upgrade");
 			items.add(upgrade);
 		}
-		else if (randNum <= 0.10) { // 5 % chance of giving extra life
-			GImage sprite = new GImage("thugLife.png", chestX, chestY);
+		else if (randNum <= 0.20) { // 10 % chance of giving extra life
+			GImage sprite = new GImage("thugLife.png", chestX, chestY + ITEM_SIZE);
 			PickUpItem life = new PickUpItem(sprite, "life");
 			items.add(life);
 		}
-		else if (randNum <= 0.20) { // 10 % chance of giving two extra hearts
-			addHeart(chestX, chestY, ITEM_SIZE);
-			addHeart(chestX, chestY, -ITEM_SIZE);
+		else if (randNum <= 0.30) { // 10 % chance of giving three extra hearts
+			addHeart(chestX, chestY + 2 * ITEM_SIZE);
+			addHeart(chestX, chestY + ITEM_SIZE);
+			addHeart(chestX, chestY - ITEM_SIZE);
+		}
+		else if (randNum <= 0.50) { // 20 % chance of giving two extra hearts
+			addHeart(chestX, chestY + ITEM_SIZE);
+			addHeart(chestX, chestY - ITEM_SIZE);
 		}
 		else {
-			addHeart(chestX, chestY, ITEM_SIZE); // 80 % chance of giving a heart
+			addHeart(chestX, chestY + ITEM_SIZE); // 50 % chance of giving a heart
 		}
-		addHeart(chestX, chestY, 0); // always give a heart
+		addHeart(chestX, chestY); // always give a heart
 		
 		return items;
 	}
 
-	private void addHeart(double chestX, double chestY, double offset) {
-		GImage heartSprite = new GImage ("Heart.png", chestX, chestY + offset); //Create a new sprite for heart.
+	private void addHeart(double chestX, double chestY) {
+		GImage heartSprite = new GImage ("Heart.png", chestX, chestY); //Create a new sprite for heart.
 		heartSprite.setSize(ITEM_SIZE, ITEM_SIZE); //Resize sprite to make it smaller.
 		PickUpItem heart = new PickUpItem(heartSprite, "heart");
 		items.add(heart);
