@@ -265,11 +265,29 @@ public class Room {
 	public ArrayList<Item> getItems() {
 		items = new ArrayList<Item>(); // initialize item array list
 		
-		addItem("heart", randomizePoint());
-		addItem("chest", randomizePoint());
-		addItem("door", randomizePoint());
-		addItem("key", randomizePoint());
-		addItem("life", randomizePoint());
+		double randNum = Math.random();
+		
+		addItem("door", randomizePoint()); //always add door
+		addItem("key", randomizePoint()); // always add key
+		
+		if (randNum <= 0.05) { // 5 % chance to appear
+			addItem("life", randomizePoint()); // add life
+		}
+		else if (randNum <= 0.35) { // 30 % chance to appear
+			addItem("chest", randomizePoint()); 
+		}
+		else if (randNum <= 0.45) { // 10 % chance to appear
+			addItem("heart", randomizePoint()); 
+			addItem("heart", randomizePoint()); 
+			addItem("heart", randomizePoint()); 
+		}
+		else if (randNum <= 0.65) { // 20 % chance to appear
+			addItem("heart", randomizePoint()); 
+			addItem("heart", randomizePoint()); 
+		}
+		else {
+			addItem("heart", randomizePoint()); // 35 % chance to appear
+		}
 		
 		return items; 
 	}
