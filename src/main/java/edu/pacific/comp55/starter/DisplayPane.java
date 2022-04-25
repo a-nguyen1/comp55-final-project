@@ -263,7 +263,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	}
 	
 	public void playSound(String e, AudioPlayer p) {
-		if (e.contains("big goblin")) {
+		if (e.contains("goblin boss")) {
 			soundEffect.setName("boss_goblin_grunt"); //Sound effect for goblin boss getting hit.
 		}
 		else if (e.contains("goblin")) {
