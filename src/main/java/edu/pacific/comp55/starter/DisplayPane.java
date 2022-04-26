@@ -177,7 +177,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			bossLabel.setFont(new Font("Serif", Font.BOLD, 20));
 			program.add(bossLabel);
 		}
-		else if (roomNum == 7 && program.isAudioOn()) { // change music after 1st boss room
+		else if (roomNum >= 7 && program.isAudioOn()) { // change music after 1st boss room
 			stopBackgroundMusic();
 			backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play background music
 		}
@@ -393,9 +393,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			}
 			if (enemy.canInteract(playerSprite.getX(), playerSprite.getY())) { //enemy detects player
 				if (timerCount % INTERACT_INTERVAL == 0) {
-					enemySprite.movePolar(enemy.getSpeed(), angle(enemySprite, playerSprite) + 180); // close range enemy moves towards player
+					enemySprite.movePolar(enemy.getSpeed(), angle(enemySprite, playerSprite) + 180); // close range enemy or dragon moves towards player
 					if (enemy.getEnemyType().contains("long range")) { // if enemy is long range
-						if (enemy.getEnemyType().contains("dragon boss")) { // if enemy is long range dragon
+						if (enemy.getEnemyType().contains("dragon")) { // if enemy is long range dragon
 								if (enemy.getEnemyType().contains("dragon boss")) { // if enemy is long range dragon boss
 								String fireSpriteFileName = "burningFireSprite.png";
 								if (Math.random() <= 0.5) { // 50% chance for fire to appear mirrored
@@ -404,39 +404,41 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								summonEnemy(enemy, fireSpriteFileName, "fire", 1, ITEM_SIZE, 0); // canInteract/damage range set to ITEM_SIZE
 							}
 						} // enemy is long range and not a dragon
-						enemySprite.movePolar(2 * enemy.getSpeed(), angle(enemySprite, playerSprite)); // move long range enemy away from player
-						setInBounds(enemy); // set long range enemy in bounds
-						if (enemy.getEnemyType().contains("summoner")){ // if enemy is long range summoner
-							int numSummoners = 0; // for counting the number of summoners
-							int numSummoned = 0; // for counting the number of summoned enemies
-							for (int ind = 0; ind < enemies.size(); ind++) { // loop over all enemies
-								Enemy temp = enemies.get(ind);
-								if (temp.getEnemyType().contains("summoner")) { // count summoner enemies
-									numSummoners++;
-								}
-								if (temp.getEnemyType().contains("summoned")) { // count summoned enemies
-									numSummoned++;
-								}
-							}
-							System.out.println("summoners: " + numSummoners);
-							System.out.println("summoned: " + numSummoned);
-							int summonRatio = 15; // number of summoned enemies per summoner
-							if (numSummoned / numSummoners < summonRatio) { // maintain summon ratio
-								if (enemy.getEnemyType().contains("wizard boss")) {
-									if (timerCount % WIZARD_TELEPORT_INTERVAL == 0) { // teleport interval
-										double newX = Math.random() * program.getWidth();
-										double newY = Math.random() * program.getHeight();
-										while (Collision.check(playerSprite.getBounds(), enemySprite.getBounds())) { // randomize location until enemy sprite will not touch player
-											newX = Math.random() * program.getWidth();
-											newY = Math.random() * program.getHeight();
-										}
-										enemySprite.setLocation(newX, newY);
+						else {
+							enemySprite.movePolar(2 * enemy.getSpeed(), angle(enemySprite, playerSprite)); // long range enemy moves away from player
+							setInBounds(enemy); // set long range enemy in bounds
+							if (enemy.getEnemyType().contains("summoner")){ // if enemy is long range summoner
+								int numSummoners = 0; // for counting the number of summoners
+								int numSummoned = 0; // for counting the number of summoned enemies
+								for (int ind = 0; ind < enemies.size(); ind++) { // loop over all enemies
+									Enemy temp = enemies.get(ind);
+									if (temp.getEnemyType().contains("summoner")) { // count summoner enemies
+										numSummoners++;
 									}
-									setInBounds(enemy); // set wizard boss in bounds
-									summonEnemy(enemy, "EnemySkeletonSummonerSprite.png", "summoned skeleton summoner", 3, 450, 350, "fireballSprite.png", 5);
+									if (temp.getEnemyType().contains("summoned")) { // count summoned enemies
+										numSummoned++;
+									}
 								}
-								else {
-									summonEnemy(enemy, "EnemyHeartlessSkeletonSprite.png", "summoned skeleton", 1, 300, 5);
+								System.out.println("summoners: " + numSummoners);
+								System.out.println("summoned: " + numSummoned);
+								int summonRatio = 15; // number of summoned enemies per summoner
+								if (numSummoned / numSummoners < summonRatio) { // maintain summon ratio
+									if (enemy.getEnemyType().contains("wizard boss")) {
+										if (timerCount % WIZARD_TELEPORT_INTERVAL == 0) { // teleport interval
+											double newX = Math.random() * program.getWidth();
+											double newY = Math.random() * program.getHeight();
+											while (Collision.check(playerSprite.getBounds(), enemySprite.getBounds())) { // randomize location until enemy sprite will not touch player
+												newX = Math.random() * program.getWidth();
+												newY = Math.random() * program.getHeight();
+											}
+											enemySprite.setLocation(newX, newY);
+										}
+										setInBounds(enemy); // set wizard boss in bounds
+										summonEnemy(enemy, "EnemySkeletonSummonerSprite.png", "summoned skeleton summoner", 3, 450, 350, "fireballSprite.png", 5);
+									}
+									else {
+										summonEnemy(enemy, "EnemyHeartlessSkeletonSprite.png", "summoned skeleton", 1, 300, 5);
+									}
 								}
 							}
 						}
@@ -444,6 +446,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					enemySprite.sendToFront(); // send enemy sprite to front
 				}
 				if (Collision.check(enemy.getSprite().getBounds(), player.getSprite().getBounds())) { // player collides with enemy
+					playSound("player", AudioPlayer.getInstance()); // player is damaged
 					double x = (enemySprite.getX() + (enemySprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
 					double y = (enemySprite.getY() + (enemySprite.getHeight() / 2)) - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between enemy and player
 					playerSprite.movePolar(Math.sqrt(x*x+y*y), angle(enemySprite, playerSprite) + 180); // player moves away from enemy
@@ -452,12 +455,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						updateHealth();
 						System.out.println("Player touched by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
 					}
-					else if (enemy.getEnemyType().contains("close range")) {
-						player.changeHealth(-1);
-						updateHealth();
-						System.out.println("Player touched by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
-					}
-					else if (enemy.getEnemyType().contains("long range")) {
+					else {
 						player.changeHealth(-1);
 						updateHealth();
 						System.out.println("Player touched by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
@@ -466,7 +464,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						int lifeIndex = -1;
 						lifeIndex = player.searchItemIndex(player, lifeIndex, "life");
 						if (lifeIndex >= 0) { // check if player has life item
-							player.setHealth(5); // reset playerHealth
+							player.setHealth(PLAYER_STARTING_HEALTH); // reset playerHealth
 							player.removeFromInventory(lifeIndex); // remove life item
 							updateHealth(); // update health
 							updateInventory(); // update inventory
@@ -625,9 +623,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				for (int z = 0; z < enemies.size(); z++) { // loop for all enemies
 					Enemy enemy = enemies.get(z);
 					if (Collision.check(attackArea.getBounds(), enemy.getSprite().getBounds())) { //player hits enemy.
+						playSound(enemy.getEnemyType(), soundEffect.getPlayer()); // play enemy grunt sound
 						System.out.println("Enemy is hit.");
 						System.out.println("Enemy: " + enemy.getEnemyType()); 
-						playSound(enemy.getEnemyType(), soundEffect.getPlayer()); // play enemy grunt sound
 						enemy.changeHealth(-1); //Reduce health by 1.
 						if (enemy instanceof Boss) {
 							updateHealth(); // update boss health
