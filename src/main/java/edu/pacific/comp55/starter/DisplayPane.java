@@ -453,12 +453,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					playerSprite.movePolar(Math.sqrt(x*x+y*y) * 2, angle(enemySprite, playerSprite) + 180); // player moves away from enemy
 					if (enemy.getEnemyType().contains("boss")) {
 						player.changeHealth(-2);
-						updateHealth();
 					}
 					else {
 						player.changeHealth(-1);
-						updateHealth();
 					}
+					updateHealth();
 					System.out.println("Player hit by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
 					if (player.isDead()) {
 						int lifeIndex = -1;
