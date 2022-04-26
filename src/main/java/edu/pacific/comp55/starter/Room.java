@@ -130,64 +130,63 @@ public class Room {
 				addBoss("goblin", BOSS_HEALTH, "close range big goblin boss", FAST_SPEED); //add GoblinBoss
 				break;
 			case 7:
-				addEnemy("skeleton", randomizePoint(), 1, "close range skeleton", SKELETON_DETECTION_RANGE, NORMAL_SPEED);
-				addEnemy("heartless skeleton", randomizePoint(), 4, "close range heartless skeleton", HEARTLESS_SKELETON_DETECTION_RANGE, SUPER_FAST_SPEED);
+				for (int i = 0; i <= 1; i++) {
+					addEnemy("dragon", randomizePoint(), 3, "long range dragon", 200, 300, "fireBallSprite.png", NORMAL_SPEED); 
+				}
 				break;
 			case 8:
-				addEnemy("skeleton summoner", randomizePoint(), 3, "long range skeleton summoner", SKELETON_SUMMONER_DETECTION_RANGE, SKELETON_SUMMONER_WEAPON_RANGE, "fireBallSprite.png", SLOW_SPEED); 
+				for (int i = 0; i <= 2; i++) {
+					addEnemy("dragon", randomizePoint(), 3, "long range dragon", 200, 300, "fireBallSprite.png", NORMAL_SPEED); 
+				}
 				break;
 			case 9:
-				for (int i = 0; i < 7; i++) {
-					addEnemy("skeleton", randomizePoint(), 1, "close range skeleton", SKELETON_DETECTION_RANGE, NORMAL_SPEED);
-				}
+				addEnemy("wizard", randomizePoint(), 3, "long range wizard", 200, 300, "fireBallSprite.png", NORMAL_SPEED); 
 				break;
 			case 10:
-				for (int i = 0; i < 2; i++) {
-					addEnemy("heartless skeleton", randomizePoint(), 4, "close range heartless skeleton", HEARTLESS_SKELETON_DETECTION_RANGE, SUPER_FAST_SPEED);
-				}
+				addEnemy("wizard", randomizePoint(), 3, "long range wizard", 200, 300, "fireBallSprite.png", NORMAL_SPEED); 
 				break;
 			case 11:
 				for (int i = 0; i < 2; i++) {
-					addEnemy("skeleton summoner", randomizePoint(), 3, "long range skeleton summoner", SKELETON_SUMMONER_DETECTION_RANGE, SKELETON_SUMMONER_WEAPON_RANGE, "fireBallSprite.png", SLOW_SPEED); 
+					addEnemy("wizard", randomizePoint(), 3, "long range wizard", 200, 300, "fireBallSprite.png", NORMAL_SPEED); 
 				}
 				break;
 			case 12:
 				addBoss("dragon", BOSS_HEALTH * 2, "long range dragon boss", BOSS_WEAPON_RANGE, "fireBallSprite.png", FAST_SPEED); //add DragonBoss
 				break;
 			case 13:
-				for (int i = 0; i <= 1; i++) {
-					addEnemy("dragon", randomizePoint(), 3, "long range dragon", 200, 300, "fireBallSprite.png", NORMAL_SPEED); 
-				}
 				addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+				addEnemy("skeleton", randomizePoint(), 1, "close range skeleton", SKELETON_DETECTION_RANGE, NORMAL_SPEED);
+				addEnemy("heartless skeleton", randomizePoint(), 4, "close range heartless skeleton", HEARTLESS_SKELETON_DETECTION_RANGE, SUPER_FAST_SPEED);
 				break;
 			case 14:
-				for (int i = 0; i <= 2; i++) {
-					addEnemy("dragon", randomizePoint(), 3, "long range dragon", 200, 300, "fireBallSprite.png", NORMAL_SPEED); 
-				}
-				for (int i = 0; i <= 1; i++) {
-					addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
-				}
-				break;
-			case 15:
-				addEnemy("wizard", randomizePoint(), 3, "long range wizard", 200, 300, "fireBallSprite.png", NORMAL_SPEED); 
 				for (int i = 0; i < 2; i++) {
 					addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+				}
+				addEnemy("skeleton summoner", randomizePoint(), 3, "long range skeleton summoner", SKELETON_SUMMONER_DETECTION_RANGE, SKELETON_SUMMONER_WEAPON_RANGE, "fireBallSprite.png", SLOW_SPEED); 
+				break;
+			case 15:
+				for (int i = 0; i < 2; i++) {
+					addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+				}
+				for (int i = 0; i < 7; i++) {
+					addEnemy("skeleton", randomizePoint(), 1, "close range skeleton", SKELETON_DETECTION_RANGE, NORMAL_SPEED);
 				}
 				break;
 			case 16:
-				addEnemy("wizard", randomizePoint(), 3, "long range wizard", 200, 300, "fireBallSprite.png", NORMAL_SPEED); 
 				for (int i = 0; i < 2; i++) {
 					addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+				}
+				for (int i = 0; i < 2; i++) {
+					addEnemy("heartless skeleton", randomizePoint(), 4, "close range heartless skeleton", HEARTLESS_SKELETON_DETECTION_RANGE, SUPER_FAST_SPEED);
 				}
 				break;
 			case 17:
 				for (int i = 0; i < 2; i++) {
-					addEnemy("wizard", randomizePoint(), 3, "long range wizard", 200, 300, "fireBallSprite.png", NORMAL_SPEED); 
-				}
-				for (int i = 0; i < 2; i++) {
-					addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+					addEnemy("skeleton summoner", randomizePoint(), 3, "long range skeleton summoner", SKELETON_SUMMONER_DETECTION_RANGE, SKELETON_SUMMONER_WEAPON_RANGE, "fireBallSprite.png", SLOW_SPEED); 
 				}
 				break;
+			
+			
 			case 18:
 				addBoss("wizard", BOSS_HEALTH * 3, "long range wizard boss summoner", BOSS_WEAPON_RANGE, "fireSpiralSprite.png", FAST_SPEED); //add WizardBoss
 				break;
