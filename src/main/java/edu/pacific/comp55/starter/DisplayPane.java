@@ -16,6 +16,15 @@ import acm.graphics.GRect; // for GRect
 
 public class DisplayPane extends GraphicsPane implements ActionListener{
 	
+	private static final int PLAYER_STARTING_LONG_RANGE = 200;
+	private static final int PLAYER_STARTING_CLOSE_RANGE = 25;
+	private static final int PLAYER_STARTING_SPEED = 7;
+	private static final int PLAYER_STARTING_HEALTH = 100;
+	private static final int LONG_RANGE_ENEMY_ATTACK_INTERVAL = 500;
+	private static final int KNIGHT_ATTACK_DISPLAY_INTERVAL = 50;
+	private static final int MINIMUM_ATTACK_COOLDOWN = 100;
+	private static final int INTERACT_INTERVAL = 100;
+	private static final int WIZARD_TELEPORT_INTERVAL = 1000;
 	private static final double SQRT_TWO_DIVIDED_BY_TWO = 0.7071067811865476;
 	private static final int BACKGROUND_TILE_SIZE = 50;
 	private static final int HEART_SIZE = 50;
@@ -29,17 +38,17 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private ArrayList<GImage> playerInventory;
 	private ArrayList<GImage> bossHealth;
 	private ArrayList<Item> items; // items to display on the level.
-	private HashMap<String, String> itemLabel; 
+	private HashMap<String, String> itemLabel; // hash map to link items with labels
 	private GLabel bossLabel; // to display boss name
 	private GImage attackArea; // to display player attack
-	private int currentRoom;
-	private double mouseX;
-	private double mouseY;
+	private int currentRoom; // to display current room
+	private double mouseX; // to keep track of mouse x location
+	private double mouseY; // to keep track of mouse y location
 	
-	//Class objects
+	//main game objects
 	private Player player;
 	private ArrayList<Enemy> enemies;
-	private ArrayList<Integer> removeEnemyIndex;
+	private ArrayList<Integer> removeEnemyIndex; // to keep track of enemy indexes to remove
 	private GRect inventoryBox;
 	private Timer timer;
 	private SoundEffect soundEffect;
@@ -83,9 +92,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		
 		//create player object with knight sprite as default. 
 		GImage playerSprite = new GImage ("PlayerKnightSprite.png");
-		player = new Player(playerSprite, 100);
+		player = new Player(playerSprite, PLAYER_STARTING_HEALTH);
 		player.randomizeXLocation(program.getWidth(), program.getHeight()); //Randomize player location at bottom of screen
-		player.setSpeed(7); // initialize speed
+		player.setSpeed(PLAYER_STARTING_SPEED); // initialize speed
 		attackArea = new GImage(""); // initialize attack area
 		
 		//create inventory box
@@ -120,19 +129,26 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			program.add(i.getSprite()); //Add item sprite to the screen.
 			program.add(i.getLabel()); //Add item label to the screen.
 		}
+		
+		Weapon weapon;
 		if (program.isCloseRangeCharacter()) { // close range character selected
-			Weapon weapon = new Weapon(new GImage(""), "close range weapon", 25);
-			player.setWeapon(weapon);
+			if (player.getWeapon() == null) { // if weapon not initialized yet
+				weapon = new Weapon(new GImage(""), "close range weapon", PLAYER_STARTING_CLOSE_RANGE); 
+				player.setWeapon(weapon);
+			}
 			attackArea.setVisible(false);
-			attackArea.setSize(weapon.getRange(), weapon.getRange());
+			attackArea.setSize(player.getWeapon().getRange(), player.getWeapon().getRange());
 			program.add(attackArea); // add attack area to the screen.
 		}
 		else { //long range character selected
+			if (player.getWeapon() == null) { // if weapon not initialized yet
+				weapon = new Weapon(new GImage(""), "long range weapon", PLAYER_STARTING_LONG_RANGE); 
+				player.setWeapon(weapon);
+			}
 			player.setSprite(new GImage ("PlayerWizardSprite.png"));
-			Weapon weapon = new Weapon(new GImage(""), "long range weapon", 200);
-			player.setWeapon(weapon);
 			program.add(player.getBulletSprite()); // add bullet to the screen
 		}
+		
 		for (Enemy enemy: enemies) { // loop for all enemies
 			program.add(enemy.getSprite()); //Add enemy sprite to screen.
 			if (enemy.getEnemyType().contains("long range")) {
@@ -302,161 +318,55 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		for (int z = 0; z < enemies.size(); z++) { // loop through all enemies
 			Enemy enemy = enemies.get(z);
 			GImage enemySprite = enemy.getSprite();
-			if (timerCount % 1 == 0) {
-				if (player.isBulletTraveling()) {
-					GImage bulletSprite = player.getBulletSprite();
-					bulletSprite = player.moveBullet(bulletSprite); // move bulletSprite towards mouse click 
-					if (Collision.check(bulletSprite.getBounds(), enemy.getSprite().getBounds())) { //enemy collides with player bullet 
-						playSound(enemy.getEnemyType(), soundEffect.getPlayer()); //play enemy grunt sound.
-						enemy.changeHealth(-1);
-						if (enemy instanceof Boss) {
-							updateHealth(); //update boss health
-						}
-						enemy.setDamaged(true); //Enemy is damaged.
-						System.out.println("enemy health: " + enemy.getHealth());
-						if (enemy.isDead()) { //Enemy has no health.
-							removeEnemyIndex.add(z); // add index to ArrayList
-							if (enemy.getEnemyType().contains("long range")) {
-								program.remove(enemy.getBulletSprite()); // remove bullet from screen
-							}
-							program.remove(enemy.getSprite()); //Remove enemy sprite from the screen since it is dead.
-							System.out.println(enemy.getEnemyType() + " is dead.");
-						}
-						bulletSprite.sendToFront();
-						while (Collision.check(bulletSprite.getBounds(), enemy.getSprite().getBounds())) { // move bulletSprite until not touching enemy 
-							bulletSprite = player.moveBullet(bulletSprite); 
-						}
+			if (player.isBulletTraveling()) {
+				GImage bulletSprite = player.getBulletSprite();
+				bulletSprite = player.moveBullet(bulletSprite); // move bulletSprite towards mouse click 
+				if (Collision.check(bulletSprite.getBounds(), enemy.getSprite().getBounds())) { //enemy collides with player bullet 
+					playSound(enemy.getEnemyType(), soundEffect.getPlayer()); //play enemy grunt sound.
+					enemy.changeHealth(-1);
+					if (enemy instanceof Boss) {
+						updateHealth(); //update boss health
 					}
-					if (player.getBulletDistance() >= player.getWeapon().getRange()) {
-						player.setBulletTraveling(false);
-						bulletSprite.setLocation(playerSprite.getX() + playerSprite.getWidth() / 2 - bulletSprite.getWidth() / 2, playerSprite.getY() + playerSprite.getHeight() / 2 - bulletSprite.getHeight() / 2);
-						player.setBulletDistance(0);
-						bulletSprite.setVisible(false);
+					enemy.setDamaged(true); //Enemy is damaged.
+					System.out.println("enemy health: " + enemy.getHealth());
+					if (enemy.isDead()) { //Enemy has no health.
+						removeEnemyIndex.add(z); // add index to ArrayList
+						if (enemy.getEnemyType().contains("long range")) {
+							program.remove(enemy.getBulletSprite()); // remove bullet from screen
+						}
+						program.remove(enemy.getSprite()); //Remove enemy sprite from the screen since it is dead.
+						System.out.println(enemy.getEnemyType() + " is dead.");
+					}
+					bulletSprite.sendToFront();
+					while (Collision.check(bulletSprite.getBounds(), enemy.getSprite().getBounds())) { // move bulletSprite until not touching enemy 
+						bulletSprite = player.moveBullet(bulletSprite);
 					}
 				}
-				
-				if (enemy.isBulletTraveling()) {
-					GImage bulletSprite = enemy.getBulletSprite();  
-					bulletSprite = enemy.moveBullet(bulletSprite); //Move the bulletSprite.
-					if (player.isDamaged()) {
-						player.playerInvincibility();
-					}
-					else {
-						if (Collision.check(bulletSprite.getBounds(), player.getSprite().getBounds())) { //returns true if player collides with bullet 
-							playSound("player", AudioPlayer.getInstance()); //play player grunt sound.
-							player.changeHealth(-1);
-							updateHealth(); // update health display
-							player.setDamaged(true); //player is damaged.
-							System.out.println("player health: " + player.getHealth());
-							if (player.isDead()) {
-								int lifeIndex = -1;
-								lifeIndex = player.searchItemIndex(player, lifeIndex, "life");
-								if (lifeIndex >= 0) { // check if player has life item
-									player.setHealth(5); // reset playerHealth
-									player.removeFromInventory(lifeIndex); // remove life item
-									updateHealth(); // update health
-									updateInventory(); // update inventory
-								}
-								else {
-									program.removeAll();
-									while (enemies.size() > 0) { // remove all enemies from ArrayList
-										enemies.remove(0);
-									}
-									gameOver();
-								}
-							}
-							while (Collision.check(bulletSprite.getBounds(), player.getSprite().getBounds())) { // move bulletSprite until not touching player 
-								bulletSprite = enemy.moveBullet(bulletSprite); 
-							}
-						}
-					}
-					if (enemy.getBulletDistance() >= enemy.getWeapon().getRange()) {
-						enemy.setBulletTraveling(false);
-						bulletSprite.setLocation(enemySprite.getX() + enemySprite.getWidth() / 2 - bulletSprite.getWidth() / 2, enemySprite.getY() + enemySprite.getHeight() / 2 - bulletSprite.getHeight() / 2);
-						enemy.setBulletDistance(0);
-						bulletSprite.setVisible(false);
-					}
+				if (player.getBulletDistance() >= player.getWeapon().getRange()) {
+					player.setBulletTraveling(false);
+					bulletSprite.setLocation(playerSprite.getX() + playerSprite.getWidth() / 2 - bulletSprite.getWidth() / 2, playerSprite.getY() + playerSprite.getHeight() / 2 - bulletSprite.getHeight() / 2);
+					player.setBulletDistance(0);
+					bulletSprite.setVisible(false);
 				}
-				
-				if (enemy.canInteract(playerSprite.getX(), playerSprite.getY())) { //enemy detects player
-					if (timerCount % 100 == 0) {
-						enemySprite.movePolar(enemy.getSpeed(), angle(enemySprite, playerSprite) + 180); // enemy moves towards player
-						if (enemy.getEnemyType().contains("long range")) { // if enemy is long range
-							if (enemy.getEnemyType().contains("dragon boss")) { // if enemy is long range dragon boss
-								String fireSpriteFileName = "burningFireSprite.png";
-								if (Math.random() <= 0.5) { // 50% chance for fire to appear mirrored
-									fireSpriteFileName = "burningFireMirroredSprite.png";
-								}
-								summonEnemy(enemy, fireSpriteFileName, "fire", 1, 25, 0);
-							} // enemy is long range and not a boss
-							else if (enemy.getEnemyType().contains("summoner")){ // if enemy is long range summoner
-								int numSummoners = 0; // for counting the number of summoners
-								int numSummoned = 0; // for counting the number of summoned enemies
-								for (int ind = 0; ind < enemies.size(); ind++) { // loop over all enemies
-									Enemy temp = enemies.get(ind);
-									if (temp.getEnemyType().contains("summoner")) { // count summoner enemies
-										numSummoners++;
-									}
-									if (temp.getEnemyType().contains("summoned")) { // count summoned enemies
-										numSummoned++;
-									}
-								}
-								System.out.println("summoners: " + numSummoners);
-								System.out.println("summoned: " + numSummoned);
-								int summonRatio = 15; // number of summoned enemies per summoner
-								if (numSummoned / numSummoners < summonRatio) { // maintain summon ratio
-									if (enemy.getEnemyType().contains("wizard boss")) {
-										enemySprite.movePolar(2 * enemy.getSpeed(), angle(enemySprite, playerSprite)); // move away from player
-										if (timerCount % 1000 == 0) { // teleport interval
-											double newX = Math.random() * program.getWidth();
-											double newY = Math.random() * program.getHeight();
-											while (Collision.check(playerSprite.getBounds(), enemySprite.getBounds())) { // randomize location until enemy sprite will not touch player
-												newX = Math.random() * program.getWidth();
-												newY = Math.random() * program.getHeight();
-											}
-											enemySprite.setLocation(newX, newY);
-										}
-										setInBounds(enemy); // set long range enemy in bounds
-										summonEnemy(enemy, "EnemySkeletonSummonerSprite.png", "summoned skeleton summoner", 3, 450, 350, "fireballSprite.png", 5);
-									}
-									else {
-										enemySprite.movePolar(2 * enemy.getSpeed(), angle(enemySprite, playerSprite)); // move long range enemy away from player
-										setInBounds(enemy); // set long range enemy in bounds
-										summonEnemy(enemy, "EnemyHeartlessSkeletonSprite.png", "summoned skeleton", 1, 300, 5);
-									}
-								}
-							}
-							else {
-								enemySprite.movePolar(2 * enemy.getSpeed(), angle(enemySprite, playerSprite)); // move long range enemy away from player
-								setInBounds(enemy); // set long range enemy in bounds
-							}
-						}
-						enemySprite.sendToFront(); // send enemy sprite to front
-					}
-					if (Collision.check(enemy.getSprite().getBounds(), player.getSprite().getBounds())) { // player collides with enemy
-						double x = (enemySprite.getX() + (enemySprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
-						double y = (enemySprite.getY() + (enemySprite.getHeight() / 2)) - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between enemy and player
-						playerSprite.movePolar(Math.sqrt(x*x+y*y), angle(enemySprite, playerSprite) + 180); // player moves away from enemy
-						if (enemy.getEnemyType().contains("boss")) {
-							player.changeHealth(-2);
-							updateHealth();
-							System.out.println("Player touched by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
-						}
-						else if (enemy.getEnemyType().contains("close range")) {
-							player.changeHealth(-1);
-							updateHealth();
-							System.out.println("Player touched by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
-						}
-						else if (enemy.getEnemyType().contains("long range")) {
-							player.changeHealth(-1);
-							updateHealth();
-							System.out.println("Player touched by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
-						}
+			}
+			if (enemy.isBulletTraveling()) {
+				GImage bulletSprite = enemy.getBulletSprite();  
+				bulletSprite = enemy.moveBullet(bulletSprite); //Move the bulletSprite.
+				if (player.isDamaged()) {
+					player.playerInvincibility();
+				}
+				else {
+					if (Collision.check(bulletSprite.getBounds(), player.getSprite().getBounds())) { //returns true if player collides with bullet 
+						playSound("player", AudioPlayer.getInstance()); //play player grunt sound.
+						player.changeHealth(-1);
+						updateHealth(); // update health display
+						player.setDamaged(true); //player is damaged.
+						System.out.println("player health: " + player.getHealth());
 						if (player.isDead()) {
 							int lifeIndex = -1;
 							lifeIndex = player.searchItemIndex(player, lifeIndex, "life");
 							if (lifeIndex >= 0) { // check if player has life item
-								player.setHealth(5); // reset playerHealth
+								player.setHealth(PLAYER_STARTING_HEALTH); // reset playerHealth
 								player.removeFromInventory(lifeIndex); // remove life item
 								updateHealth(); // update health
 								updateInventory(); // update inventory
@@ -469,18 +379,117 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								gameOver();
 							}
 						}
-					}
-					if (enemy.getEnemyType().contains("long range")) {
-						if (enemy.isAttackAvailable()) {
-							GImage bulletSprite = enemy.getBulletSprite();
-			            	enemy.getWeapon().setAngle(angle(enemySprite, playerSprite) + 180);	
-							if (!enemy.isBulletTraveling()) { // set initial bullet location and enemy attack sprite when not in motion
-								bulletSprite.setLocation(enemySprite.getX() + (enemySprite.getWidth() / 2) - bulletSprite.getWidth() / 2, enemySprite.getY() + (enemySprite.getHeight() / 2) - bulletSprite.getHeight() / 2);
-							}
-							bulletSprite.setVisible(true);
-							enemy.setBulletTraveling(true); // move bulletSprite under actionPerformed() method
-							enemy.setAttackAvailable(false); //enemy can't attack for a time
+						while (Collision.check(bulletSprite.getBounds(), player.getSprite().getBounds())) { // move bulletSprite until not touching player 
+							bulletSprite = enemy.moveBullet(bulletSprite); 
 						}
+					}
+				}
+				if (enemy.getBulletDistance() >= enemy.getWeapon().getRange()) {
+					enemy.setBulletTraveling(false);
+					bulletSprite.setLocation(enemySprite.getX() + enemySprite.getWidth() / 2 - bulletSprite.getWidth() / 2, enemySprite.getY() + enemySprite.getHeight() / 2 - bulletSprite.getHeight() / 2);
+					enemy.setBulletDistance(0);
+					bulletSprite.setVisible(false);
+				}
+			}
+			if (enemy.canInteract(playerSprite.getX(), playerSprite.getY())) { //enemy detects player
+				if (timerCount % INTERACT_INTERVAL == 0) {
+					enemySprite.movePolar(enemy.getSpeed(), angle(enemySprite, playerSprite) + 180); // close range enemy moves towards player
+					if (enemy.getEnemyType().contains("long range")) { // if enemy is long range
+						if (enemy.getEnemyType().contains("dragon boss")) { // if enemy is long range dragon
+								if (enemy.getEnemyType().contains("dragon boss")) { // if enemy is long range dragon boss
+								String fireSpriteFileName = "burningFireSprite.png";
+								if (Math.random() <= 0.5) { // 50% chance for fire to appear mirrored
+									fireSpriteFileName = "burningFireMirroredSprite.png";
+								}
+								summonEnemy(enemy, fireSpriteFileName, "fire", 1, ITEM_SIZE, 0); // canInteract/damage range set to ITEM_SIZE
+							}
+						} // enemy is long range and not a dragon
+						enemySprite.movePolar(2 * enemy.getSpeed(), angle(enemySprite, playerSprite)); // move long range enemy away from player
+						setInBounds(enemy); // set long range enemy in bounds
+						if (enemy.getEnemyType().contains("summoner")){ // if enemy is long range summoner
+							int numSummoners = 0; // for counting the number of summoners
+							int numSummoned = 0; // for counting the number of summoned enemies
+							for (int ind = 0; ind < enemies.size(); ind++) { // loop over all enemies
+								Enemy temp = enemies.get(ind);
+								if (temp.getEnemyType().contains("summoner")) { // count summoner enemies
+									numSummoners++;
+								}
+								if (temp.getEnemyType().contains("summoned")) { // count summoned enemies
+									numSummoned++;
+								}
+							}
+							System.out.println("summoners: " + numSummoners);
+							System.out.println("summoned: " + numSummoned);
+							int summonRatio = 15; // number of summoned enemies per summoner
+							if (numSummoned / numSummoners < summonRatio) { // maintain summon ratio
+								if (enemy.getEnemyType().contains("wizard boss")) {
+									if (timerCount % WIZARD_TELEPORT_INTERVAL == 0) { // teleport interval
+										double newX = Math.random() * program.getWidth();
+										double newY = Math.random() * program.getHeight();
+										while (Collision.check(playerSprite.getBounds(), enemySprite.getBounds())) { // randomize location until enemy sprite will not touch player
+											newX = Math.random() * program.getWidth();
+											newY = Math.random() * program.getHeight();
+										}
+										enemySprite.setLocation(newX, newY);
+									}
+									setInBounds(enemy); // set wizard boss in bounds
+									summonEnemy(enemy, "EnemySkeletonSummonerSprite.png", "summoned skeleton summoner", 3, 450, 350, "fireballSprite.png", 5);
+								}
+								else {
+									summonEnemy(enemy, "EnemyHeartlessSkeletonSprite.png", "summoned skeleton", 1, 300, 5);
+								}
+							}
+						}
+					}
+					enemySprite.sendToFront(); // send enemy sprite to front
+				}
+				if (Collision.check(enemy.getSprite().getBounds(), player.getSprite().getBounds())) { // player collides with enemy
+					double x = (enemySprite.getX() + (enemySprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
+					double y = (enemySprite.getY() + (enemySprite.getHeight() / 2)) - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between enemy and player
+					playerSprite.movePolar(Math.sqrt(x*x+y*y), angle(enemySprite, playerSprite) + 180); // player moves away from enemy
+					if (enemy.getEnemyType().contains("boss")) {
+						player.changeHealth(-2);
+						updateHealth();
+						System.out.println("Player touched by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
+					}
+					else if (enemy.getEnemyType().contains("close range")) {
+						player.changeHealth(-1);
+						updateHealth();
+						System.out.println("Player touched by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
+					}
+					else if (enemy.getEnemyType().contains("long range")) {
+						player.changeHealth(-1);
+						updateHealth();
+						System.out.println("Player touched by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
+					}
+					if (player.isDead()) {
+						int lifeIndex = -1;
+						lifeIndex = player.searchItemIndex(player, lifeIndex, "life");
+						if (lifeIndex >= 0) { // check if player has life item
+							player.setHealth(5); // reset playerHealth
+							player.removeFromInventory(lifeIndex); // remove life item
+							updateHealth(); // update health
+							updateInventory(); // update inventory
+						}
+						else {
+							program.removeAll();
+							while (enemies.size() > 0) { // remove all enemies from ArrayList
+								enemies.remove(0);
+							}
+							gameOver();
+						}
+					}
+				}
+				if (enemy.getEnemyType().contains("long range")) {
+					if (enemy.isAttackAvailable()) {
+						GImage bulletSprite = enemy.getBulletSprite();
+			           	enemy.getWeapon().setAngle(angle(enemySprite, playerSprite) + 180);	
+						if (!enemy.isBulletTraveling()) { // set initial bullet location and enemy attack sprite when not in motion
+							bulletSprite.setLocation(enemySprite.getX() + (enemySprite.getWidth() / 2) - bulletSprite.getWidth() / 2, enemySprite.getY() + (enemySprite.getHeight() / 2) - bulletSprite.getHeight() / 2);
+						}
+						bulletSprite.setVisible(true);
+						enemy.setBulletTraveling(true); // move bulletSprite under actionPerformed() method
+						enemy.setAttackAvailable(false); //enemy can't attack for a time
 					}
 				}
 			}
@@ -492,9 +501,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			player.getBulletSprite().setVisible(false); // hide player bullet
 		}
 		timerCount++;
-		if (timerCount % 50 == 0) {
+		if (timerCount % KNIGHT_ATTACK_DISPLAY_INTERVAL == 0) {
 			attackArea.setVisible(false); // make attack area disappear
-			if (timerCount % 100 == 0) {
+			if (timerCount % INTERACT_INTERVAL == 0) {
 				for (Item i : items) {
 					if (player.canInteract(i.getSprite().getX(), i.getSprite().getY())) {
 						if (player.hasKey() && i.getItemType() == "closedDoor") {
@@ -513,7 +522,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				if (timerCount % player.getDashCooldown() == 0) {
 					player.setDashAvailable(true); //player can now dash
 				}
-				if (timerCount % 500 == 0) {
+				if (timerCount % LONG_RANGE_ENEMY_ATTACK_INTERVAL == 0) {
 					for (Enemy e1 : enemies) {
 						e1.setAttackAvailable(true); //enemy can now attack
 					}
@@ -808,8 +817,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				else if (nearestItem instanceof Weapon) { // for weapon upgrade, decrease attack cool down
 					int oldAttackCooldown = player.getAttackCooldown();
 					int newAttackCooldown = oldAttackCooldown - (oldAttackCooldown / 4); // reduce attack cool down by ~25%
-					if (newAttackCooldown < 100) { // if attack cool down is too low, increase weapon range
-						newAttackCooldown = 100; // set attack cool back to minimum
+					if (newAttackCooldown < MINIMUM_ATTACK_COOLDOWN) { // if attack cool down is too low, increase weapon range
+						newAttackCooldown = MINIMUM_ATTACK_COOLDOWN; // set attack cool back to minimum
 						int oldAttackRange = player.getWeapon().getRange(); 
 						int newAttackRange = oldAttackRange + (oldAttackRange / 4); // increase weapon range by ~25%
 						player.getWeapon().setRange(newAttackRange);
@@ -819,7 +828,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					System.out.println("Old attack cooldown: " + oldAttackCooldown);
 					System.out.println("New attack cooldown: " + newAttackCooldown);
 					player.setAttackCooldown(newAttackCooldown);
-					
 					items.remove(nearestItem); // remove weapon upgrade from list
 					program.remove(nearestItem.getSprite()); // remove weapon upgrade from screen
 					program.remove(nearestItem.getLabel()); // remove weapon label from screen

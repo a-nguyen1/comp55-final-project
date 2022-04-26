@@ -185,8 +185,6 @@ public class Room {
 					addEnemy("skeleton summoner", randomizePoint(), 3, "long range skeleton summoner", SKELETON_SUMMONER_DETECTION_RANGE, SKELETON_SUMMONER_WEAPON_RANGE, "fireBallSprite.png", SLOW_SPEED); 
 				}
 				break;
-			
-			
 			case 18:
 				addBoss("wizard", BOSS_HEALTH * 3, "long range wizard boss summoner", BOSS_WEAPON_RANGE, "fireSpiralSprite.png", FAST_SPEED); //add WizardBoss
 				break;

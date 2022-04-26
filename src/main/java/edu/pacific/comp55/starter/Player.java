@@ -106,6 +106,10 @@ public class Player extends Character {
 	
 	public void setWeapon(Weapon weapon) {
 		this.weapon = weapon;
+		// if default range for close range has not been set, set weapon range
+		if (weapon.getItemType() == "close range weapon" && weapon.getRange() == 200) { 
+			weapon.setRange(25);
+		}
 	}
 	
 	public Weapon getWeapon() {
