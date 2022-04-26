@@ -272,8 +272,23 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		else if (e.contains("dragon")) {
 			soundEffect.setName("dragon_grunt"); //Sound effect for dragon getting hit.
 		}
-		else {
-			soundEffect.setName("dragon_grunt"); //default sound effect TODO change this later
+		else if (e.contains("skeleton")){
+			soundEffect.setName("skeleton");
+			if (e.contains("skeleton summoner")) {
+				soundEffect.setName("skeleton_summoner");
+			}
+		}
+		else if (e.contains("wizard")) {
+			soundEffect.setName("wizard");
+		}
+		else if (e.contains("fire")) {
+			soundEffect.setName("fire");
+		}
+		else if (e.contains("demon magician")){
+			soundEffect.setName("demon_magician");
+		}
+		else if (e.contains("player")) {
+			soundEffect.setName("player");
 		}
 		if (program.isAudioOn()) {
 			soundEffect.play(p); //Play sound effect.
@@ -328,8 +343,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					}
 					else {
 						if (Collision.check(bulletSprite.getBounds(), player.getSprite().getBounds())) { //returns true if player collides with bullet 
-							//TODO player grunts
-							//playSound("player", p); //play player grunt sound.
+							playSound("player", AudioPlayer.getInstance()); //play player grunt sound.
 							player.changeHealth(-1);
 							updateHealth(); // update health display
 							player.setDamaged(true); //player is damaged.
