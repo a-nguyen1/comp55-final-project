@@ -20,11 +20,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private static final int PLAYER_STARTING_CLOSE_RANGE = 25;
 	private static final int PLAYER_STARTING_SPEED = 7;
 	private static final int PLAYER_STARTING_HEALTH = 100;
-	private static final int LONG_RANGE_ENEMY_ATTACK_INTERVAL = 500;
+	
 	private static final int KNIGHT_ATTACK_DISPLAY_INTERVAL = 50;
-	private static final int MINIMUM_ATTACK_COOLDOWN = 100;
 	private static final int INTERACT_INTERVAL = 100;
+	private static final int LONG_RANGE_ENEMY_ATTACK_INTERVAL = 500;
 	private static final int WIZARD_TELEPORT_INTERVAL = 1000;
+	
 	private static final double SQRT_TWO_DIVIDED_BY_TWO = 0.7071067811865476;
 	private static final int BACKGROUND_TILE_SIZE = 50;
 	private static final int HEART_SIZE = 50;
@@ -213,7 +214,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					if (e instanceof Boss) { // check if enemy is a boss
 						if (e.isDead()) { // check if boss is dead
 							program.remove(bossLabel); // remove bossLabel from screen
-							if (!dropWeaponUpgrade) {
+							if (!dropWeaponUpgrade) { // if weapon has not been dropped yet
 								GImage upgradeSprite;
 								if (program.isCloseRangeCharacter()) {
 									upgradeSprite = new GImage ("KnightUpgrade.png", e.getSprite().getX(), e.getSprite().getY()); //Create a new sprite for weapon upgrade.
@@ -221,13 +222,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 								else {
 									upgradeSprite = new GImage ("WizardUpgrade.png", e.getSprite().getX(), e.getSprite().getY()); //Create a new sprite for weapon upgrade.
 								}
-								upgradeSprite.setSize(ITEM_SIZE, ITEM_SIZE); //Resize sprite to make it smaller.
 								Weapon upgrade = new Weapon(upgradeSprite, "upgrade");
 								items.add(upgrade); // add weaponUpgrade to items list
 								program.add(upgradeSprite); // add weapon upgrade to screen
 								program.add(upgrade.getLabel()); //add label to screen.
-								dropWeaponUpgrade = true;
-								player.getSprite().sendToFront();
+								dropWeaponUpgrade = true; // weapon has been dropped
+								player.getSprite().sendToFront(); // send player sprite to front
 							}
 						}
 						else { // boss is alive
@@ -814,20 +814,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						itemLabel.put("closedDoor", "A key is needed."); 
 					}
 				}
-				else if (nearestItem instanceof Weapon) { // for weapon upgrade, decrease attack cool down
-					int oldAttackCooldown = player.getAttackCooldown();
-					int newAttackCooldown = oldAttackCooldown - (oldAttackCooldown / 4); // reduce attack cool down by ~25%
-					if (newAttackCooldown < MINIMUM_ATTACK_COOLDOWN) { // if attack cool down is too low, increase weapon range
-						newAttackCooldown = MINIMUM_ATTACK_COOLDOWN; // set attack cool back to minimum
-						int oldAttackRange = player.getWeapon().getRange(); 
-						int newAttackRange = oldAttackRange + (oldAttackRange / 4); // increase weapon range by ~25%
-						player.getWeapon().setRange(newAttackRange);
-						System.out.println("Old attack range: " + oldAttackRange);
-						System.out.println("New attack range: " + newAttackRange);
-					}
-					System.out.println("Old attack cooldown: " + oldAttackCooldown);
-					System.out.println("New attack cooldown: " + newAttackCooldown);
-					player.setAttackCooldown(newAttackCooldown);
+				else if (nearestItem instanceof Weapon) { // for weapon upgrade, increase weapon range
+					int oldAttackRange = player.getWeapon().getRange(); 
+					int newAttackRange = oldAttackRange + (oldAttackRange / 4); // increase weapon range by ~25%
+					player.getWeapon().setRange(newAttackRange);
+					System.out.println("Old attack range: " + oldAttackRange);
+					System.out.println("New attack range: " + newAttackRange);
 					items.remove(nearestItem); // remove weapon upgrade from list
 					program.remove(nearestItem.getSprite()); // remove weapon upgrade from screen
 					program.remove(nearestItem.getLabel()); // remove weapon label from screen

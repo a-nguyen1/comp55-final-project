@@ -21,13 +21,13 @@ public class Chest extends Item {
 		double chestX = getSprite().getX();
 		double chestY = getSprite().getY();
 		double randNum = Math.random();
-		if (randNum <= 0.10) { // 10 % chance of giving weapon upgrade
+		if (randNum <= 0.1) { // 10 % chance of giving weapon upgrade
 			String upgradeType = "WizardUpgrade.png"; //default weapon upgrade sprite.
 			if (closeRange) {
 				upgradeType = "KnightUpgrade.png";
 			}
 			GImage sprite = new GImage(upgradeType, chestX, chestY + ITEM_SIZE); //weapon upgrade sprite for knight.
-			PickUpItem upgrade = new PickUpItem(sprite, "upgrade");
+			Weapon upgrade = new Weapon(sprite, "upgrade");
 			items.add(upgrade);
 		}
 		else if (randNum <= 0.20) { // 10 % chance of giving extra life
