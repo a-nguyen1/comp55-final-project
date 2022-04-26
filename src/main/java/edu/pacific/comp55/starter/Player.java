@@ -19,6 +19,7 @@ public class Player extends Character {
 	private boolean bulletTraveling;
 	private int bulletDistance;
 	private GImage bulletSprite;
+	private int attackDisplayCount;
 	
 	public Player(GImage sprite, int health) {
 		super(sprite, health);
@@ -222,6 +223,14 @@ public class Player extends Character {
 	
 	public void randomizeXLocation(double maxX, double y) { // randomizes x location
 		getSprite().setLocation((maxX - 1.75 * getSprite().getWidth()) * Math.random(), y - 2.25 * getSprite().getHeight());
+	}
+	
+	public void setAttackDisplayCount (int timerCount) {
+		attackDisplayCount = timerCount;
+	}
+	
+	public int getAttackDisplayCount () {
+		return attackDisplayCount;
 	}
 	
 	@Override

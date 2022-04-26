@@ -19,7 +19,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private static final int PLAYER_STARTING_LONG_RANGE = 200;
 	private static final int PLAYER_STARTING_CLOSE_RANGE = 25;
 	private static final int PLAYER_STARTING_SPEED = 7;
-	private static final int PLAYER_STARTING_HEALTH = 100;
+	private static final int PLAYER_STARTING_HEALTH = 10;
 	
 	private static final int KNIGHT_ATTACK_DISPLAY_INTERVAL = 50;
 	private static final int INTERACT_INTERVAL = 100;
@@ -172,7 +172,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			else if (roomNum == 18) {
 				bossLabel = new GLabel("Evil Wizard");
 			}
-			System.out.println("Boss label: " + bossLabel);
 			bossLabel.setLocation(program.getWidth() - 2.25 * bossLabel.getWidth(), inventoryBox.getHeight() + ITEM_SIZE); // set boss label based on player inventory
 			bossLabel.setFont(new Font("Serif", Font.BOLD, 20));
 			program.add(bossLabel);
@@ -201,10 +200,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			heart.setSize(HEART_SIZE, HEART_SIZE);
 			program.add(heart);
 		}
-		System.out.println("current room: " + currentRoom);
 		if (currentRoom % 6 == 0) { // every sixth room is a boss room
 			bossLabel.sendToFront();
-			System.out.println(bossHealth.size());
 			while (bossHealth.size() > 0) { // remove all boss hearts from screen
 				program.remove(bossHealth.get(0));
 				bossHealth.remove(0);
@@ -267,6 +264,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			stopBackgroundMusic();
 			backgroundMusic.playSound("sounds", "game_over.wav", false); // play game over sound
 		}
+		System.out.println("Player is dead. Game Over.");
 		program.removeAll(); // remove all objects from screen
 		initializeGame(); // reset all game values (player win is set to false)
 		program.switchTo(3); // switch to game end screen
@@ -328,7 +326,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						updateHealth(); //update boss health
 					}
 					enemy.setDamaged(true); //Enemy is damaged.
-					System.out.println("enemy health: " + enemy.getHealth());
+					System.out.println("Enemy health: " + enemy.getHealth());
 					if (enemy.isDead()) { //Enemy has no health.
 						removeEnemyIndex.add(z); // add index to ArrayList
 						if (enemy.getEnemyType().contains("long range")) {
@@ -336,6 +334,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						}
 						program.remove(enemy.getSprite()); //Remove enemy sprite from the screen since it is dead.
 						System.out.println(enemy.getEnemyType() + " is dead.");
+						
+						addHeart(enemy);
+						
 					}
 					bulletSprite.sendToFront();
 					while (Collision.check(bulletSprite.getBounds(), enemy.getSprite().getBounds())) { // move bulletSprite until not touching enemy 
@@ -361,7 +362,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						player.changeHealth(-1);
 						updateHealth(); // update health display
 						player.setDamaged(true); //player is damaged.
-						System.out.println("player health: " + player.getHealth());
 						if (player.isDead()) {
 							int lifeIndex = -1;
 							lifeIndex = player.searchItemIndex(player, lifeIndex, "life");
@@ -419,8 +419,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 										numSummoned++;
 									}
 								}
-								System.out.println("summoners: " + numSummoners);
-								System.out.println("summoned: " + numSummoned);
 								int summonRatio = 15; // number of summoned enemies per summoner
 								if (numSummoned / numSummoners < summonRatio) { // maintain summon ratio
 									if (enemy.getEnemyType().contains("wizard boss")) {
@@ -453,13 +451,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					if (enemy.getEnemyType().contains("boss")) {
 						player.changeHealth(-2);
 						updateHealth();
-						System.out.println("Player touched by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
 					}
 					else {
 						player.changeHealth(-1);
 						updateHealth();
-						System.out.println("Player touched by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
 					}
+					System.out.println("Player hit by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
 					if (player.isDead()) {
 						int lifeIndex = -1;
 						lifeIndex = player.searchItemIndex(player, lifeIndex, "life");
@@ -499,47 +496,49 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			player.getBulletSprite().setVisible(false); // hide player bullet
 		}
 		timerCount++;
-		if (timerCount % KNIGHT_ATTACK_DISPLAY_INTERVAL == 0) {
+		if (Math.abs(player.getAttackDisplayCount() - timerCount) > KNIGHT_ATTACK_DISPLAY_INTERVAL) {
 			attackArea.setVisible(false); // make attack area disappear
-			if (timerCount % INTERACT_INTERVAL == 0) {
-				for (Item i : items) {
-					if (player.canInteract(i.getSprite().getX(), i.getSprite().getY())) {
-						if (player.hasKey() && i.getItemType() == "closedDoor") {
-							itemLabel.put("closedDoor", "Press e to unlock door.");
-						}
-						String s = itemLabel.get(i.getItemType());
-						i.setLabel(s);
-						i.getLabel().setLocation(i.getSprite().getX() + i.getSprite().getWidth() / 2 - i.getLabel().getWidth() / 2, i.getSprite().getY());
-					} else {
-						i.setLabel("");
+		}
+		if (timerCount % INTERACT_INTERVAL == 0) {
+			for (Item i : items) {
+				if (player.canInteract(i.getSprite().getX(), i.getSprite().getY())) {
+					if (player.hasKey() && i.getItemType() == "closedDoor") {
+						itemLabel.put("closedDoor", "Press e to unlock door.");
 					}
+					String s = itemLabel.get(i.getItemType());
+					i.setLabel(s);
+					i.getLabel().setLocation(i.getSprite().getX() + i.getSprite().getWidth() / 2 - i.getLabel().getWidth() / 2, i.getSprite().getY());
+				} else {
+					i.setLabel("");
 				}
-				if (timerCount % player.getAttackCooldown() == 0) {
-					player.setAttackAvailable(true); //player can now attack
-				}
-				if (timerCount % player.getDashCooldown() == 0) {
-					player.setDashAvailable(true); //player can now dash
-				}
-				if (timerCount % LONG_RANGE_ENEMY_ATTACK_INTERVAL == 0) {
-					for (Enemy e1 : enemies) {
-						e1.setAttackAvailable(true); //enemy can now attack
-					}
-				}
-				
 			}
+			if (timerCount % player.getAttackCooldown() == 0) {
+				player.setAttackAvailable(true); //player can now attack
+			}
+			if (timerCount % player.getDashCooldown() == 0) {
+				player.setDashAvailable(true); //player can now dash
+			}
+			if (timerCount % LONG_RANGE_ENEMY_ATTACK_INTERVAL == 0) {
+				for (Enemy e1 : enemies) {
+					e1.setAttackAvailable(true); //enemy can now attack
+				}
+			}
+				
 		}
 	}
 
+	private void addHeart(Enemy enemy) {
+		GImage heartSprite = new GImage ("Heart.png", enemy.getSprite().getX(), enemy.getSprite().getY()); //Create a new sprite for heart.
+		heartSprite.setSize(ITEM_SIZE, ITEM_SIZE); //Resize sprite to make it smaller.
+		PickUpItem heart = new PickUpItem(heartSprite, "heart");
+		items.add(heart);
+		program.add(heartSprite);
+		program.add(heart.getLabel());
+	}
+
 	private void removeAllDeadEnemies() {
-		System.out.println("Removing dead enemies...");
 		for (int y = removeEnemyIndex.size() - 1; y >= 0 ; y--) {
-			System.out.println("Enemy index to remove: " + (int)removeEnemyIndex.get(y));
 			enemies.remove((int)removeEnemyIndex.get(y));
-			System.out.println("Enemy index removed: " + (int)removeEnemyIndex.get(y));
-		}
-		System.out.println("Enemies alive: ");
-		for (Enemy ene: enemies) {
-			System.out.println(ene.getEnemyType());
 		}
 	}
 
@@ -619,13 +618,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		if (player.isAttackAvailable()) {
 			if (program.isCloseRangeCharacter()) {
 				setUpAttackArea(e, playerSprite);
+				player.setAttackDisplayCount(timerCount);
 				removeEnemyIndex = new ArrayList<Integer>(); // initialize array list for indexes of dead enemies
 				for (int z = 0; z < enemies.size(); z++) { // loop for all enemies
 					Enemy enemy = enemies.get(z);
 					if (Collision.check(attackArea.getBounds(), enemy.getSprite().getBounds())) { //player hits enemy.
 						playSound(enemy.getEnemyType(), soundEffect.getPlayer()); // play enemy grunt sound
-						System.out.println("Enemy is hit.");
-						System.out.println("Enemy: " + enemy.getEnemyType()); 
+						System.out.println(enemy.getEnemyType() + " is hit.");
 						enemy.changeHealth(-1); //Reduce health by 1.
 						if (enemy instanceof Boss) {
 							updateHealth(); // update boss health
@@ -637,10 +636,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							}
 							program.remove(enemy.getSprite()); //Remove enemy sprite from the screen since it is dead.
 							System.out.println(enemy.getEnemyType() + " is dead.");
+							
+							addHeart(enemy);
 						}
 					}
 				}
 				removeAllDeadEnemies();
+				
 			}
 			else { // long range attack
 				GImage bulletSprite = player.getBulletSprite();
@@ -816,8 +818,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					int oldAttackRange = player.getWeapon().getRange(); 
 					int newAttackRange = oldAttackRange + (oldAttackRange / 4); // increase weapon range by ~25%
 					player.getWeapon().setRange(newAttackRange);
-					System.out.println("Old attack range: " + oldAttackRange);
-					System.out.println("New attack range: " + newAttackRange);
+					System.out.println("Your weapon range has increased by: " + (oldAttackRange / 4));
 					items.remove(nearestItem); // remove weapon upgrade from list
 					program.remove(nearestItem.getSprite()); // remove weapon upgrade from screen
 					program.remove(nearestItem.getLabel()); // remove weapon label from screen
