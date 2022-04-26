@@ -215,9 +215,10 @@ public class Player extends Character {
 	
 	public void playerInvincibility() {
 		setInvincibilityCounter(getInvincibilityCounter() + 1); //player is invincible for a time.
-		if (getInvincibilityCounter() > 100) { //player is not invincible.
+		if (getInvincibilityCounter() > 10000) { //player is not invincible.
 			setDamaged(false);
 			setInvincibilityCounter(0); 
+			System.out.println("player vulnerable");
 		}
 	}
 	

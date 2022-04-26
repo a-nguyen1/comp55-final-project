@@ -63,6 +63,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		program = app;
 		
 		timer = new Timer(0, this); // create timer object
+		
 		initializeGame();
 	}
 
@@ -176,7 +177,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			bossLabel.setFont(new Font("Serif", Font.BOLD, 20));
 			program.add(bossLabel);
 		}
-		else if (roomNum >= 7 && program.isAudioOn()) { // change music after 1st boss room
+		else if (roomNum >= 7 && program.isAudioOn() && roomNum < FINAL_ROOM) { // change music after 1st boss room and don't play after final room
 			stopBackgroundMusic();
 			backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play background music
 		}
@@ -364,24 +365,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						playSound("player", AudioPlayer.getInstance()); //play player grunt sound.
 						player.changeHealth(-1);
 						updateHealth(); // update health display
+						updateInventory();
 						player.setDamaged(true); //player is damaged.
-						if (player.isDead()) {
-							int lifeIndex = -1;
-							lifeIndex = player.searchItemIndex(player, lifeIndex, "life");
-							if (lifeIndex >= 0) { // check if player has life item
-								player.setHealth(PLAYER_STARTING_HEALTH); // reset playerHealth
-								player.removeFromInventory(lifeIndex); // remove life item
-								updateHealth(); // update health
-								updateInventory(); // update inventory
-							}
-							else {
-								program.removeAll();
-								while (enemies.size() > 0) { // remove all enemies from ArrayList
-									enemies.remove(0);
-								}
-								gameOver();
-							}
-						}
+						checkPlayerDeath();
 						while (Collision.check(bulletSprite.getBounds(), player.getSprite().getBounds())) { // move bulletSprite until not touching player 
 							bulletSprite = enemy.moveBullet(bulletSprite); 
 						}
@@ -438,7 +424,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 										summonEnemy(enemy, "EnemySkeletonSummonerSprite.png", "summoned skeleton summoner", 3, 450, 350, "fireballSprite.png", 5);
 									}
 									else {
-										summonEnemy(enemy, "EnemyHeartlessSkeletonSprite.png", "summoned skeleton", 1, 300, 5);
+										summonEnemy(enemy, "EnemySkeletonSprite.png", "summoned skeleton", 1, 300, 5);
 									}
 								}
 							}
@@ -446,35 +432,26 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					}
 					enemySprite.sendToFront(); // send enemy sprite to front
 				}
-				if (Collision.check(enemy.getSprite().getBounds(), player.getSprite().getBounds())) { // player collides with enemy
-					playSound("player", AudioPlayer.getInstance()); // player is damaged
-					double x = (enemySprite.getX() + (enemySprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
-					double y = (enemySprite.getY() + (enemySprite.getHeight() / 2)) - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between enemy and player
-					playerSprite.movePolar(Math.sqrt(x*x+y*y) * 2, angle(enemySprite, playerSprite) + 180); // player moves away from enemy
-					if (enemy.getEnemyType().contains("boss")) {
-						player.changeHealth(-2);
-					}
-					else {
-						player.changeHealth(-1);
-					}
-					updateHealth();
-					System.out.println("Player hit by " + enemy.getEnemyType() + ". player health: " + player.getHealth());
-					if (player.isDead()) {
-						int lifeIndex = -1;
-						lifeIndex = player.searchItemIndex(player, lifeIndex, "life");
-						if (lifeIndex >= 0) { // check if player has life item
-							player.setHealth(PLAYER_STARTING_HEALTH); // reset playerHealth
-							player.removeFromInventory(lifeIndex); // remove life item
-							updateHealth(); // update health
-							updateInventory(); // update inventory
+				if (player.isDamaged()) {
+					player.playerInvincibility();
+				}
+				else {
+					if (Collision.check(enemy.getSprite().getBounds(), player.getSprite().getBounds())) { // player collides with enemy
+						playSound("player", AudioPlayer.getInstance()); // player is damaged
+						double x = (enemySprite.getX() + (enemySprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
+						double y = (enemySprite.getY() + (enemySprite.getHeight() / 2)) - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between enemy and player
+						playerSprite.movePolar(Math.sqrt(x*x+y*y) * 2, angle(enemySprite, playerSprite) + 180); // player moves away from enemy
+						if (enemy.getEnemyType().contains("boss")) {
+							player.changeHealth(-2);
 						}
 						else {
-							program.removeAll();
-							while (enemies.size() > 0) { // remove all enemies from ArrayList
-								enemies.remove(0);
-							}
-							gameOver();
+							player.changeHealth(-1);
 						}
+						updateHealth();
+						updateInventory();
+						System.out.println("Player hit by " + enemy.getEnemyType() + ". Player health: " + player.getHealth());
+						player.setDamaged(true); //player is damaged.
+						checkPlayerDeath();
 					}
 				}
 				if (enemy.getEnemyType().contains("long range")) {
@@ -529,8 +506,28 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 	}
 
-	private void addHeart(Enemy enemy, int xOffset, int yOffset) {
-		if (enemy instanceof Boss || Math.random() < 0.50 + 2 * ((double)currentRoom / 100.0)) { // if enemy is boss or (50 + (2 to 36)) % chance
+	private void checkPlayerDeath() {
+		if (player.isDead()) {
+			int lifeIndex = -1;
+			lifeIndex = player.searchItemIndex(player, lifeIndex, "life");
+			if (lifeIndex >= 0) { // check if player has life item
+				player.setHealth(PLAYER_STARTING_HEALTH); // reset playerHealth
+				player.removeFromInventory(lifeIndex); // remove life item
+				updateHealth(); // update health
+				updateInventory(); // update inventory
+			}
+			else {
+				program.removeAll();
+				while (enemies.size() > 0) { // remove all enemies from ArrayList
+					enemies.remove(0);
+				}
+				gameOver(); // go to game over screen
+			}
+		}
+	}
+
+	private void addHeart(Enemy enemy, int xOffset, int yOffset) { // if enemy is not a fire AND (is a boss OR (50 + (2 to 36)) % chance)
+		if (!enemy.getEnemyType().contains("fire") && (enemy instanceof Boss || Math.random() < 0.50 + 2 * ((double)currentRoom / 100.0))) { 
 			GImage heartSprite = new GImage ("Heart.png", enemy.getSprite().getX() + xOffset, enemy.getSprite().getY() + yOffset); //Create a new sprite for heart.
 			heartSprite.setSize(ITEM_SIZE, ITEM_SIZE); //Resize sprite to make it smaller.
 			PickUpItem heart = new PickUpItem(heartSprite, "heart");
@@ -589,6 +586,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		newEnemy.setWeapon(weapon);
 		GImage bullet = new GImage(bulletName, newEnemy.getSprite().getX() + newEnemy.getSprite().getWidth() / 2, newEnemy.getSprite().getY() + newEnemy.getSprite().getHeight() / 2);
 		newEnemy.setBulletSprite(bullet);
+		program.add(newEnemy.getBulletSprite());
 		program.add(newEnemy.getSprite()); // add new enemy sprite to the screen
 		enemies.add(newEnemy); // add new enemy to the screen
 		enemy.getSprite().sendToFront(); // send summoner to front
@@ -598,6 +596,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	public void showContents() {
 		createRoom(currentRoom); // currentRoom is initially at 1
 		if (program.isAudioOn()) {
+			stopBackgroundMusic();
 			backgroundMusic.playSound("sounds", "basic_loop.wav", true); // play background music
 		}
 		else {
