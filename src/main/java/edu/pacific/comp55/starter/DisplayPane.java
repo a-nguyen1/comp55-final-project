@@ -450,7 +450,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					playSound("player", AudioPlayer.getInstance()); // player is damaged
 					double x = (enemySprite.getX() + (enemySprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
 					double y = (enemySprite.getY() + (enemySprite.getHeight() / 2)) - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between enemy and player
-					playerSprite.movePolar(Math.sqrt(x*x+y*y), angle(enemySprite, playerSprite) + 180); // player moves away from enemy
+					playerSprite.movePolar(Math.sqrt(x*x+y*y) * 2, angle(enemySprite, playerSprite) + 180); // player moves away from enemy
 					if (enemy.getEnemyType().contains("boss")) {
 						player.changeHealth(-2);
 						updateHealth();
