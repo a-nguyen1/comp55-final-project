@@ -212,19 +212,22 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						if (e.isDead()) { // check if boss is dead
 							program.remove(bossLabel); // remove bossLabel from screen
 							if (!dropWeaponUpgrade) { // if weapon has not been dropped yet
-								GImage upgradeSprite;
+								String upgradeType;
 								if (program.isCloseRangeCharacter()) {
-									upgradeSprite = new GImage ("KnightUpgrade.png", e.getSprite().getX(), e.getSprite().getY()); //Create a new sprite for weapon upgrade.
+									upgradeType = "KnightUpgrade.png";
 								}
 								else {
-									upgradeSprite = new GImage ("WizardUpgrade.png", e.getSprite().getX(), e.getSprite().getY()); //Create a new sprite for weapon upgrade.
+									upgradeType = "WizardUpgrade.png";
 								}
+								GImage upgradeSprite = new GImage (upgradeType, e.getSprite().getX(), e.getSprite().getY() + ITEM_SIZE); //Create a new sprite for weapon upgrade.
 								Weapon upgrade = new Weapon(upgradeSprite, "upgrade");
 								items.add(upgrade); // add weaponUpgrade to items list
 								program.add(upgradeSprite); // add weapon upgrade to screen
 								program.add(upgrade.getLabel()); //add label to screen.
-								dropWeaponUpgrade = true; // weapon has been dropped
 								player.getSprite().sendToFront(); // send player sprite to front
+								dropWeaponUpgrade = true; // weapon has been dropped
+								addHeart(e, 0, ITEM_SIZE * 2);
+								addHeart(e, 0, -ITEM_SIZE);
 							}
 						}
 						else { // boss is alive
@@ -335,7 +338,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						program.remove(enemy.getSprite()); //Remove enemy sprite from the screen since it is dead.
 						System.out.println(enemy.getEnemyType() + " is dead.");
 						
-						addHeart(enemy);
+						addHeart(enemy, 0, 0);
 						
 					}
 					bulletSprite.sendToFront();
@@ -527,13 +530,15 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 	}
 
-	private void addHeart(Enemy enemy) {
-		GImage heartSprite = new GImage ("Heart.png", enemy.getSprite().getX(), enemy.getSprite().getY()); //Create a new sprite for heart.
-		heartSprite.setSize(ITEM_SIZE, ITEM_SIZE); //Resize sprite to make it smaller.
-		PickUpItem heart = new PickUpItem(heartSprite, "heart");
-		items.add(heart);
-		program.add(heartSprite);
-		program.add(heart.getLabel());
+	private void addHeart(Enemy enemy, int xOffset, int yOffset) {
+		if (enemy instanceof Boss || Math.random() < 0.50 + 2 * ((double)currentRoom / 100.0)) { // if enemy is boss or (50 + (2 to 36)) % chance
+			GImage heartSprite = new GImage ("Heart.png", enemy.getSprite().getX() + xOffset, enemy.getSprite().getY() + yOffset); //Create a new sprite for heart.
+			heartSprite.setSize(ITEM_SIZE, ITEM_SIZE); //Resize sprite to make it smaller.
+			PickUpItem heart = new PickUpItem(heartSprite, "heart");
+			items.add(heart);
+			program.add(heartSprite);
+			program.add(heart.getLabel());
+		}
 	}
 
 	private void removeAllDeadEnemies() {
@@ -637,7 +642,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							program.remove(enemy.getSprite()); //Remove enemy sprite from the screen since it is dead.
 							System.out.println(enemy.getEnemyType() + " is dead.");
 							
-							addHeart(enemy);
+							addHeart(enemy, 0, 0);
 						}
 					}
 				}
@@ -912,4 +917,5 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	public static void main(String[] args) {
 		
 	}
+	
 }
