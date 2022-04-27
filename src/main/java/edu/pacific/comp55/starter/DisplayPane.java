@@ -19,7 +19,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private static final int PLAYER_STARTING_LONG_RANGE = 200;
 	private static final int PLAYER_STARTING_CLOSE_RANGE = 25;
 	private static final int PLAYER_STARTING_SPEED = 7;
-	private static final int PLAYER_STARTING_HEALTH = 100;
+	private static final int PLAYER_STARTING_HEALTH = 10;
 	
 	private static final int KNIGHT_ATTACK_DISPLAY_INTERVAL = 50;
 	private static final int INTERACT_INTERVAL = 100;
@@ -426,9 +426,39 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 											enemySprite.setLocation(newX, newY);
 										}
 										setInBounds(enemy); // set wizard boss in bounds
-										summonEnemy(enemy, "EnemySkeletonSummonerSprite.png", "summoned skeleton summoner", 3, 450, 350, "fireballSprite.png", 5);
+										// randomly summon a long range enemy
+										String spriteFileName;
+										String enemyName;
+										int detectionRange = 200;
+										int weaponRange = 300;
+										int speed = 5;
+										int health = 3;
+										String bulletFileName = "fireBallSprite.png";
+										double randomNumber = Math.random();
+										if (randomNumber <= 0.35) { // 35 % chance
+											spriteFileName = "EnemyDragonSprite.png";
+											enemyName = "dragon";
+										}
+										else if (randomNumber <= 0.60) { // 25 % chance
+											spriteFileName = "EnemyWizardSprite.png";
+											enemyName = "wizard";
+										}
+										else if (randomNumber <= 0.95) { // 35 % chance
+											spriteFileName = "EnemyDemonMagicianSprite.png";
+											enemyName = "demon magician";
+											detectionRange = 250;
+											weaponRange = 400;
+										}
+										else { // 5% chance
+											spriteFileName = "EnemySkeletonSummonerSprite.png";
+											enemyName = "skeleton summoner";
+											detectionRange = 450;
+											weaponRange = 350;
+											speed = 3;
+										}
+										summonEnemy(enemy, spriteFileName, "summoned " + enemyName, health, detectionRange, weaponRange, bulletFileName, speed);
 									}
-									else {
+									else { // summoner is a skeleton summoner and summon ratio has not been reached
 										summonEnemy(enemy, "EnemySkeletonSprite.png", "summoned skeleton", 1, 300, 5);
 									}
 								}
@@ -586,6 +616,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 		double xValue = inRange(player.getSprite().getX() + xOffset, 0, program.getWidth()); // make x value on screen
 		sprite = new GImage (spriteFileName, xValue, player.getSprite().getY());
+		
+		if (name.contains("demon magician")) {
+			sprite.setSize(BACKGROUND_TILE_SIZE, BACKGROUND_TILE_SIZE); // set demon magician to size of background tile
+		}
 	
 		Enemy newEnemy = new Enemy(sprite, health, "long range " + name);
 		newEnemy.setDetectionRange(detectionRange); // so new enemy can detect player
@@ -602,7 +636,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	@Override
 	public void showContents() {
-		currentRoom = 18;
 		createRoom(currentRoom); // currentRoom is initially at 1
 		if (program.isAudioOn()) {
 			stopBackgroundMusic();
