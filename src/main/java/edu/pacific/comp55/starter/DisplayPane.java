@@ -19,7 +19,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private static final int PLAYER_STARTING_LONG_RANGE = 200;
 	private static final int PLAYER_STARTING_CLOSE_RANGE = 25;
 	private static final int PLAYER_STARTING_SPEED = 7;
-	private static final int PLAYER_STARTING_HEALTH = 10;
+	private static final int PLAYER_STARTING_HEALTH = 100;
 	
 	private static final int KNIGHT_ATTACK_DISPLAY_INTERVAL = 50;
 	private static final int INTERACT_INTERVAL = 100;
@@ -177,9 +177,13 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			bossLabel.setFont(new Font("Serif", Font.BOLD, 20));
 			program.add(bossLabel);
 		}
-		else if (roomNum >= 7 && program.isAudioOn() && roomNum < FINAL_ROOM) { // change music after 1st boss room and don't play after final room
+		else if (roomNum >= 7 && program.isAudioOn() && roomNum < FINAL_ROOM) { // change music after 1st level and don't play after final room
 			stopBackgroundMusic();
-			backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play background music
+			backgroundMusic.playSound("sounds", "more_basic_loop.wav", true); // play background music for 2nd level
+			if (roomNum >= 13) {
+				stopBackgroundMusic();
+				backgroundMusic.playSound("sounds", "average_loop.wav", true); // play background music for 3rd level
+			}
 		}
 		
 		program.add(inventoryBox); //Add inventory box to the screen.
@@ -275,8 +279,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	}
 
 	private void stopBackgroundMusic() {
-		backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop background music
-		backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop background music
+		backgroundMusic.stopSound("sounds", "basic_loop.wav"); // stop 1st level background music
+		backgroundMusic.stopSound("sounds", "more_basic_loop.wav"); // stop 2nd level background music
+		backgroundMusic.stopSound("sounds", "average_loop.wav"); // stop 3rd level background music
 		backgroundMusic.stopSound("sounds", "most_basic_loop.wav"); // stop boss background music
 	}
 	
@@ -515,6 +520,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				player.removeFromInventory(lifeIndex); // remove life item
 				updateHealth(); // update health
 				updateInventory(); // update inventory
+				System.out.println("Extra life consumed");
 			}
 			else {
 				program.removeAll();
@@ -526,14 +532,16 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		}
 	}
 
-	private void addHeart(Enemy enemy, int xOffset, int yOffset) { // if enemy is not a fire AND (is a boss OR (50 + (2 to 36)) % chance)
-		if (!enemy.getEnemyType().contains("fire") && (enemy instanceof Boss || Math.random() < 0.50 + 2 * ((double)currentRoom / 100.0))) { 
-			GImage heartSprite = new GImage ("Heart.png", enemy.getSprite().getX() + xOffset, enemy.getSprite().getY() + yOffset); //Create a new sprite for heart.
-			heartSprite.setSize(ITEM_SIZE, ITEM_SIZE); //Resize sprite to make it smaller.
-			PickUpItem heart = new PickUpItem(heartSprite, "heart");
-			items.add(heart);
-			program.add(heartSprite);
-			program.add(heart.getLabel());
+	private void addHeart(Enemy enemy, int xOffset, int yOffset) {
+		if (enemy instanceof Boss || Math.random() < 0.50 + 2 * ((double)currentRoom / 100.0)) { //if enemy is a boss OR (50 + (2 * currentRoom)) % chance)
+			if (!(enemy.getEnemyType().contains("summoned") || enemy.getEnemyType().contains("fire"))) { // fire or summoned enemies should not drop hearts
+				GImage heartSprite = new GImage ("Heart.png", enemy.getSprite().getX() + xOffset, enemy.getSprite().getY() + yOffset); //Create a new sprite for heart.
+				heartSprite.setSize(ITEM_SIZE, ITEM_SIZE); //Resize sprite to make it smaller.
+				PickUpItem heart = new PickUpItem(heartSprite, "heart");
+				items.add(heart);
+				program.add(heartSprite);
+				program.add(heart.getLabel());
+			}
 		}
 	}
 
@@ -559,12 +567,12 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			double xValue = inRange(player.getSprite().getX() + xOffset, 0, program.getWidth()); // make x value on screen
 			sprite = new GImage (spriteFileName, xValue, player.getSprite().getY());
 		}
-			Enemy newEnemy = new Enemy(sprite, health, "close range " + name);
-			newEnemy.setDetectionRange(detectionRange); // so new enemy can detect player
-			newEnemy.setSpeed(speed); // set new enemy speed
-			program.add(newEnemy.getSprite()); // add new enemy sprite to the screen
-			enemies.add(newEnemy); // add new enemy to the screen
-			enemy.getSprite().sendToFront(); // send summoner to front
+		Enemy newEnemy = new Enemy(sprite, health, "close range " + name);
+		newEnemy.setDetectionRange(detectionRange); // so new enemy can detect player
+		newEnemy.setSpeed(speed); // set new enemy speed
+		program.add(newEnemy.getSprite()); // add new enemy sprite to the screen
+		enemies.add(newEnemy); // add new enemy to the screen
+		enemy.getSprite().sendToFront(); // send summoner to front
 	}
 	
 	private void summonEnemy(Enemy enemy, String spriteFileName, String name, int health, int detectionRange, int weaponRange, String bulletName, int speed) {
@@ -594,10 +602,11 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	@Override
 	public void showContents() {
+		currentRoom = 18;
 		createRoom(currentRoom); // currentRoom is initially at 1
 		if (program.isAudioOn()) {
 			stopBackgroundMusic();
-			backgroundMusic.playSound("sounds", "basic_loop.wav", true); // play background music
+			backgroundMusic.playSound("sounds", "basic_loop.wav", true); // play background music for 1st level
 		}
 		else {
 			stopBackgroundMusic();
@@ -639,7 +648,6 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 							}
 							program.remove(enemy.getSprite()); //Remove enemy sprite from the screen since it is dead.
 							System.out.println(enemy.getEnemyType() + " is dead.");
-							
 							addHeart(enemy, 0, 0);
 						}
 					}
