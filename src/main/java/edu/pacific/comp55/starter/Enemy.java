@@ -76,18 +76,6 @@ public class Enemy extends Character {
 			System.out.println("invincibility counter: " + getInvincibilityCounter());
 	}
 
-	@Override
-	public void move(double x, double y) {
-		getSprite().move(x, y);
-		weapon.getSprite().move(x,y);
-	}
-	
-	@Override
-	public void movePolar(double r, double theta) {
-		getSprite().movePolar(r, theta);
-		weapon.getSprite().movePolar(r, theta);
-	}
-
 	public static void main(String[] args) {
 
 	}
