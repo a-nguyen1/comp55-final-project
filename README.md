@@ -1,7 +1,7 @@
 # Overview
 Escape the Dungeon is a dungeon crawler where you have the option to play as a knight or a wizard.
-The main objective of the game is to escape the dungeon. 
-You have the option to fight the enemies and pick up items. 
+Escape or face your foes who stand in your way. 
+Pick up items to better your odds.
 # Features
 - Main Menu
 
