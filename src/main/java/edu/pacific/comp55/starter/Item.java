@@ -7,6 +7,7 @@ public class Item {
 	private GImage sprite;
 	private String itemType;
 	private GLabel message;
+	private static final String folder = "/images/"; // images folder path
 	
 	public Item(GImage image, String name) {
 		sprite = image;
@@ -40,6 +41,10 @@ public class Item {
 	
 	public static void main(String[] args) {
 
+	}
+
+	public static String getFolder() {
+		return folder;
 	}
 
 }

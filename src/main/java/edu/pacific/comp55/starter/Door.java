@@ -10,7 +10,7 @@ public class Door extends Item{
 	public Door(GImage image, String name) { // image is when door closed
 		super(image, name);
 		setLocked(true);
-		doorOpen = new GImage("openDoor.png", image.getX(), image.getY());
+		doorOpen = new GImage(ImageFolder.get() + "openDoor.png", image.getX(), image.getY());
 	}
 	
 	public boolean unlock(ArrayList<Item> inventory) {

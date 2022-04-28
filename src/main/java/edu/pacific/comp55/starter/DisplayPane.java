@@ -93,7 +93,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		itemLabel.put("life", "Press e to gain an extra life.");
 		
 		//create player object with knight sprite as default. 
-		GImage playerSprite = new GImage ("PlayerKnightSprite.png");
+		GImage playerSprite = new GImage (ImageFolder.get() + "PlayerKnightSprite.png");
 		player = new Player(playerSprite, PLAYER_STARTING_HEALTH);
 		player.randomizeXLocation(program.getWidth(), program.getHeight()); //Randomize player location at bottom of screen
 		player.setSpeed(PLAYER_STARTING_SPEED); // initialize speed
@@ -147,7 +147,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				weapon = new Weapon(new GImage(""), "long range weapon", PLAYER_STARTING_LONG_RANGE); 
 				player.setWeapon(weapon);
 			}
-			player.setSprite(new GImage ("PlayerWizardSprite.png"));
+			player.setSprite(new GImage (ImageFolder.get() + "PlayerWizardSprite.png"));
 			program.add(player.getBulletSprite()); // add bullet to the screen
 		}
 		
@@ -217,12 +217,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 						if (e.isDead()) { // check if boss is dead
 							program.remove(bossLabel); // remove bossLabel from screen
 							if (!dropWeaponUpgrade) { // if weapon has not been dropped yet
-								String upgradeType;
+								String upgradeType = ImageFolder.get() + "WizardUpgrade.png";
 								if (program.isCloseRangeCharacter()) {
-									upgradeType = "KnightUpgrade.png";
-								}
-								else {
-									upgradeType = "WizardUpgrade.png";
+									upgradeType = ImageFolder.get() + "KnightUpgrade.png";
 								}
 								GImage upgradeSprite = new GImage (upgradeType, e.getSprite().getX(), e.getSprite().getY() + ITEM_SIZE); //Create a new sprite for weapon upgrade.
 								Weapon upgrade = new Weapon(upgradeSprite, "upgrade");
@@ -391,9 +388,9 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					if (enemy.getEnemyType().contains("long range")) { // if enemy is long range
 						if (enemy.getEnemyType().contains("dragon")) { // if enemy is long range dragon
 								if (enemy.getEnemyType().contains("dragon boss")) { // if enemy is long range dragon boss
-								String fireSpriteFileName = "burningFireSprite.png";
+								String fireSpriteFileName = ImageFolder.get() + "burningFireSprite.png";
 								if (Math.random() <= 0.5) { // 50% chance for fire to appear mirrored
-									fireSpriteFileName = "burningFireMirroredSprite.png";
+									fireSpriteFileName = ImageFolder.get() + "burningFireMirroredSprite.png";
 								}
 								summonEnemy(enemy, fireSpriteFileName, "fire", 1, ITEM_SIZE, 0); // canInteract/damage range set to ITEM_SIZE
 							}
@@ -433,24 +430,24 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 										int weaponRange = 300;
 										int speed = 5;
 										int health = 3;
-										String bulletFileName = "fireBallSprite.png";
+										String bulletFileName = ImageFolder.get() + "fireBallSprite.png";
 										double randomNumber = Math.random();
 										if (randomNumber <= 0.35) { // 35 % chance
-											spriteFileName = "EnemyDragonSprite.png";
+											spriteFileName = ImageFolder.get() + "EnemyDragonSprite.png";
 											enemyName = "dragon";
 										}
 										else if (randomNumber <= 0.60) { // 25 % chance
-											spriteFileName = "EnemyWizardSprite.png";
+											spriteFileName = ImageFolder.get() + "EnemyWizardSprite.png";
 											enemyName = "wizard";
 										}
 										else if (randomNumber <= 0.95) { // 35 % chance
-											spriteFileName = "EnemyDemonMagicianSprite.png";
+											spriteFileName = ImageFolder.get() + "EnemyDemonMagicianSprite.png";
 											enemyName = "demon magician";
 											detectionRange = 250;
 											weaponRange = 400;
 										}
 										else { // 5% chance
-											spriteFileName = "EnemySkeletonSummonerSprite.png";
+											spriteFileName = ImageFolder.get() + "EnemySkeletonSummonerSprite.png";
 											enemyName = "skeleton summoner";
 											detectionRange = 450;
 											weaponRange = 350;
@@ -459,7 +456,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 										summonEnemy(enemy, spriteFileName, "summoned " + enemyName, health, detectionRange, weaponRange, bulletFileName, speed);
 									}
 									else { // summoner is a skeleton summoner and summon ratio has not been reached
-										summonEnemy(enemy, "EnemySkeletonSprite.png", "summoned skeleton", 1, 300, 5);
+										summonEnemy(enemy, ImageFolder.get() + "EnemySkeletonSprite.png", "summoned skeleton", 1, 300, 5);
 									}
 								}
 							}
@@ -565,7 +562,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	private void addHeart(Enemy enemy, int xOffset, int yOffset) {
 		if (enemy instanceof Boss || Math.random() < 0.50 + 2 * ((double)currentRoom / 100.0)) { //if enemy is a boss OR (50 + (2 * currentRoom)) % chance)
 			if (!(enemy.getEnemyType().contains("summoned") || enemy.getEnemyType().contains("fire"))) { // fire or summoned enemies should not drop hearts
-				GImage heartSprite = new GImage ("Heart.png", enemy.getSprite().getX() + xOffset, enemy.getSprite().getY() + yOffset); //Create a new sprite for heart.
+				GImage heartSprite = new GImage (ImageFolder.get() + "Heart.png", enemy.getSprite().getX() + xOffset, enemy.getSprite().getY() + yOffset); //Create a new sprite for heart.
 				heartSprite.setSize(ITEM_SIZE, ITEM_SIZE); //Resize sprite to make it smaller.
 				PickUpItem heart = new PickUpItem(heartSprite, "heart");
 				items.add(heart);
@@ -708,24 +705,24 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		if (angle >= 0) {
 			if (angle > 90) {
 				if (angle > 135) { // angle > 135
-					attackArea.setImage("TopLeft.png");
+					attackArea.setImage(ImageFolder.get() + "TopLeft.png");
 					xOffset = - weaponRange - player.getSprite().getWidth() / 2;
 					yOffset = - weaponRange;
 				}
 				else { // 90 < angle <= 135
-					attackArea.setImage("TopLeft.png");
+					attackArea.setImage(ImageFolder.get() + "TopLeft.png");
 					xOffset = - weaponRange;
 					yOffset = - weaponRange - player.getSprite().getHeight() / 2;
 				}
 			}
 			else { 
 				if (angle <= 45) { // 0 <= angle <= 45
-					attackArea.setImage("TopRight.png");
+					attackArea.setImage(ImageFolder.get() + "TopRight.png");
 					xOffset = player.getSprite().getWidth() / 2;
 					yOffset = - weaponRange;
 				}
 				else { // 45 < angle <= 90
-					attackArea.setImage("TopRight.png");
+					attackArea.setImage(ImageFolder.get() + "TopRight.png");
 					xOffset = 0;
 					yOffset = - weaponRange - player.getSprite().getHeight() / 2;
 				}
@@ -734,24 +731,24 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 		else { // angle < 0
 			if (angle < -90) {
 				if (angle < -135) { // angle < -135
-					attackArea.setImage("BottomLeft.png");
+					attackArea.setImage(ImageFolder.get() + "BottomLeft.png");
 					xOffset = - weaponRange - player.getSprite().getWidth() / 2;
 					yOffset = 0;
 				}
 				else { // -90 > angle >= -135
-					attackArea.setImage("BottomLeft.png");
+					attackArea.setImage(ImageFolder.get() + "BottomLeft.png");
 					xOffset = - weaponRange;
 					yOffset = player.getSprite().getHeight() / 2;
 				}
 			}
 			else { 
 				if (angle >= -45) { // 0 > angle >= -45
-					attackArea.setImage("BottomRight.png");
+					attackArea.setImage(ImageFolder.get() + "BottomRight.png");
 					xOffset = player.getSprite().getWidth() / 2;
 					yOffset = 0;
 				}
 				else { // -45 > angle >= -90
-					attackArea.setImage("BottomRight.png");
+					attackArea.setImage(ImageFolder.get() + "BottomRight.png");
 					xOffset = 0;
 					yOffset = player.getSprite().getHeight() / 2;
 				}
@@ -897,21 +894,21 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 			GImage newPlayerSprite = new GImage("", playerSprite.getX(), playerSprite.getY());
 			if (player.getMoveX() < 0) { // player moving left
 				if (program.isCloseRangeCharacter()) {
-					newPlayerSprite.setImage("PlayerKnightSprite.png");
+					newPlayerSprite.setImage(ImageFolder.get() + "PlayerKnightSprite.png");
 					player.setSprite(newPlayerSprite);
 				}
 				else {
-					newPlayerSprite.setImage("PlayerWizardSprite.png");
+					newPlayerSprite.setImage(ImageFolder.get() + "PlayerWizardSprite.png");
 					player.setSprite(newPlayerSprite);
 				}
 			}
 			else { // player moving right
 				if (program.isCloseRangeCharacter()) {
-					newPlayerSprite.setImage("PlayerKnightMirroredSprite.png");
+					newPlayerSprite.setImage(ImageFolder.get() + "PlayerKnightMirroredSprite.png");
 					player.setSprite(newPlayerSprite);
 				}
 				else {
-					newPlayerSprite.setImage("PlayerWizardMirroredSprite.png");
+					newPlayerSprite.setImage(ImageFolder.get() + "PlayerWizardMirroredSprite.png");
 					player.setSprite(newPlayerSprite);
 				}
 			}

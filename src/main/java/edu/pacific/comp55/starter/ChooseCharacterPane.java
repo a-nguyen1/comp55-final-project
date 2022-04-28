@@ -14,8 +14,8 @@ public class ChooseCharacterPane extends GraphicsPane {
 	
 	public ChooseCharacterPane(MainApplication app) {
 		this.program = app;
-		longRangeCharacter = new GImage("PlayerWizardSprite.png", program.getWidth() * 2 / 3, 200);
-		closeRangeCharacter = new GImage("PlayerKnightSprite.png", program.getWidth() / 3, 200);
+		longRangeCharacter = new GImage(ImageFolder.get() + "PlayerWizardSprite.png", program.getWidth() * 2 / 3, 200);
+		closeRangeCharacter = new GImage(ImageFolder.get() + "PlayerKnightSprite.png", program.getWidth() / 3, 200);
 		chooseCharacterLabel = new GLabel("Choose Your Character", program.getWidth() / 3, 100);
 		chooseCharacterLabel.setFont("Arial-24");
 	}

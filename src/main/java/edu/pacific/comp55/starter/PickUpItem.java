@@ -10,10 +10,6 @@ public class PickUpItem extends Item{
 		inInventory = false;
 	}
 	
-	public void consume() { //TODO use the item
-		
-	}
-	
 	public static void main(String[] args) {
 
 	}

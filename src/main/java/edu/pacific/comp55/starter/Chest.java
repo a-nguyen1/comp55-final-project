@@ -12,7 +12,7 @@ public class Chest extends Item {
 		super(image, name);
 		isChestOpen = false;
 		//Create an open chest sprite
-		openChest = new GImage("openChest.png", getSprite().getX(), getSprite().getY()); 
+		openChest = new GImage(ImageFolder.get() + "openChest.png", getSprite().getX(), getSprite().getY()); 
 		openChest.setSize(ITEM_SIZE, ITEM_SIZE);
 	}
 
@@ -22,16 +22,16 @@ public class Chest extends Item {
 		double chestY = getSprite().getY();
 		double randNum = Math.random();
 		if (randNum <= 0.1) { // 10 % chance of giving weapon upgrade
-			String upgradeType = "WizardUpgrade.png"; //default weapon upgrade sprite.
+			String upgradeType = ImageFolder.get() + "WizardUpgrade.png"; //default weapon upgrade sprite.
 			if (closeRange) {
-				upgradeType = "KnightUpgrade.png";
+				upgradeType = ImageFolder.get() + "KnightUpgrade.png";
 			}
 			GImage sprite = new GImage(upgradeType, chestX, chestY + ITEM_SIZE); //weapon upgrade sprite for knight.
 			Weapon upgrade = new Weapon(sprite, "upgrade");
 			items.add(upgrade);
 		}
 		else if (randNum <= 0.20) { // 10 % chance of giving extra life
-			GImage sprite = new GImage("thugLife.png", chestX, chestY + ITEM_SIZE);
+			GImage sprite = new GImage(ImageFolder.get() + "thugLife.png", chestX, chestY + ITEM_SIZE);
 			PickUpItem life = new PickUpItem(sprite, "life");
 			items.add(life);
 		}
@@ -53,7 +53,7 @@ public class Chest extends Item {
 	}
 
 	private void addHeart(double chestX, double chestY) {
-		GImage heartSprite = new GImage ("Heart.png", chestX, chestY); //Create a new sprite for heart.
+		GImage heartSprite = new GImage (ImageFolder.get() + "Heart.png", chestX, chestY); //Create a new sprite for heart.
 		heartSprite.setSize(ITEM_SIZE, ITEM_SIZE); //Resize sprite to make it smaller.
 		PickUpItem heart = new PickUpItem(heartSprite, "heart");
 		items.add(heart);

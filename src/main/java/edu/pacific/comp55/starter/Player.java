@@ -11,6 +11,7 @@ import acm.program.GraphicsProgram;
 public class Player extends Character {
 	private static final int ITEM_SIZE = 25;
 	private static final int HEART_SIZE = 50;
+	
 	private Weapon weapon;
 	private ArrayList<Item> inventory;
 	private boolean dashAvailable;
@@ -28,7 +29,7 @@ public class Player extends Character {
 		attackAvailable = false;
 		bulletTraveling = false;
 		bulletDistance = 0;
-		bulletSprite = new GImage("lightningBallSprite.png", getSprite().getX() + getSprite().getWidth() / 2, getSprite().getY() + getSprite().getHeight() / 2);
+		bulletSprite = new GImage(ImageFolder.get() + "lightningBallSprite.png", getSprite().getX() + getSprite().getWidth() / 2, getSprite().getY() + getSprite().getHeight() / 2);
 		bulletSprite.setVisible(false); 
 		dashCooldown = 500; // set to 500 by default
 		super.setAttackCooldown(200); // set to 200 by default
@@ -46,7 +47,7 @@ public class Player extends Character {
 		ArrayList<GImage> playerHealth = new ArrayList<GImage>(); 
 		for (int x = 0; x < getHealth(); x++) { //add hearts based on player health
 			// if health > 10, place the next row of hearts right beneath original row of hearts
-			playerHealth.add(new GImage("Heart.png", x % 10 * HEART_SIZE, 5 * (x / 10)));
+			playerHealth.add(new GImage(ImageFolder.get() + "Heart.png", x % 10 * HEART_SIZE, 5 * (x / 10)));
 		}
 		return playerHealth;
 	}

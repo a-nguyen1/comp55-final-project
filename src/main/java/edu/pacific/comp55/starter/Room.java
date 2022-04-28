@@ -44,49 +44,52 @@ public class Room {
 	
 	private static final int BABY_GOBLIN_DETECTION_RANGE = 200;
 	private static final int NORMAL_GOBLIN_DETECTION_RANGE = 100;
-
+	
 	private ArrayList<Item> items;
 	private ArrayList<Enemy> enemies;
 	private ArrayList<GPoint> locations;
 	private HashMap<String, String> sprites;
 	private String backgroundTileName;
+	
 	private double width; // width of program
 	private double height; // height of program
 	private int room; // room number
 	
+	
 	public Room(int roomNumber, double w, double h) {
 		room = roomNumber;
 		//set tiles based on room number
+		
 		if (room <= 6) { 
-			backgroundTileName = "GreenTile.png";
+			backgroundTileName = ImageFolder.get() + "GreenTile.png";
 		}
 		else if (room <= 12) {
-			backgroundTileName = "GrayTile.png";
+			backgroundTileName = ImageFolder.get() + "GrayTile.png";
 		}
 		else {
-			backgroundTileName = "OrangeTile.png";
+			backgroundTileName = ImageFolder.get() + "OrangeTile.png";
 		}
 		width = w;
 		height = h;
 		sprites = new HashMap<String, String>();
 		
 		//enemy sprites
-		sprites.put("skeleton", "EnemySkeletonSprite.png"); 
-		sprites.put("heartless skeleton", "EnemyHeartlessSkeletonSprite.png");
-		sprites.put("skeleton summoner", "EnemySkeletonSummonerSprite.png");
-		sprites.put("goblin", "EnemyGoblinSprite.png");
-		sprites.put("baby goblin", "EnemyGoblinBabySprite.png");
-		sprites.put("flying goblin", "EnemyGoblinFlyingSprite.png");
-		sprites.put("dragon", "EnemyDragonSprite.png");
-		sprites.put("wizard", "EnemyWizardSprite.png");
-		sprites.put("demon magician", "EnemyDemonMagicianSprite.png");
+		sprites.put("skeleton", ImageFolder.get() + "EnemySkeletonSprite.png"); 
+		sprites.put("heartless skeleton", ImageFolder.get() + "EnemyHeartlessSkeletonSprite.png");
+		sprites.put("skeleton summoner", ImageFolder.get() + "EnemySkeletonSummonerSprite.png");
+		sprites.put("goblin", ImageFolder.get() + "EnemyGoblinSprite.png");
+		sprites.put("baby goblin", ImageFolder.get() + "EnemyGoblinBabySprite.png");
+		sprites.put("flying goblin", ImageFolder.get() + "EnemyGoblinFlyingSprite.png");
+		sprites.put("dragon", ImageFolder.get() + "EnemyDragonSprite.png");
+		sprites.put("wizard", ImageFolder.get() + "EnemyWizardSprite.png");
+		sprites.put("demon magician", ImageFolder.get() + "EnemyDemonMagicianSprite.png");
 		
 		//item sprites
-		sprites.put("key", "key.png");
-		sprites.put("heart", "heart.png");
-		sprites.put("chest", "closedChest.png");
-		sprites.put("door", "closedDoor.png");
-		sprites.put("life", "thugLife.png");
+		sprites.put("key", ImageFolder.get() + "key.png");
+		sprites.put("heart", ImageFolder.get() + "heart.png");
+		sprites.put("chest", ImageFolder.get() + "closedChest.png");
+		sprites.put("door", ImageFolder.get() + "closedDoor.png");
+		sprites.put("life", ImageFolder.get() + "thugLife.png");
 		
 		locations = new ArrayList<GPoint>();
 		items = new ArrayList<Item>();
@@ -118,7 +121,7 @@ public class Room {
 			case 3: 
 				addEnemy("goblin", randomizePoint(), 2, "close range goblin", NORMAL_GOBLIN_DETECTION_RANGE, NORMAL_SPEED); 
 				addEnemy("baby goblin", randomizePoint(), 1, "close range baby goblin", BABY_GOBLIN_DETECTION_RANGE, FAST_SPEED); 
-				addEnemy("flying goblin", randomizePoint(), 2, "long range flying goblin", FLYING_GOBLIN_DETECTION_RANGE, FLYING_GOBLIN_WEAPON_RANGE, "poisonBallSprite.png", NORMAL_SPEED); 
+				addEnemy("flying goblin", randomizePoint(), 2, "long range flying goblin", FLYING_GOBLIN_DETECTION_RANGE, FLYING_GOBLIN_WEAPON_RANGE, ImageFolder.get() + "poisonBallSprite.png", NORMAL_SPEED); 
 				break;
 			case 4:
 				for (int i = 0; i < 5; i++) {
@@ -127,7 +130,7 @@ public class Room {
 				break;
 			case 5:
 				for (int i = 0; i < 3; i++) {
-					addEnemy("flying goblin", randomizePoint(), 2, "long range flying goblin", FLYING_GOBLIN_DETECTION_RANGE, FLYING_GOBLIN_WEAPON_RANGE, "poisonBallSprite.png", NORMAL_SPEED);
+					addEnemy("flying goblin", randomizePoint(), 2, "long range flying goblin", FLYING_GOBLIN_DETECTION_RANGE, FLYING_GOBLIN_WEAPON_RANGE, ImageFolder.get() + "poisonBallSprite.png", NORMAL_SPEED);
 				}
 				break;
 			case 6:
@@ -135,43 +138,43 @@ public class Room {
 				break;
 			case 7:
 				for (int i = 0; i <= 1; i++) {
-					addEnemy("dragon", randomizePoint(), 3, "long range dragon", WIZARD_DRAGON_DETECTION_RANGE, WIZARD_DRAGON_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+					addEnemy("dragon", randomizePoint(), 3, "long range dragon", WIZARD_DRAGON_DETECTION_RANGE, WIZARD_DRAGON_WEAPON_RANGE, ImageFolder.get() + "fireBallSprite.png", NORMAL_SPEED); 
 				}
 				break;
 			case 8:
 				for (int i = 0; i <= 2; i++) {
-					addEnemy("dragon", randomizePoint(), 3, "long range dragon", WIZARD_DRAGON_DETECTION_RANGE, WIZARD_DRAGON_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+					addEnemy("dragon", randomizePoint(), 3, "long range dragon", WIZARD_DRAGON_DETECTION_RANGE, WIZARD_DRAGON_WEAPON_RANGE, ImageFolder.get() + "fireBallSprite.png", NORMAL_SPEED); 
 				}
 				break;
 			case 9:
-				addEnemy("wizard", randomizePoint(), 3, "long range wizard", WIZARD_DRAGON_DETECTION_RANGE, WIZARD_DRAGON_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+				addEnemy("wizard", randomizePoint(), 3, "long range wizard", WIZARD_DRAGON_DETECTION_RANGE, WIZARD_DRAGON_WEAPON_RANGE, ImageFolder.get() + "fireBallSprite.png", NORMAL_SPEED); 
 				break;
 			case 10:
-				addEnemy("wizard", randomizePoint(), 3, "long range wizard", WIZARD_DRAGON_DETECTION_RANGE, WIZARD_DRAGON_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED);
-				addEnemy("dragon", randomizePoint(), 3, "long range dragon", WIZARD_DRAGON_DETECTION_RANGE, WIZARD_DRAGON_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED);
+				addEnemy("wizard", randomizePoint(), 3, "long range wizard", WIZARD_DRAGON_DETECTION_RANGE, WIZARD_DRAGON_WEAPON_RANGE, ImageFolder.get() + "fireBallSprite.png", NORMAL_SPEED);
+				addEnemy("dragon", randomizePoint(), 3, "long range dragon", WIZARD_DRAGON_DETECTION_RANGE, WIZARD_DRAGON_WEAPON_RANGE, ImageFolder.get() + "fireBallSprite.png", NORMAL_SPEED);
 				break;
 			case 11:
 				for (int i = 0; i < 2; i++) {
-					addEnemy("wizard", randomizePoint(), 3, "long range wizard", WIZARD_DRAGON_DETECTION_RANGE, WIZARD_DRAGON_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+					addEnemy("wizard", randomizePoint(), 3, "long range wizard", WIZARD_DRAGON_DETECTION_RANGE, WIZARD_DRAGON_WEAPON_RANGE, ImageFolder.get() + "fireBallSprite.png", NORMAL_SPEED); 
 				}
 				break;
 			case 12:
-				addBoss("dragon", BOSS_HEALTH * 2, "long range dragon boss", BOSS_WEAPON_RANGE, "fireBallSprite.png", FAST_SPEED); //add DragonBoss
+				addBoss("dragon", BOSS_HEALTH * 2, "long range dragon boss", BOSS_WEAPON_RANGE, ImageFolder.get() + "fireBallSprite.png", FAST_SPEED); //add DragonBoss
 				break;
 			case 13:
-				addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+				addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, ImageFolder.get() + "fireBallSprite.png", NORMAL_SPEED); 
 				addEnemy("skeleton", randomizePoint(), 1, "close range skeleton", SKELETON_DETECTION_RANGE, NORMAL_SPEED);
 				addEnemy("heartless skeleton", randomizePoint(), 4, "close range heartless skeleton", HEARTLESS_SKELETON_DETECTION_RANGE, SUPER_FAST_SPEED);
 				break;
 			case 14:
 				for (int i = 0; i < 2; i++) {
-					addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+					addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, ImageFolder.get() + "fireBallSprite.png", NORMAL_SPEED); 
 				}
-				addEnemy("skeleton summoner", randomizePoint(), 3, "long range skeleton summoner", SKELETON_SUMMONER_DETECTION_RANGE, SKELETON_SUMMONER_WEAPON_RANGE, "fireBallSprite.png", SLOW_SPEED); 
+				addEnemy("skeleton summoner", randomizePoint(), 3, "long range skeleton summoner", SKELETON_SUMMONER_DETECTION_RANGE, SKELETON_SUMMONER_WEAPON_RANGE, ImageFolder.get() + "fireBallSprite.png", SLOW_SPEED); 
 				break;
 			case 15:
 				for (int i = 0; i < 2; i++) {
-					addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+					addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, ImageFolder.get() + "fireBallSprite.png", NORMAL_SPEED); 
 				}
 				for (int i = 0; i < 7; i++) {
 					addEnemy("skeleton", randomizePoint(), 1, "close range skeleton", SKELETON_DETECTION_RANGE, NORMAL_SPEED);
@@ -179,7 +182,7 @@ public class Room {
 				break;
 			case 16:
 				for (int i = 0; i < 2; i++) {
-					addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, "fireBallSprite.png", NORMAL_SPEED); 
+					addEnemy("demon magician", randomizePoint(), 3, "long range demon magician", DEMON_MAGICIAN_DETECTION_RANGE, DEMON_MAGICIAN_WEAPON_RANGE, ImageFolder.get() + "fireBallSprite.png", NORMAL_SPEED); 
 				}
 				for (int i = 0; i < 2; i++) {
 					addEnemy("heartless skeleton", randomizePoint(), 4, "close range heartless skeleton", HEARTLESS_SKELETON_DETECTION_RANGE, SUPER_FAST_SPEED);
@@ -187,11 +190,11 @@ public class Room {
 				break;
 			case 17:
 				for (int i = 0; i < 2; i++) {
-					addEnemy("skeleton summoner", randomizePoint(), 3, "long range skeleton summoner", SKELETON_SUMMONER_DETECTION_RANGE, SKELETON_SUMMONER_WEAPON_RANGE, "fireBallSprite.png", SLOW_SPEED); 
+					addEnemy("skeleton summoner", randomizePoint(), 3, "long range skeleton summoner", SKELETON_SUMMONER_DETECTION_RANGE, SKELETON_SUMMONER_WEAPON_RANGE, ImageFolder.get() + "fireBallSprite.png", SLOW_SPEED); 
 				}
 				break;
 			case 18:
-				addBoss("wizard", BOSS_HEALTH * 3, "long range wizard boss summoner", BOSS_WEAPON_RANGE, "fireSpiralSprite.png", FAST_SPEED); //add WizardBoss
+				addBoss("wizard", BOSS_HEALTH * 3, "long range wizard boss summoner", BOSS_WEAPON_RANGE, ImageFolder.get() + "fireSpiralSprite.png", FAST_SPEED); //add WizardBoss
 				break;
 		}
 			

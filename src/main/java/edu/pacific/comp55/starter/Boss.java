@@ -22,7 +22,7 @@ public class Boss extends Enemy {
 		ArrayList<GImage> bossHealth = new ArrayList<GImage>(); 
 		for (int x = 0; x < getHealth(); x++) { //add hearts based on boss health
 			// if health > 5, place the next row of hearts right next to original row of hearts
-			bossHealth.add(new GImage("Heart.png", xOffset + (5 * (x / 5)), x % 5 * HEART_SIZE + yOffset)); 
+			bossHealth.add(new GImage(ImageFolder.get() + "Heart.png", xOffset + (5 * (x / 5)), x % 5 * HEART_SIZE + yOffset)); 
 		}
 		return bossHealth;
 	}
