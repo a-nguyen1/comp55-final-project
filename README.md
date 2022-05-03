@@ -3,6 +3,21 @@ The motivation for this project came from playing games and wanting to create an
 
 <img src="media/Boss.png" alt="" width="1000"/>
 
+# Functional Requirements
+## Use Case - Casual
+The player starts with menu selection to configure audio, learn how to play the game, and playing the game by moving around, collecting items, and attacking enemies. If an enemy sees the player, it will attempt to attack in the player’s direction, and if successful, the player’s number of hearts is lowered, and if the player’s health is zero, the game is over. If the player is able to escape the final room, the player wins the game.
+
+## Use Case - Full
+The main menu can be used to toggle audio on and off, to learn how to play the game, and to start the game. The camera is always centered at the center of the room. Every room will have all edges of the screen blocked off. In every room, the player must find a key to unlock the next room. Once the key is found, the player can move to the next room by moving to the door and using the key to open it. When a player enters the next room, there will be enemies that spawn randomly at a minimum distance from the player. Enemies will move towards the player if the player is detected within the enemy’s detection radius. As long as the player is within that radius, the enemy will start moving. It’s possible to escape the detection radius of the enemy, usually with use of the dash feature. When the player is within the enemy’s detection radius, the enemy will attempt to attack, either by attempting to touch the player or by performing a long range attack. If the player is hit by an enemy or an enemy attack, the player will lose HP. The player also gains limited invincibility when hit. Attacks can be easier to dodge by using the dash feature. The direction of the dash is determined by the location of the player’s mouse in relation to the player. There is also a cooldown for the dash. If the player performs an attack, there is a delay before the player can attack again. Like the dash, the direction of the attack is determined by the player’s mouse. If the player is using a melee weapon, any enemies within the player’s attack area are damaged. If the player is using a ranged weapon, enemies hit by the bullet are damaged. The player will also have the opportunity to pick up hearts to regain HP. It’s possible to get more hearts than the starting 10 HP that are provided at the beginning. Enemies will start off with one or two HP, but going deeper into the dungeon means enemies will become more difficult. If the player attacks and defeats an enemy, the enemy will die. The game has multiple boss rooms. In each boss room, it is optional for the player to defeat the boss. The boss will have more HP and a personal HP display to stand out from normal enemies. 
+
+## Use Case Diagram
+
+<img src="media/ClassDiagram.png" alt="" width="1000"/>
+
+## Use Cases - Unimplemented (consider for future)
+Level selection would allow a user to choose which levels to go to that they have already visited. 
+
+
 # Overview
 Escape the Dungeon is a dungeon crawler where you can play as a knight or a wizard.
 Escape or face your foes who stand in your way. 
