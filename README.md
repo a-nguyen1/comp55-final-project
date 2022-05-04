@@ -25,7 +25,7 @@ The main menu can be used to toggle audio on and off, to learn how to play the g
 
 **Use Cases - Unimplemented (consider for future)**
 
-Level selection would allow a user to go back to levels that they have already visited. Level selection would allow a user to choose which levels to go to that they have already visited. Animating the character sprites would make the visuals more appealing. Also, adding features like character sprint and more attacking features is another aspect we’re excited about.
+Level selection would allow a user to choose which levels to go to that they have already visited. Animating the character sprites would make the visuals more appealing. Also, adding features like character sprint and more attacking features is another aspect we’re excited about.
 
 # Class Diagram and Interface Specification
 1. Player.nearestItem()
