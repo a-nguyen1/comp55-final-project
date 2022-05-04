@@ -4,6 +4,7 @@ The motivation for this project came from playing games and wanting to create an
 <img src="media/Boss.png" alt="" width="1000"/>
 
 # Functional Requirements
+
 **Use Case - Casual**
 
 The player starts with menu selection to configure audio, learn how to play the game, and playing the game by moving around, collecting items, and attacking enemies. If an enemy sees the player, it will attempt to attack in the player's direction, and if successful, the player's number of hearts is lowered, and if the player's health is zero, the game is over. If the player is able to escape the final room, the player wins the game.
@@ -30,6 +31,15 @@ Level selection would allow a user to go back to levels that they have already v
 # Interaction Diagrams
 
 # References with Annotations
+
+<img src="media/KeyCodes.png" alt="" width="50"/>
+
+- [Key Code Source](https://stackoverflow.com/questions/15313469/java-keyboard-keycodes-list) - Key codes helped to determine which key on the keyboard that the user pressed, which helped with the implementation of the logic for player movement, use/pickup items, etc.
+- [Interact Lab Source](https://onzfonz.github.io/comp55/labs/5-Interact.html) - Helped with detection of mouse movement, especially for player attack and dash.
+- [Timer Lab Source](https://onzfonz.github.io/comp55/labs/10-Timer.html) - Helped with using timer for setting up main game logic
+- [HashMap Lab Source](https://onzfonz.github.io/comp55/labs/12-Hash.html) - Helped with using HashMaps to quickly access sprites and adjust item labels
+- [Decomposition Lab Source](https://onzfonz.github.io/comp55/labs/11-Decomp.html) - Helped with solving complex problems by breaking them down into smaller segments
+
 
 # Overview
 Escape the Dungeon is a dungeon crawler where you can play as a knight or a wizard.
