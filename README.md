@@ -25,7 +25,7 @@ The main menu can be used to toggle audio on and off, to learn how to play the g
 
 **Use Cases - Unimplemented (consider for future)**
 
-Level selection would allow a user to go back to levels that they have already visited. 
+Level selection would allow a user to go back to levels that they have already visited. Level selection would allow a user to choose which levels to go to that they have already visited. Animating the character sprites would make the visuals more appealing. Also, adding features like character sprint and more attacking features is another aspect we’re excited about.
 
 # Class Diagram and Interface Specification
 1. Player.nearestItem()
@@ -34,7 +34,23 @@ Level selection would allow a user to go back to levels that they have already v
 
 <img src="media/ClassDiagram.png" alt="" width="1000"/>
 
+**MainApplication:** switches between different panes.
+
+**ChooseCharacterPane:** option to choose knight or wizard. switches to DisplayPane.
+
+**MenuPane:** option to play the game, go to HowToPlayPane, or toggle music on or off. 
+
+**HowToPlayPane:** displays instructions on how to play. switches to MenuPane.
+
+**DisplayPane:** where most of the game logic occurs.
+
+**Item:** provides a framework for any interactable object in the game.
+
 # Interaction Diagrams
+
+<img src="media/SequenceDiagram.png" alt="" width="1000"/>
+
+A Collision class along with its static method was used to check for any collisions occurring in the game. This was done so that any collision in the game could be checked by simply calling Collision.check() on two GRectangles. A createRoom() method was used for getting and setting the items, enemies, and a new background for each room. It’s a useful method because a Room must be created each time the player unlocked the door to the next room. The method changeHealth() would receive an integer and was used to change the player’s health each time the player was hit. It also was used for when the enemy was hit by the player to deplete the enemy’s health. 
 
 # References with Annotations
 
@@ -45,59 +61,3 @@ Level selection would allow a user to go back to levels that they have already v
 - [Timer Lab Source](https://onzfonz.github.io/comp55/labs/10-Timer.html) - Helped with using timer for setting up main game logic
 - [HashMap Lab Source](https://onzfonz.github.io/comp55/labs/12-Hash.html) - Helped with using HashMaps to quickly access sprites and adjust item labels
 - [Decomposition Lab Source](https://onzfonz.github.io/comp55/labs/11-Decomp.html) - Helped with solving complex problems by breaking them down into smaller segments
-
-
-# Overview
-Escape the Dungeon is a dungeon crawler where you can play as a knight or a wizard.
-Escape or face your foes who stand in your way. 
-Pick up items to better your odds.
-
-# Features
-- Main Menu
-
-<img src="media/MainMenu.png" alt="" width="1000"/>
-
-- How To Play instructions
-- Audio can be turned on/off
-- The Winning/Losing Screen has an option to restart
-
-<img src="media/GameOver.png" alt="" width="1000"/>
-
-- You can choose to play as a Knight or a Wizard
-- The Knight can attack from close range
-- The Wizard can attack from long range
-- Your character and Bosses have a health display
-
-<img src="media/Boss.png" alt="" width="1000"/>
-
-- Your character needs a key to open the door to access the next room
-- Your character can dash and move in any direction
-- Your character can pick up items and weapon upgrades
-- Each room is randomized with multiple enemy and item types
-
-<img src="media/Gameplay.png" alt="" width="1000"/>
-
-- Enemies can detect if your character is within range
-- If your character touches an enemy, you will lose health
-- Certain enemies can attack from long range
-
-# Features not implemented
-- Select Level
-- Tutorial
-- Different types of weapons
-
-# How to play
-- Move the mouse and use the Left-Click button to navigate the main menu and toggle audio
-- Press w, a, s, d to move up, down, left, right, respectively
-- Press SHIFT to dash in the direction of the mouse
-- Press the Left-Click button on the mouse to attack in the direction of the mouse
-- Press e to interact with objects
-- Press r to use a heart item
-
-# How to build (Windows)
-- Go to releases
-- Download tea-win-x64.zip
-- Extract the zip file
-- Open the extracted folder
-- Open the bin folder
-- Run the tea.bat file
