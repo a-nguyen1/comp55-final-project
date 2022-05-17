@@ -34,6 +34,10 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	
 	private MainApplication program;
 	
+	//player animation members
+	private int frame = 0;
+	private String[] wizardBobbing = {"PlayerWizardStandingLeft.png", "PlayerWizardMoveLeft1.png", "PlayerWizardMoveLeft2.png", "PlayerWizardMoveLeft1.png", "PlayerWizardStandingLeft.png", "PlayerWizardMoveLeftVar1.png", "PlayerWizardMoveLeftVar2.png", "PlayerWizardMoveLeftVar1.png"};
+	
 	private ArrayList<GImage> backgroundTiles;
 	private ArrayList<GImage> playerHealth;
 	private ArrayList<GImage> playerInventory;
@@ -147,7 +151,8 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 				weapon = new Weapon(new GImage(""), "long range weapon", PLAYER_STARTING_LONG_RANGE); 
 				player.setWeapon(weapon);
 			}
-			player.setSprite(new GImage (ImageFolder.get() + "PlayerWizardSprite.png"));
+			GImage wizardSprite = new GImage (ImageFolder.get() + "PlayerWizardStandingLeft.png");
+			player.setSprite(wizardSprite);
 			program.add(player.getBulletSprite()); // add bullet to the screen
 		}
 		
@@ -777,6 +782,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 	@Override
 	public void keyPressed(KeyEvent e) {
 		GImage playerSprite = player.getSprite();
+		GImage wizardBobSprite = new GImage("", playerSprite.getX(), playerSprite.getY());
 		int keyCode = e.getKeyCode();
 		if (keyCode == 87) { // w
 			player.setMoveY(-1);
@@ -898,8 +904,20 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					player.setSprite(newPlayerSprite);
 				}
 				else {
-					newPlayerSprite.setImage(ImageFolder.get() + "PlayerWizardSprite.png");
+					// If the player is not moving left, set to left stationary image.
+					if (!(keyCode == 65)) { // If !(a) key pressed
+						newPlayerSprite.setImage(ImageFolder.get() + "PlayerWizardStandingLeft.png");
+						player.setSprite(newPlayerSprite);
+					}
+					
+					// If player is moving left (If a key pressed), animate sprite.
+					newPlayerSprite.setImage(ImageFolder.get() + wizardBobbing[frame]);
+					frame++;
 					player.setSprite(newPlayerSprite);
+		            if(frame>=wizardBobbing.length){
+		                frame = 0;
+		            }
+		            player.setSprite(newPlayerSprite);
 				}
 			}
 			else { // player moving right
@@ -908,7 +926,7 @@ public class DisplayPane extends GraphicsPane implements ActionListener{
 					player.setSprite(newPlayerSprite);
 				}
 				else {
-					newPlayerSprite.setImage(ImageFolder.get() + "PlayerWizardMirroredSprite.png");
+					newPlayerSprite.setImage(ImageFolder.get() + "PlayerWizardMirroredSprite2.png");
 					player.setSprite(newPlayerSprite);
 				}
 			}
